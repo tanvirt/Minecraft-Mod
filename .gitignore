@@ -51,3 +51,22 @@ com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
 fabric.properties
+
+# idea
+out
+*.ipr
+*.iws
+*.iml
+.idea
+
+# gradle
+build
+.gradle
+
+# other
+run
+build.gradle
+gradle.properties
+gradle/
+gradlew
+gradlew.bat
