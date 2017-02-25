@@ -1,6 +1,8 @@
 package com.example.examplemod;
 
 import com.example.examplemod.proxy.CommonProxy;
+import com.example.examplemod.tab.CustomTab;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -22,8 +24,11 @@ public class CustomMod  {
     @Mod.Instance
     public static CustomMod instance;
 
+    public static CreativeTabs tab;
+
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
+        tab = new CustomTab(CreativeTabs.getNextID(), "custom_tab");
         proxy.preInit(event);
     }
 
