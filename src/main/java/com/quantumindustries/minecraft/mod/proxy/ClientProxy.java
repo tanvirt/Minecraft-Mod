@@ -1,6 +1,6 @@
 package com.quantumindustries.minecraft.mod.proxy;
 
-import com.quantumindustries.minecraft.mod.Items.ModItems;
+import com.quantumindustries.minecraft.mod.items.ModItems;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;

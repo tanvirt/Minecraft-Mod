@@ -1,4 +1,4 @@
-package com.quantumindustries.minecraft.mod.Items;
+package com.quantumindustries.minecraft.mod.items;
 
 import com.quantumindustries.minecraft.mod.CustomMod;
 import net.minecraft.creativetab.CreativeTabs;

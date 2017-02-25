@@ -1,12 +1,9 @@
-package com.quantumindustries.minecraft.mod.Items;
+package com.quantumindustries.minecraft.mod.items;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
-/**
- * Created by snype on 2/25/2017.
- */
 public class ModItems {
 
     public static ItemBase ingotCopper;

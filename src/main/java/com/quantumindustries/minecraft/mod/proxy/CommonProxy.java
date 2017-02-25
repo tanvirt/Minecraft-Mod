@@ -1,8 +1,6 @@
 package com.quantumindustries.minecraft.mod.proxy;
 
 import com.quantumindustries.minecraft.mod.CustomMod;
-import com.quantumindustries.minecraft.mod.Items.ItemBase;
-import com.quantumindustries.minecraft.mod.Items.ModItems;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.model.ModelLoader;
