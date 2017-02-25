@@ -65,7 +65,6 @@ build
 
 # other
 run
-build.gradle
 gradle.properties
 gradle/
 gradlew

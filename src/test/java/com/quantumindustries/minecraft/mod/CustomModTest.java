@@ -1,7 +1,6 @@
-package com.example.examplemod;
+package com.quantumindustries.minecraft.mod;
 
-import com.example.examplemod.proxy.CommonProxy;
-import com.example.examplemod.tab.CustomTab;
+import com.quantumindustries.minecraft.mod.proxy.CommonProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -9,14 +8,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import mockit.*;
 
 class CustomModTest {
 
     @Tested CustomMod mod;
     @Mocked CommonProxy proxy;
+
     @Mocked FMLPreInitializationEvent preInit;
     @Mocked FMLInitializationEvent init;
     @Mocked FMLPostInitializationEvent postInit;
@@ -32,18 +30,12 @@ class CustomModTest {
     }
 
     @Test
-    public void testToString() {
-        assertEquals("CustomMod class", mod.toString());
-    }
-
-    @Test
-    public void testInitializationEvents(@Mocked CustomTab tab) {
+    public void testInitializationEvents() {
         mod.preInit(preInit);
         mod.init(init);
         mod.postInit(postInit);
 
         new VerificationsInOrder() {{
-            new CustomTab(anyInt, "custom_tab");
             proxy.preInit(preInit);
             proxy.init(init);
             proxy.postInit(postInit);

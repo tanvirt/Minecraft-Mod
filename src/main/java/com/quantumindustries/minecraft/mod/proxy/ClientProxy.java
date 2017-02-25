@@ -1,4 +1,4 @@
-package com.example.examplemod.proxy;
+package com.quantumindustries.minecraft.mod.proxy;
 
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;

@@ -1,10 +1,7 @@
-package com.example.examplemod;
+package com.quantumindustries.minecraft.mod;
 
-import com.example.examplemod.proxy.CommonProxy;
-import com.example.examplemod.tab.CustomTab;
-import net.minecraft.creativetab.CreativeTabs;
+import com.quantumindustries.minecraft.mod.proxy.CommonProxy;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -14,37 +11,29 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 public class CustomMod  {
 
     public static final String MODID = "custommod";
-    public static final String VERSION = "1.0";
+    public static final String VERSION = "1.0.0";
     public static final String NAME = "Custom Mod";
 
-    @SidedProxy(clientSide = "com.example.examplemod.proxy.ClientProxy",
-            serverSide = "com.example.examplemod.proxy.CommonProxy")
+    @SidedProxy(clientSide = "com.quantumindustries.minecraft.mod.proxy.ClientProxy",
+            serverSide = "com.quantumindustries.minecraft.mod.proxy.CommonProxy")
     public static CommonProxy proxy;
 
     @Mod.Instance
     public static CustomMod instance;
 
-    public static CreativeTabs tab;
-
-    @EventHandler
+    @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        tab = new CustomTab(CreativeTabs.getNextID(), "custom_tab");
         proxy.preInit(event);
     }
 
-    @EventHandler
+    @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         proxy.init(event);
     }
 
-    @EventHandler
+    @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
         proxy.postInit(event);
-    }
-
-    @Override
-    public String toString() {
-        return "CustomMod class";
     }
 
 }
