@@ -7,6 +7,7 @@ I. Sync with dev branch.
 ```sh
 $ git fetch
 $ git checkout dev
+$ git pull origin dev
 ```
 
 II. Create a new branch.
