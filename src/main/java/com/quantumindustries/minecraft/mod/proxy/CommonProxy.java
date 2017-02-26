@@ -26,7 +26,8 @@ public class CommonProxy {
         ModelLoader.setCustomModelResourceLocation(
                 item,
                 meta,
-                new ModelResourceLocation(CustomMod.MODID + ":" + id, "inventory"));
+                new ModelResourceLocation(CustomMod.MODID + ":" + id, "inventory")
+        );
     }
 
 }
