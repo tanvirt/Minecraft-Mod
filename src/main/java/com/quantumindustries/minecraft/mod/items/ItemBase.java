@@ -11,8 +11,10 @@ public class ItemBase extends Item implements ItemModelProvider {
 
     public ItemBase(String name) {
         this.name = name;
+
         setUnlocalizedName(name);
         setRegistryName(name);
+        setCreativeTab(CustomMod.tab);
     }
 
     @Override
