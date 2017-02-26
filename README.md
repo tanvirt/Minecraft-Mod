@@ -31,7 +31,7 @@ $ git pull origin dev
 $ git commit -a -m "A small merge with dev"
 ```
 
-V. Run "All in Minecraft-Mod_test". Make sure all tests pass. If there are issues, repeat steps 3-4.
+V. Run "All in Minecraft-Mod_test" with Coverage. Make sure all tests pass. If there are issues, repeat steps 3-4.
 
 VI. Run "Minecraft Client". Make sure all changes are reflected properly and app doesn't crash. If there are issues, repeat steps 3-5.
 
