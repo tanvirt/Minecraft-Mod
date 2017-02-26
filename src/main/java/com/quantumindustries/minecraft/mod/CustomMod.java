@@ -22,6 +22,8 @@ public class CustomMod  {
     @Mod.Instance
     public static CustomMod instance;
 
+    public static final CustomTab tab = new CustomTab();
+
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         proxy.preInit(event);
