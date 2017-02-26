@@ -37,7 +37,7 @@ VI. Run "Minecraft Client". Make sure all changes are reflected properly and app
 
 VII. Push changes upstream.
 ```sh
-$ git push
+$ git push origin my-small-new-feature
 ```
 
 VIII. Create pull request for the [repo][git-repo-url] with "base: dev" and "compare: my-new-feature".
