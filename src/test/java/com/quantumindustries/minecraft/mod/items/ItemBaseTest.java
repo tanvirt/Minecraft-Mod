@@ -42,7 +42,7 @@ class ItemBaseTest {
 
     @Test
     public void testRegisterItemModel() {
-        item.registerItemModel();
+        item.registerItemModel(item);
 
         new FullVerificationsInOrder() {{
             mod.registerItemRenderer(item, 0, name);

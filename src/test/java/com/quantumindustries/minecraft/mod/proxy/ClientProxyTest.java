@@ -32,8 +32,8 @@ class ClientProxyTest {
         proxy.preInit(preInitEvent);
 
         new FullVerificationsInOrder() {{
-           ModItems.init();
-           ModBlocks.init();
+            ModBlocks.init();
+            ModItems.init();
         }};
     }
 

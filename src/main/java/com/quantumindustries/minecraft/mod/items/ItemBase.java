@@ -1,10 +1,11 @@
 package com.quantumindustries.minecraft.mod.items;
 
 import com.quantumindustries.minecraft.mod.CustomMod;
+import com.quantumindustries.minecraft.mod.ItemModelProvider;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 
-public class ItemBase extends Item {
+public class ItemBase extends Item implements ItemModelProvider {
 
     protected String name;
 
@@ -14,7 +15,8 @@ public class ItemBase extends Item {
         setRegistryName(name);
     }
 
-    public void registerItemModel() {
+    @Override
+    public void registerItemModel(Item item) {
         CustomMod.registerItemRenderer(this, 0, name);
     }
 

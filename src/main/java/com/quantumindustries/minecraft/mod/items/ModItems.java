@@ -1,5 +1,6 @@
 package com.quantumindustries.minecraft.mod.items;
 
+import com.quantumindustries.minecraft.mod.ItemModelProvider;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -17,8 +18,8 @@ public class ModItems {
     private static <T extends Item> T register(T item) {
         GameRegistry.register(item);
 
-        if (item instanceof ItemBase) {
-            ((ItemBase)item).registerItemModel();
+        if(item instanceof ItemModelProvider) {
+            ((ItemModelProvider) item).registerItemModel(item);
         }
 
         return item;

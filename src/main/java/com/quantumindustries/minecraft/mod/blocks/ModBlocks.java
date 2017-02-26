@@ -1,5 +1,6 @@
 package com.quantumindustries.minecraft.mod.blocks;
 
+import com.quantumindustries.minecraft.mod.ItemModelProvider;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemBlock;
@@ -17,10 +18,13 @@ public class ModBlocks {
 
     private static <T extends Block> T register(T block, ItemBlock itemBlock) {
         GameRegistry.register(block);
-        GameRegistry.register(itemBlock);
 
-        if (block instanceof BlockBase) {
-            ((BlockBase)block).registerItemModel(itemBlock);
+        if(itemBlock != null) {
+            GameRegistry.register(itemBlock);
+
+            if(block instanceof ItemModelProvider) {
+                ((ItemModelProvider) block).registerItemModel(itemBlock);
+            }
         }
 
         return block;
