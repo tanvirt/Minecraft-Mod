@@ -15,7 +15,7 @@ public class ItemBase extends Item {
     }
 
     public void registerItemModel() {
-        CustomMod.proxy.registerItemRenderer(this, 0, name);
+        CustomMod.registerItemRenderer(this, 0, name);
     }
 
     @Override

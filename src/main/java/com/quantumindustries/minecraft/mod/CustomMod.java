@@ -1,6 +1,7 @@
 package com.quantumindustries.minecraft.mod;
 
 import com.quantumindustries.minecraft.mod.proxy.CommonProxy;
+import net.minecraft.item.Item;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -34,6 +35,10 @@ public class CustomMod  {
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
         proxy.postInit(event);
+    }
+
+    public static void registerItemRenderer(Item item, int meta, String id) {
+        proxy.registerItemRenderer(item, meta, id);
     }
 
 }

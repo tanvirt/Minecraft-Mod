@@ -20,7 +20,7 @@ public class BlockBase extends Block {
     }
 
     public void registerItemModel(ItemBlock itemBlock) {
-        CustomMod.proxy.registerItemRenderer(itemBlock, 0, name);
+        CustomMod.registerItemRenderer(itemBlock, 0, name);
     }
 
     @Override
