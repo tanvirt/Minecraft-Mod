@@ -1,6 +1,8 @@
 package com.quantumindustries.minecraft.mod;
 
+import com.quantumindustries.minecraft.mod.items.ItemBase;
 import com.quantumindustries.minecraft.mod.proxy.CommonProxy;
+import net.minecraft.item.Item;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -12,15 +14,15 @@ import mockit.*;
 
 class CustomModTest {
 
-    @Tested CustomMod mod;
+    CustomMod mod;
     @Mocked CommonProxy proxy;
-
-    @Mocked FMLPreInitializationEvent preInit;
-    @Mocked FMLInitializationEvent init;
-    @Mocked FMLPostInitializationEvent postInit;
+    @Mocked FMLPreInitializationEvent preInitEvent;
+    @Mocked FMLInitializationEvent initEvent;
+    @Mocked FMLPostInitializationEvent postInitEvent;
 
     @BeforeEach
     public void setUp() {
+        mod = new CustomMod();
         CustomMod.proxy = proxy;
     }
 
@@ -30,15 +32,41 @@ class CustomModTest {
     }
 
     @Test
-    public void testInitializationEvents() {
-        mod.preInit(preInit);
-        mod.init(init);
-        mod.postInit(postInit);
+    public void testPreInit() {
+        mod.preInit(preInitEvent);
 
-        new VerificationsInOrder() {{
-            proxy.preInit(preInit);
-            proxy.init(init);
-            proxy.postInit(postInit);
+        new FullVerificationsInOrder() {{
+            proxy.preInit(preInitEvent);
+        }};
+    }
+
+    @Test
+    public void testInit() {
+        mod.init(initEvent);
+
+        new FullVerificationsInOrder() {{
+            proxy.init(initEvent);
+        }};
+    }
+
+    @Test
+    public void testPostInit() {
+        mod.postInit(postInitEvent);
+
+        new FullVerificationsInOrder() {{
+            proxy.postInit(postInitEvent);
+        }};
+    }
+
+    @Test
+    public void testRegisterItemRenderer() {
+        final int meta = 0;
+        final String name = "item_name";
+        final Item item = new ItemBase(name);
+        CustomMod.registerItemRenderer(item, meta, name);
+
+        new FullVerificationsInOrder() {{
+            proxy.registerItemRenderer(item, meta, name);
         }};
     }
 
