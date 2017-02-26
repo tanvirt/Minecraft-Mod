@@ -23,11 +23,11 @@ public class CommonProxy {
     }
 
     public void registerItemRenderer(Item item, int meta, String id) {
-        ModelLoader.setCustomModelResourceLocation(
-                item,
-                meta,
-                new ModelResourceLocation(CustomMod.MODID + ":" + id, "inventory")
+        ModelResourceLocation location = new ModelResourceLocation(
+                CustomMod.MODID + ":" + id,
+                "inventory"
         );
+        ModelLoader.setCustomModelResourceLocation(item, meta, location);
     }
 
 }
