@@ -2,7 +2,6 @@ package com.quantumindustries.minecraft.mod.blocks;
 
 import com.quantumindustries.minecraft.mod.ItemModelProvider;
 import net.minecraft.block.Block;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemBlock;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
@@ -12,7 +11,6 @@ public class ModBlocks {
 
     public static void init() {
         BlockOre ore = new BlockOre("oreCopper");
-        ore.setCreativeTab(CreativeTabs.MATERIALS);
         oreCopper = register(ore);
     }
 
