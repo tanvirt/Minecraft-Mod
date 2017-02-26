@@ -9,7 +9,9 @@ public class ModItems {
     public static ItemBase ingotCopper;
 
     public static void init() {
-        ingotCopper = register(new ItemBase("ingotCopper").setCreativeTab(CreativeTabs.MATERIALS));
+        ItemBase item = new ItemBase("ingotCopper");
+        item.setCreativeTab(CreativeTabs.MATERIALS);
+        ingotCopper = register(item);
     }
 
     private static <T extends Item> T register(T item) {

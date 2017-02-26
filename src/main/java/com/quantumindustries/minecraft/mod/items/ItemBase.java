@@ -23,4 +23,5 @@ public class ItemBase extends Item {
         super.setCreativeTab(tab);
         return this;
     }
+
 }
