@@ -10,7 +10,9 @@ public class ModBlocks {
     public static BlockOre oreCopper;
 
     public static void init() {
-        oreCopper = register(new BlockOre("oreCopper").setCreativeTab(CreativeTabs.MATERIALS));
+        BlockOre ore = new BlockOre("oreCopper");
+        ore.setCreativeTab(CreativeTabs.MATERIALS);
+        oreCopper = register(ore);
     }
 
     private static <T extends Block> T register(T block, ItemBlock itemBlock) {
