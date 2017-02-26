@@ -34,9 +34,11 @@ class ItemBaseTest {
             @Mock public void setUnlocalizedName(String name) {}
             @Mock public void setRegistryName(String name) {}
         };
+
         new FullVerificationsInOrder() {{
             item.setUnlocalizedName(name);
             item.setRegistryName(name);
+            item.setCreativeTab(CustomMod.tab);
         }};
     }
 

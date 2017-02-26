@@ -25,9 +25,22 @@ class CustomTabTest {
     public void tearDown() {}
 
     @Test
+    public void testConstructor() {
+        new FullVerificationsInOrder() {{
+            tab.setBackgroundImageName("item_search.png");
+            tab.hasSearchBar();
+        }};
+    }
+
+    @Test
     public void testGetTabIconItem() {
         Item item = tab.getTabIconItem();
         assertEquals(ModItems.ingotCopper, item);
+    }
+
+    @Test
+    public void testHasSearchBar() {
+        assertTrue(tab.hasSearchBar());
     }
 
 }

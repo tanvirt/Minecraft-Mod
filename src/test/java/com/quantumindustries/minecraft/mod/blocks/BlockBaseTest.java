@@ -35,6 +35,20 @@ class BlockBaseTest {
     public void tearDown() {}
 
     @Test
+    public void testConstructor() {
+        new MockUp<BlockBase>() {
+            @Mock public void setUnlocalizedName(String name) {}
+            @Mock public void setRegistryName(String name) {}
+        };
+
+        new FullVerificationsInOrder() {{
+            block.setUnlocalizedName(name);
+            block.setRegistryName(name);
+            block.setCreativeTab(CustomMod.tab);
+        }};
+    }
+
+    @Test
     public void testRegisterItemModel() {
         block.registerItemModel(itemBlock);
 
