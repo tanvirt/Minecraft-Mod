@@ -1,6 +1,8 @@
 package com.quantumindustries.minecraft.mod.blocks;
 
 import com.quantumindustries.minecraft.mod.ItemModelProvider;
+import com.quantumindustries.minecraft.mod.blocks.counter.BlockCounter;
+import com.quantumindustries.minecraft.mod.tileentities.BlockTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemBlock;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -8,12 +10,20 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 public class ModBlocks {
 
     public static BlockOre oreCopper;
+    public static BlockCounter counter;
 
     public static void init() {
+        // Register Blocks
         BlockOre ore = new BlockOre("oreCopper");
         oreCopper = register(ore);
+
+        //Register Tile Entities
+        BlockCounter count = new BlockCounter();
+        counter = register(count);
     }
 
+    // Registers blocks and checks what they are instanceof
+    // for further registrations.
     private static <T extends Block> T register(T block, ItemBlock itemBlock) {
         GameRegistry.register(block);
 
@@ -22,6 +32,12 @@ public class ModBlocks {
 
             if(block instanceof ItemModelProvider) {
                 ((ItemModelProvider) block).registerItemModel(itemBlock);
+            }
+
+            if (block instanceof BlockTileEntity) {
+                GameRegistry.registerTileEntity(((
+                        BlockTileEntity<?>)block).getTileEntityClass(),
+                        block.getRegistryName().toString());
             }
         }
 
