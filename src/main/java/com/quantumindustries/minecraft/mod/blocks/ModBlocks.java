@@ -2,6 +2,7 @@ package com.quantumindustries.minecraft.mod.blocks;
 
 import com.quantumindustries.minecraft.mod.ItemModelProvider;
 import com.quantumindustries.minecraft.mod.blocks.counter.BlockCounter;
+import com.quantumindustries.minecraft.mod.items.ItemOreDict;
 import com.quantumindustries.minecraft.mod.tileentities.BlockTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemBlock;
@@ -14,7 +15,7 @@ public class ModBlocks {
 
     public static void init() {
         // Register Blocks
-        BlockOre ore = new BlockOre("oreCopper");
+        BlockOre ore = new BlockOre("oreCopper", "oreCopper");
         oreCopper = register(ore);
 
         //Register Tile Entities
@@ -34,11 +35,16 @@ public class ModBlocks {
                 ((ItemModelProvider) block).registerItemModel(itemBlock);
             }
 
-            if (block instanceof BlockTileEntity) {
+            if(block instanceof BlockTileEntity) {
                 GameRegistry.registerTileEntity(((
                         BlockTileEntity<?>)block).getTileEntityClass(),
                         block.getRegistryName().toString());
             }
+
+            if(itemBlock instanceof ItemOreDict) {
+                ((ItemOreDict) itemBlock).initOreDict();
+            }
+
         }
 
         return block;

@@ -9,7 +9,7 @@ public class ModItems {
     public static ItemBase ingotCopper;
 
     public static void init() {
-        ItemBase item = new ItemBase("ingotCopper");
+        ItemOre item = new ItemOre("ingotCopper", "ingotCopper");
         ingotCopper = register(item);
     }
 
@@ -18,6 +18,9 @@ public class ModItems {
 
         if(item instanceof ItemModelProvider) {
             ((ItemModelProvider) item).registerItemModel(item);
+        }
+        if(item instanceof ItemOreDict) {
+            ((ItemOreDict) item).initOreDict();
         }
 
         return item;
