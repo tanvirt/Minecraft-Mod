@@ -2,6 +2,7 @@ package com.quantumindustries.minecraft.mod.proxy;
 
 import com.quantumindustries.minecraft.mod.blocks.ModBlocks;
 import com.quantumindustries.minecraft.mod.items.ModItems;
+import com.quantumindustries.minecraft.mod.recipes.ModRecipes;
 import mockit.*;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -34,6 +35,7 @@ class ClientProxyTest {
         new FullVerificationsInOrder() {{
             ModBlocks.init();
             ModItems.init();
+            ModRecipes.init();
         }};
     }
 
