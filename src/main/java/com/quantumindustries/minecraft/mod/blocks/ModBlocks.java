@@ -7,9 +7,11 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class ModBlocks {
 
+    // TODO: Remove this. This is a test mod block.
     public static BlockOre oreCopper;
 
     public static void init() {
+        // TODO: Remove this. This is a test mod block.
         BlockOre ore = new BlockOre("oreCopper");
         oreCopper = register(ore);
     }
