@@ -13,7 +13,7 @@ public class CustomTab extends CreativeTabs {
 
     @Override
     public Item getTabIconItem() {
-        return ModItems.ingotCopper;
+        return ModItems.airFilter;
     }
 
     @Override
