@@ -10,15 +10,18 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class ModBlocks {
 
+    // TODO: Remove these. These are test objects.
     public static BlockOre oreCopper;
     public static BlockCounter counter;
 
     public static void init() {
+        // TODO: Remove these. These are test objects.
+
         // Register Blocks
         BlockOre ore = new BlockOre("oreCopper", "oreCopper");
         oreCopper = register(ore);
 
-        //Register Tile Entities
+        // Register Tile Entities
         BlockCounter count = new BlockCounter();
         counter = register(count);
     }
@@ -36,9 +39,10 @@ public class ModBlocks {
             }
 
             if(block instanceof BlockTileEntity) {
-                GameRegistry.registerTileEntity(((
-                        BlockTileEntity<?>)block).getTileEntityClass(),
-                        block.getRegistryName().toString());
+                GameRegistry.registerTileEntity(
+                        ((BlockTileEntity<?>) block).getTileEntityClass(),
+                        block.getRegistryName().toString()
+                );
             }
 
             if(itemBlock instanceof ItemOreDict) {

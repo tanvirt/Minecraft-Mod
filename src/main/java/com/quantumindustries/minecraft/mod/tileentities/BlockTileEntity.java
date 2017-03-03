@@ -1,7 +1,5 @@
 package com.quantumindustries.minecraft.mod.tileentities;
 
-
-
 import com.quantumindustries.minecraft.mod.blocks.BlockBase;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;

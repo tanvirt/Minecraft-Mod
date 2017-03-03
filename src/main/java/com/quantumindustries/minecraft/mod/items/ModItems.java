@@ -6,9 +6,11 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class ModItems {
 
+    // TODO: Remove this. This is a test mod item.
     public static ItemBase ingotCopper;
 
     public static void init() {
+        // TODO: Remove this. This is a test mod item.
         ItemOre item = new ItemOre("ingotCopper", "ingotCopper");
         ingotCopper = register(item);
     }
@@ -25,4 +27,5 @@ public class ModItems {
 
         return item;
     }
+
 }
