@@ -1,6 +1,5 @@
 package com.quantumindustries.minecraft.mod.recipes;
 
-
 import com.quantumindustries.minecraft.mod.items.ModItems;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -17,11 +16,9 @@ public class ModRecipes {
     // GameRegistry.addSmelting(<block>, <item result>, <float number exp>);
     // ---------------------------------------------------------------------
     public static void init() {
-
         initShaped();
         initShapeless();
         initSmelting();
-
     }
 
     private static void initShaped() {
