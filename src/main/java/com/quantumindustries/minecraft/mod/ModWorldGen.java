@@ -34,7 +34,7 @@ public class ModWorldGen implements IWorldGenerator {
     private void generateOre(IBlockState ore, World world, Random random,
                              int x, int z, int minY, int maxY, int size, int chances) {
         int deltaY = maxY - minY;
-        for (int i = 0; i < chances; i++) {
+        for(int i = 0; i < chances; i++) {
             generateBlock(ore, world, random, x, z, minY, size, deltaY);
         }
     }
