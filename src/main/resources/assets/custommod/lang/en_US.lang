@@ -3,3 +3,4 @@
 # item.UNLOCALIZED.name = <name> for items
 
 item.ingotCopper.name=Copper Ingot
+item.airFilter.name=Air Filter

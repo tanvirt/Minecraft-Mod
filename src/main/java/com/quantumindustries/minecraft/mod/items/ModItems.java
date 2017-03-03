@@ -6,13 +6,11 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class ModItems {
 
-    // TODO: Remove this. This is a test mod item.
-    public static ItemBase ingotCopper;
+    public static ItemBase airFilter;
 
     public static void init() {
-        // TODO: Remove this. This is a test mod item.
-        ItemOre item = new ItemOre("ingotCopper", "ingotCopper");
-        ingotCopper = register(item);
+        ItemBase airFilterItem = new ItemBase("airFilter");
+        airFilter = register(airFilterItem);
     }
 
     private static <T extends Item> T register(T item) {
