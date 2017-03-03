@@ -41,7 +41,7 @@ VII. Push changes upstream.
 $ git push origin my-small-new-feature
 ```
 
-VIII. Create pull request for the [repo][git-repo-url] with "base: dev" and "compare: my-new-feature".
+VIII. Create pull request for the [repo][git-repo-url] with "base: dev" and "compare: my-small-new-feature".
 
 IX. Repeat the above steps for continued development.
 

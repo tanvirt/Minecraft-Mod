@@ -1,11 +1,13 @@
 package com.quantumindustries.minecraft.mod.proxy;
 
+import com.quantumindustries.minecraft.mod.ModWorldGen;
 import com.quantumindustries.minecraft.mod.blocks.ModBlocks;
 import com.quantumindustries.minecraft.mod.items.ModItems;
 import com.quantumindustries.minecraft.mod.recipes.ModRecipes;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class ClientProxy extends CommonProxy {
 
@@ -14,6 +16,7 @@ public class ClientProxy extends CommonProxy {
         ModBlocks.init();
         ModItems.init();
         ModRecipes.init();
+        GameRegistry.registerWorldGenerator(new ModWorldGen(), 3);
     }
 
     @Override
