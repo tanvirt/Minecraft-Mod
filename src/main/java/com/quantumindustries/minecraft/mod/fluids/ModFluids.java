@@ -64,6 +64,13 @@ public class ModFluids {
         registerFluid(block, fluidName);
     }
 
+    private static void registerBlock(BlockFluidClassicBase block) {
+        ItemBlock itemBlock = new ItemBlock(block);
+        itemBlock.setRegistryName(block.getRegistryName());
+        GameRegistry.register(block);
+        GameRegistry.register(itemBlock);
+    }
+
     private static void registerFluid(BlockFluidClassicBase block, String name) {
         Item item = Item.getItemFromBlock(block);
         ModelResourceLocation location = new ModelResourceLocation(
@@ -83,13 +90,6 @@ public class ModFluids {
                 return location;
             }
         });
-    }
-
-    private static void registerBlock(BlockFluidClassicBase block) {
-        ItemBlock itemBlock = new ItemBlock(block);
-        itemBlock.setRegistryName(block.getRegistryName());
-        GameRegistry.register(block);
-        GameRegistry.register(itemBlock);
     }
 
 }
