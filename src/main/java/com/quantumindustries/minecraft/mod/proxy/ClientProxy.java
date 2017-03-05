@@ -2,6 +2,7 @@ package com.quantumindustries.minecraft.mod.proxy;
 
 import com.quantumindustries.minecraft.mod.ModWorldGen;
 import com.quantumindustries.minecraft.mod.blocks.ModBlocks;
+import com.quantumindustries.minecraft.mod.fluids.ModFluids;
 import com.quantumindustries.minecraft.mod.items.ModItems;
 import com.quantumindustries.minecraft.mod.recipes.ModRecipes;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -15,6 +16,7 @@ public class ClientProxy extends CommonProxy {
     public void preInit(FMLPreInitializationEvent event) {
         ModBlocks.init();
         ModItems.init();
+        ModFluids.init();
         ModRecipes.init();
         GameRegistry.registerWorldGenerator(new ModWorldGen(), 3);
     }
