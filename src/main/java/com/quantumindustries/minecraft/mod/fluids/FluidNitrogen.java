@@ -3,7 +3,7 @@ package com.quantumindustries.minecraft.mod.fluids;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 
-import java.awt.*;
+import java.awt.Color;
 
 public class FluidNitrogen extends Fluid {
 
