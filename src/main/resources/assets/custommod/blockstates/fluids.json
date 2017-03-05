@@ -1,0 +1,18 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "forge:fluid",
+    "transform": "forge:default-item"
+  },
+  "variants": {
+    "nitrogen": [{
+      "custom": { "fluid": "fluid_nitrogen" }
+    }],
+    "oxygen": [{
+      "custom": { "fluid": "fluid_oxygen" }
+    }],
+    "argon": [{
+      "custom": { "fluid": "fluid_argon" }
+    }]
+  }
+}

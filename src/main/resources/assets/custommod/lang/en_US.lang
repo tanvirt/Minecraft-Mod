@@ -3,3 +3,6 @@
 # item.UNLOCALIZED.name = <name> for items
 
 item.airFilter.name=Air Filter
+tile.blockFluidNitrogen.name=Liquid Nitrogen
+tile.blockFluidOxygen.name=Liquid Oxygen
+tile.blockFluidArgon.name=Liquid Argon
