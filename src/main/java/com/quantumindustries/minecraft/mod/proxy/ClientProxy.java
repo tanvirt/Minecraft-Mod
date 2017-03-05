@@ -15,8 +15,8 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void preInit(FMLPreInitializationEvent event) {
         ModBlocks.init();
-        ModItems.init();
         ModFluids.init();
+        ModItems.init();
         ModRecipes.init();
         GameRegistry.registerWorldGenerator(new ModWorldGen(), 3);
     }
