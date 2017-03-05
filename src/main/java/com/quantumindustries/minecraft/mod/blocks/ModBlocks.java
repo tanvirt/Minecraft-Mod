@@ -2,9 +2,7 @@ package com.quantumindustries.minecraft.mod.blocks;
 
 import com.quantumindustries.minecraft.mod.CustomMod;
 import com.quantumindustries.minecraft.mod.ItemModelProvider;
-import com.quantumindustries.minecraft.mod.blocks.counter.BlockCounter;
 import com.quantumindustries.minecraft.mod.fluids.BlockFluidNitrogen;
-import com.quantumindustries.minecraft.mod.fluids.FluidNitrogen;
 import com.quantumindustries.minecraft.mod.items.ItemOreDict;
 import com.quantumindustries.minecraft.mod.tileentities.BlockTileEntity;
 import net.minecraft.block.Block;
@@ -17,55 +15,16 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fluids.BlockFluidClassic;
-import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class ModBlocks {
 
-    // TODO: Remove these. These are test objects.
-    public static BlockOre oreCopper;
-    public static BlockCounter counter;
-
-    public static BlockFluidNitrogen blockFluidNitrogen;
+    public static BlockFluidBase blockFluidNitrogen;
 
     public static void init() {
-        // TODO: Remove these. These are test objects.
-
-        // Register Blocks
-        BlockOre ore = new BlockOre("oreCopper", "oreCopper");
-        oreCopper = register(ore);
-
-        // Register Tile Entities
-        BlockCounter count = new BlockCounter();
-        counter = register(count);
-
-        FluidNitrogen fluidNitrogen = new FluidNitrogen();
-        FluidRegistry.registerFluid(fluidNitrogen);
-        BlockFluidNitrogen blockNitrogen = new BlockFluidNitrogen(fluidNitrogen, "blockFluidNitrogen");
-        blockFluidNitrogen = register(blockNitrogen);
+        blockFluidNitrogen = new BlockFluidNitrogen("blockFluidNitrogen");
         registerFluid(blockFluidNitrogen, "nitrogen");
-    }
-
-    public static void registerFluid(BlockFluidClassic blockFluid, String name) {
-        Item item = Item.getItemFromBlock(blockFluid);
-        ModelResourceLocation location = new ModelResourceLocation(
-                CustomMod.MODID + ":fluids",
-                name
-        );
-        ModelBakery.registerItemVariants(item, location);
-        ModelLoader.setCustomMeshDefinition(item, new ItemMeshDefinition() {
-            @Override
-            public ModelResourceLocation getModelLocation(ItemStack stack) {
-                return location;
-            }
-        });
-        ModelLoader.setCustomStateMapper(blockFluid, new StateMapperBase() {
-            @Override
-            protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
-                return location;
-            }
-        });
     }
 
     // Registers blocks and checks what they are instanceof
@@ -100,6 +59,28 @@ public class ModBlocks {
         ItemBlock itemBlock = new ItemBlock(block);
         itemBlock.setRegistryName(block.getRegistryName());
         return register(block, itemBlock);
+    }
+
+    private static void registerFluid(Block block, String name) {
+        register(block);
+        Item item = Item.getItemFromBlock(block);
+        ModelResourceLocation location = new ModelResourceLocation(
+                CustomMod.MODID + ":fluids",
+                name
+        );
+        ModelBakery.registerItemVariants(item);
+        ModelLoader.setCustomMeshDefinition(item, new ItemMeshDefinition() {
+            @Override
+            public ModelResourceLocation getModelLocation(ItemStack stack) {
+                return location;
+            }
+        });
+        ModelLoader.setCustomStateMapper(block, new StateMapperBase() {
+            @Override
+            protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
+                return location;
+            }
+        });
     }
 
 }
