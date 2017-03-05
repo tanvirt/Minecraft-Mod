@@ -19,24 +19,27 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 public class ModFluids {
 
     public static void init() {
-        initNitrogenFluid();
-        initOxygenFluid();
-        initArgonFluid();
+        initNitrogen();
+        initOxygen();
+        initArgon();
     }
 
-    private static void initNitrogenFluid() {
-        Fluid fluid = createFluid("nitrogen");
-        initBlockFluid("blockFluidNitrogen", "nitrogen", fluid, Material.WATER);
+    private static void initNitrogen() {
+        String fluidName = "nitrogen";
+        Fluid fluid = createFluid(fluidName);
+        createBlock("blockFluidNitrogen", fluidName, fluid, Material.WATER);
     }
 
-    private static void initOxygenFluid() {
-        Fluid fluid = createFluid("oxygen");
-        initBlockFluid("blockFluidOxygen", "oxygen", fluid, Material.WATER);
+    private static void initOxygen() {
+        String fluidName = "oxygen";
+        Fluid fluid = createFluid(fluidName);
+        createBlock("blockFluidOxygen", fluidName, fluid, Material.WATER);
     }
 
-    private static void initArgonFluid() {
-        Fluid fluid = createFluid("argon");
-        initBlockFluid("blockFluidArgon", "argon", fluid, Material.WATER);
+    private static void initArgon() {
+        String fluidName = "argon";
+        Fluid fluid = createFluid(fluidName);
+        createBlock("blockFluidArgon", fluidName, fluid, Material.WATER);
     }
 
     private static Fluid createFluid(String name) {
@@ -50,14 +53,19 @@ public class ModFluids {
         return fluid;
     }
 
-    private static void initBlockFluid(String blockFluidName, String fluidName, Fluid fluid, Material material) {
-        BlockFluidClassicBase blockFluid = new BlockFluidClassicBase(blockFluidName, fluid, material);
-        registerFluid(blockFluid, fluidName);
+    private static void createBlock(String blockName, String fluidName,
+                                    Fluid fluid, Material material) {
+        BlockFluidClassicBase block = new BlockFluidClassicBase(
+                blockName,
+                fluid,
+                material
+        );
+        registerBlock(block);
+        registerFluid(block, fluidName);
     }
 
-    private static void registerFluid(BlockFluidClassicBase blockFluid, String name) {
-        registerBlock(blockFluid);
-        Item item = Item.getItemFromBlock(blockFluid);
+    private static void registerFluid(BlockFluidClassicBase block, String name) {
+        Item item = Item.getItemFromBlock(block);
         ModelResourceLocation location = new ModelResourceLocation(
                 CustomMod.MODID + ":fluids",
                 name
@@ -69,7 +77,7 @@ public class ModFluids {
                 return location;
             }
         });
-        ModelLoader.setCustomStateMapper(blockFluid, new StateMapperBase() {
+        ModelLoader.setCustomStateMapper(block, new StateMapperBase() {
             @Override
             protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
                 return location;
@@ -77,10 +85,10 @@ public class ModFluids {
         });
     }
 
-    private static void registerBlock(BlockFluidClassicBase blockFluid) {
-        ItemBlock itemBlock = new ItemBlock(blockFluid);
-        itemBlock.setRegistryName(blockFluid.getRegistryName());
-        GameRegistry.register(blockFluid);
+    private static void registerBlock(BlockFluidClassicBase block) {
+        ItemBlock itemBlock = new ItemBlock(block);
+        itemBlock.setRegistryName(block.getRegistryName());
+        GameRegistry.register(block);
         GameRegistry.register(itemBlock);
     }
 
