@@ -10,12 +10,12 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class ModBlocks {
 
-    // TODO: Remove these. These are test objects.
+    /*// TODO: Remove these. These are test objects.
     public static BlockOre oreCopper;
-    public static BlockCounter counter;
+    public static BlockCounter counter;*/
 
     public static void init() {
-        // TODO: Remove these. These are test objects.
+        /*// TODO: Remove these. These are test objects.
 
         // Register Blocks
         BlockOre ore = new BlockOre("oreCopper", "oreCopper");
@@ -23,7 +23,7 @@ public class ModBlocks {
 
         // Register Tile Entities
         BlockCounter count = new BlockCounter();
-        counter = register(count);
+        counter = register(count);*/
     }
 
     // Registers blocks and checks what they are instanceof
