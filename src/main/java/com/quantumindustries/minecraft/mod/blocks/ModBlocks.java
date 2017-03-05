@@ -10,9 +10,9 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class ModBlocks {
 
-    // TODO: Remove these. These are test objects.
+    /*// TODO: Remove these. These are test objects.
     public static BlockOre oreCopper;
-    public static BlockCounter counter;
+    public static BlockCounter counter;*/
 
     public static void init() {
         /*// TODO: Remove these. These are test objects.
