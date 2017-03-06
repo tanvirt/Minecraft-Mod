@@ -63,7 +63,8 @@ build
 .gradle
 
 # other
-run
+run/*
+!/run/mods
 gradle.properties
 gradle/
 gradlew
