@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
@@ -27,7 +28,14 @@ public class ModFluids {
     private static void initNitrogen() {
         String fluidName = "nitrogen";
         Fluid fluid = createFluid(fluidName);
-        createBlock("blockFluidNitrogen", fluidName, fluid, Material.WATER);
+        BlockFluidClassicBase block = createBlock(
+                "blockFluidNitrogen",
+                fluidName,
+                fluid,
+                Material.WATER
+        );
+        ItemBucket nitrogenBucket = new ItemBucketBase("itemBucketNitrogen", block);
+        GameRegistry.register(nitrogenBucket);
     }
 
     private static void initOxygen() {
@@ -53,7 +61,7 @@ public class ModFluids {
         return fluid;
     }
 
-    private static void createBlock(String blockName, String fluidName,
+    private static BlockFluidClassicBase createBlock(String blockName, String fluidName,
                                     Fluid fluid, Material material) {
         BlockFluidClassicBase block = new BlockFluidClassicBase(
                 blockName,
@@ -62,6 +70,7 @@ public class ModFluids {
         );
         registerBlock(block);
         registerFluid(block, fluidName);
+        return block;
     }
 
     private static void registerBlock(BlockFluidClassicBase block) {
