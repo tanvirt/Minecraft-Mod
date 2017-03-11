@@ -12,7 +12,12 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class ModBlocks {
 
+    public static BlockOre oreCobalt;
+    public static BlockOre oreRhodium;
+
     public static void init() {
+        oreCobalt = register(new BlockOre("oreCobalt", "oreCobalt", 3f, 5f));
+        oreRhodium = register(new BlockOre("oreRhodium", "oreRhodium", 3f, 5f));
         register(new BlockInfiniteProducer());
         register(new BlockPowerAnalyzer());
     }

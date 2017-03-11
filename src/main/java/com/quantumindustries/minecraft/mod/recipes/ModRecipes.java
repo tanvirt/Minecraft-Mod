@@ -1,5 +1,6 @@
 package com.quantumindustries.minecraft.mod.recipes;
 
+import com.quantumindustries.minecraft.mod.blocks.ModBlocks;
 import com.quantumindustries.minecraft.mod.items.ModItems;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -30,7 +31,20 @@ public class ModRecipes {
     }
 
     private static void initSmelting() {
-        // Insert smelting recipes here
+        initIngotCobalt();
+        initIngotRhodium();
+    }
+
+    // TODO(CM): Change experience output possibly
+    private static void initIngotCobalt() {
+        ItemStack ingotCobalt = new ItemStack(ModItems.ingotCobalt);
+        GameRegistry.addSmelting(ModBlocks.oreCobalt, ingotCobalt, 0);
+    }
+
+    // TODO(CM): Change experience output possibly
+    private static void initIngotRhodium() {
+        ItemStack ingotRhodium = new ItemStack(ModItems.ingotRhodium);
+        GameRegistry.addSmelting(ModBlocks.oreRhodium, ingotRhodium, 0);
     }
 
     private static void initAirFilter() {
