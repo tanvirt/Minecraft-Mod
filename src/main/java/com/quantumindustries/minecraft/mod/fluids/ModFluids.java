@@ -74,7 +74,7 @@ public class ModFluids {
 
     private static void registerFluid(BlockFluidClassicBase block, String name) {
         Item item = Item.getItemFromBlock(block);
-        ModelResourceLocation location = new ModelResourceLocation(
+        final ModelResourceLocation location = new ModelResourceLocation(
                 CustomMod.MODID + ":fluids",
                 name
         );
