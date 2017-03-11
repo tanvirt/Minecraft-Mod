@@ -16,15 +16,15 @@ public class ModBlocks {
     // BlockOres
     public static BlockOre oreCobalt;
     public static BlockOre oreRhodium;
-    public static BlockBase blockCobalt;
-    public static BlockBase blockRhodium;
+    public static BlockOre blockCobalt;
+    public static BlockOre blockRhodium;
 
     // TODO(CM): Separate out different registers into functions (register ores, blocks, etc.)
     public static void init() {
         oreCobalt = register(new BlockOre("oreCobalt", "oreCobalt", 3f, 5f));
         oreRhodium = register(new BlockOre("oreRhodium", "oreRhodium", 3f, 5f));
-        blockCobalt = register(new BlockBase(Material.ROCK, "blockCobalt"));
-        blockRhodium = register(new BlockBase(Material.ROCK, "blockRhodium"));
+        blockCobalt = register(new BlockOre("blockCobalt", "blockCobalt", 3f, 5f));
+        blockRhodium = register(new BlockOre("blockRhodium", "blockRhodium", 3f, 5f));
         register(new BlockInfiniteProducer());
         register(new BlockPowerAnalyzer());
     }
