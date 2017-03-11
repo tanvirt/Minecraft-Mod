@@ -6,16 +6,14 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class ModItems {
 
+    public static ItemBase airFilter;
+
     public static void init() {
-        initAirFilter();
+        ItemBase airFilterItem = new ItemBase("airFilter");
+        airFilter = register(airFilterItem);
     }
 
-    private static void initAirFilter() {
-        ItemBase airFilter = new ItemBase("airFilter");
-        register(airFilter);
-    }
-
-    private static void register(Item item) {
+    private static <T extends Item> T register(T item) {
         GameRegistry.register(item);
 
         if(item instanceof ItemModelProvider) {
@@ -24,6 +22,8 @@ public class ModItems {
         if(item instanceof ItemOreDict) {
             ((ItemOreDict) item).initOreDict();
         }
+
+        return item;
     }
 
 }

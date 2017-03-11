@@ -2,6 +2,7 @@ package com.quantumindustries.minecraft.mod;
 
 import com.quantumindustries.minecraft.mod.proxy.CommonProxy;
 import net.minecraft.item.Item;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -23,6 +24,10 @@ public class CustomMod  {
     public static CustomMod instance;
 
     public static final CustomTab tab = new CustomTab();
+
+    static {
+        FluidRegistry.enableUniversalBucket();
+    }
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
