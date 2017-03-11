@@ -7,17 +7,24 @@ import com.quantumindustries.minecraft.mod.blocks.poweranalyzer.BlockPowerAnalyz
 import com.quantumindustries.minecraft.mod.items.ItemOreDict;
 import com.quantumindustries.minecraft.mod.tileentities.BlockTileEntity;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.item.ItemBlock;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class ModBlocks {
 
+    // BlockOres
     public static BlockOre oreCobalt;
     public static BlockOre oreRhodium;
+    public static BlockBase blockCobalt;
+    public static BlockBase blockRhodium;
 
+    // TODO(CM): Separate out different registers into functions (register ores, blocks, etc.)
     public static void init() {
         oreCobalt = register(new BlockOre("oreCobalt", "oreCobalt", 3f, 5f));
         oreRhodium = register(new BlockOre("oreRhodium", "oreRhodium", 3f, 5f));
+        blockCobalt = register(new BlockBase(Material.ROCK, "blockCobalt"));
+        blockRhodium = register(new BlockBase(Material.ROCK, "blockRhodium"));
         register(new BlockInfiniteProducer());
         register(new BlockPowerAnalyzer());
     }
