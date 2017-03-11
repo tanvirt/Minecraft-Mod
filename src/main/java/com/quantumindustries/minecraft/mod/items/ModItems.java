@@ -7,10 +7,13 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 public class ModItems {
 
     public static ItemBase airFilter;
+    public static ItemOre ingotCobalt;
+    public static ItemOre ingotRhodium;
 
     public static void init() {
-        ItemBase airFilterItem = new ItemBase("airFilter");
-        airFilter = register(airFilterItem);
+        ingotCobalt = register(new ItemOre("ingotCobalt", "ingotCobalt"));
+        ingotRhodium = register(new ItemOre("ingotRhodium", "ingotRhodium"));
+        airFilter = register(new ItemBase("airFilter"));
     }
 
     private static <T extends Item> T register(T item) {
