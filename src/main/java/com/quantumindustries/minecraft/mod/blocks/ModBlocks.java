@@ -2,6 +2,8 @@ package com.quantumindustries.minecraft.mod.blocks;
 
 import com.quantumindustries.minecraft.mod.ItemModelProvider;
 import com.quantumindustries.minecraft.mod.blocks.counter.BlockCounter;
+import com.quantumindustries.minecraft.mod.blocks.infiniteproducer.BlockInfiniteProducer;
+import com.quantumindustries.minecraft.mod.blocks.poweranalyzer.BlockPowerAnalyzer;
 import com.quantumindustries.minecraft.mod.items.ItemOreDict;
 import com.quantumindustries.minecraft.mod.tileentities.BlockTileEntity;
 import net.minecraft.block.Block;
@@ -10,20 +12,14 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class ModBlocks {
 
-    /*// TODO: Remove these. These are test objects.
-    public static BlockOre oreCopper;
-    public static BlockCounter counter;*/
+    public static BlockInfiniteProducer producer;
+    public static BlockPowerAnalyzer analyzer;
 
     public static void init() {
-        /*// TODO: Remove these. These are test objects.
-
-        // Register Blocks
-        BlockOre ore = new BlockOre("oreCopper", "oreCopper");
-        oreCopper = register(ore);
-
-        // Register Tile Entities
-        BlockCounter count = new BlockCounter();
-        counter = register(count);*/
+        BlockInfiniteProducer prod = new BlockInfiniteProducer();
+        producer = register(prod);
+        BlockPowerAnalyzer analyze = new BlockPowerAnalyzer();
+        analyzer = register(analyze);
     }
 
     // Registers blocks and checks what they are instanceof
