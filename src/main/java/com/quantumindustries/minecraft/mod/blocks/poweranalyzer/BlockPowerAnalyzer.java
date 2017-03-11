@@ -23,14 +23,9 @@ public class BlockPowerAnalyzer extends BlockTileEntity<TileEntityPowerAnalyzer>
     }
 
     @Override
-    public boolean onBlockActivated(World world,
-                                    BlockPos pos,
-                                    IBlockState state,
-                                    EntityPlayer player,
-                                    EnumHand hand,
-                                    ItemStack heldItem,
-                                    EnumFacing side,
-                                    float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state,
+                                    EntityPlayer player, EnumHand hand, ItemStack heldItem,
+                                    EnumFacing side, float hitX, float hitY, float hitZ) {
         if(!world.isRemote) {
             TileEntityPowerAnalyzer tile = getTileEntity(world, pos);
             final ITeslaHolder holder = tile.getCapability(TeslaCapabilities.CAPABILITY_HOLDER, side);
@@ -54,4 +49,5 @@ public class BlockPowerAnalyzer extends BlockTileEntity<TileEntityPowerAnalyzer>
     public TileEntityPowerAnalyzer createTileEntity(World world, IBlockState state) {
         return new TileEntityPowerAnalyzer();
     }
+
 }

@@ -10,7 +10,7 @@ import net.minecraftforge.common.capabilities.Capability;
 
 public class TileEntityInfiniteProducer extends TileEntity implements ITickable{
     /*
-    *   Tile Entity for testing, produces infinite power on all sides every tick.
+     *  Tile Entity for testing, produces infinite power on all sides every tick.
      */
 
     @Override
@@ -24,15 +24,13 @@ public class TileEntityInfiniteProducer extends TileEntity implements ITickable{
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if(capability == TeslaCapabilities.CAPABILITY_PRODUCER)
-            return true;
-
-        return super.hasCapability(capability, facing);
+        return capability == TeslaCapabilities.CAPABILITY_PRODUCER ||
+                super.hasCapability(capability, facing);
     }
-
 
     @Override
     public void update() {
         TeslaUtils.distributePowerToAllFaces(this.worldObj, this.pos, 50, false);
     }
+
 }

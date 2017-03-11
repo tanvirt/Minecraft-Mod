@@ -23,4 +23,5 @@ public class BlockInfiniteProducer extends BlockTileEntity<TileEntityInfinitePro
     public TileEntityInfiniteProducer createTileEntity(World world, IBlockState state) {
         return new TileEntityInfiniteProducer();
     }
+
 }

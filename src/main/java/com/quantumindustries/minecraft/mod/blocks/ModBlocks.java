@@ -12,14 +12,9 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class ModBlocks {
 
-    public static BlockInfiniteProducer producer;
-    public static BlockPowerAnalyzer analyzer;
-
     public static void init() {
-        BlockInfiniteProducer prod = new BlockInfiniteProducer();
-        producer = register(prod);
-        BlockPowerAnalyzer analyze = new BlockPowerAnalyzer();
-        analyzer = register(analyze);
+        register(new BlockInfiniteProducer());
+        register(new BlockPowerAnalyzer());
     }
 
     // Registers blocks and checks what they are instanceof
