@@ -9,7 +9,7 @@ public class BlockOre extends BlockBase implements ItemOreDict {
 
     private String oreName;
 
-    public BlockOre(String name, String oreName, Float hardness, Float resistance) {
+    public BlockOre(String name, String oreName, float hardness, float resistance) {
         super(Material.ROCK, name);
 
         this.oreName = oreName;
