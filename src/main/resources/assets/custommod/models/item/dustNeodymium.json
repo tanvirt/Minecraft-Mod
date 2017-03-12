@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "custommod:item/ingotCobalt"
+    "layer0": "custommod:item/dustNeodymium"
   }
 }
