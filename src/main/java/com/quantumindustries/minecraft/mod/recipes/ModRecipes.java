@@ -37,16 +37,16 @@ public class ModRecipes {
     }
 
     private static void initSmelting() {
-        initStandardOreSmelting(ModItems.ingotCobalt, ModBlocks.oreCobalt, ModItems.dustCobalt);
-        initStandardOreSmelting(ModItems.ingotNeodymium, ModBlocks.oreNeodymium, ModItems.dustNeodymium);
-        initStandardOreSmelting(ModItems.ingotRhodium, ModBlocks.oreRhodium, ModItems.dustRhodium);
+        initOreSmelting(ModItems.ingotCobalt, ModBlocks.oreCobalt, ModItems.dustCobalt);
+        initOreSmelting(ModItems.ingotNeodymium, ModBlocks.oreNeodymium, ModItems.dustNeodymium);
+        initOreSmelting(ModItems.ingotRhodium, ModBlocks.oreRhodium, ModItems.dustRhodium);
     }
 
     // ------------------------------------------------------------------------
     // Smelting Recipes Section
     // ------------------------------------------------------------------------
     // TODO(CM): Change experience output possibly
-    private static void initStandardOreSmelting(ItemOre item, BlockOre ore, ItemOre dust) {
+    private static void initOreSmelting(ItemOre item, BlockOre ore, ItemOre dust) {
         ItemStack ingot = new ItemStack(item);
         GameRegistry.addSmelting(ore, ingot, 0);
         GameRegistry.addSmelting(dust, ingot, 0);

@@ -26,7 +26,6 @@ public class ModBlocks {
     public static BlockBase blockNeoCobaltMagnet;
     public static BlockBase blockNeoRhodiumMagnet;
 
-    // TODO(CM): Separate out different registers into functions (register ores, blocks, etc.)
     public static void init() {
         initMagnetBlocks();
         initOres();
