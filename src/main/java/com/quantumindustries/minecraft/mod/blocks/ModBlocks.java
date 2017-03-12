@@ -21,12 +21,20 @@ public class ModBlocks {
 
     // TODO(CM): Separate out different registers into functions (register ores, blocks, etc.)
     public static void init() {
-        oreCobalt = register(new BlockOre("oreCobalt", "oreCobalt", 3f, 5f));
-        oreRhodium = register(new BlockOre("oreRhodium", "oreRhodium", 3f, 5f));
-        blockCobalt = register(new BlockOre("blockCobalt", "blockCobalt", 3f, 5f));
-        blockRhodium = register(new BlockOre("blockRhodium", "blockRhodium", 3f, 5f));
+        initOres();
+        initOreBlocks();
         register(new BlockInfiniteProducer());
         register(new BlockPowerAnalyzer());
+    }
+
+    private static void initOres() {
+        oreCobalt = register(new BlockOre("oreCobalt", "oreCobalt", 3f, 5f));
+        oreRhodium = register(new BlockOre("oreRhodium", "oreRhodium", 3f, 5f));
+    }
+
+    private static void initOreBlocks() {
+        blockCobalt = register(new BlockOre("blockCobalt", "blockCobalt", 3f, 5f));
+        blockRhodium = register(new BlockOre("blockRhodium", "blockRhodium", 3f, 5f));
     }
 
     // Registers blocks and checks what they are instanceof

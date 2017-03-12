@@ -1,6 +1,8 @@
 package com.quantumindustries.minecraft.mod.recipes;
 
+import com.quantumindustries.minecraft.mod.blocks.BlockOre;
 import com.quantumindustries.minecraft.mod.blocks.ModBlocks;
+import com.quantumindustries.minecraft.mod.items.ItemOre;
 import com.quantumindustries.minecraft.mod.items.ModItems;
 import com.sun.org.apache.xpath.internal.operations.Mod;
 import net.minecraft.init.Items;
@@ -26,13 +28,13 @@ public class ModRecipes {
 
     private static void initShaped() {
         initAirFilter();
-        initBlockCobalt();
-        initBlockRhodium();
+        initBlockOre(ModBlocks.blockCobalt, ModItems.ingotCobalt);
+        initBlockOre(ModBlocks.blockRhodium, ModItems.ingotRhodium);
     }
 
     private static void initShapeless() {
-        initIngotCobaltFromBlock();
-        initIngotRhodiumFromBlock();
+        initIngotFromBlock(ModItems.ingotCobalt, ModBlocks.blockCobalt);
+        initIngotFromBlock(ModItems.ingotRhodium, ModBlocks.blockRhodium);
     }
 
     private static void initSmelting() {
@@ -54,30 +56,17 @@ public class ModRecipes {
         GameRegistry.addSmelting(ModItems.dustRhodium, ingotRhodium, 0);
     }
 
-    private static void initBlockCobalt() {
-        ItemStack blockCobalt = new ItemStack(ModBlocks.blockCobalt);
+    private static void initBlockOre(BlockOre block, ItemOre item) {
+        ItemStack blockOre = new ItemStack(block);
         GameRegistry.addShapedRecipe(
-                blockCobalt, "III", "III", "III",
-                'I', ModItems.ingotCobalt
+                blockOre, "III", "III", "III",
+                'I', item
         );
     }
 
-    private static void initBlockRhodium() {
-        ItemStack blockRhodium = new ItemStack(ModBlocks.blockRhodium);
-        GameRegistry.addRecipe(
-                blockRhodium, "III", "III", "III",
-                'I', ModItems.ingotRhodium
-        );
-    }
-
-    private static void initIngotCobaltFromBlock() {
-        ItemStack ingotCobalt = new ItemStack(ModItems.ingotCobalt, 9);
-        GameRegistry.addShapelessRecipe(ingotCobalt, ModBlocks.blockCobalt);
-    }
-
-    private static void initIngotRhodiumFromBlock() {
-        ItemStack ingotRhodium = new ItemStack(ModItems.ingotRhodium, 9);
-        GameRegistry.addShapelessRecipe(ingotRhodium, ModBlocks.blockRhodium);
+    private static void initIngotFromBlock(ItemOre item, BlockOre block) {
+        ItemStack ingot = new ItemStack(item, 9);
+        GameRegistry.addShapelessRecipe(ingot, block);
     }
 
     private static void initAirFilter() {

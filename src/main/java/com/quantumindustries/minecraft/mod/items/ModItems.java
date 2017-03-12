@@ -16,11 +16,19 @@ public class ModItems {
     public static ItemOre dustRhodium;
 
     public static void init() {
+        initIngots();
+        initDusts();
+        airFilter = register(new ItemBase("airFilter"));
+    }
+
+    private static void initIngots() {
         ingotCobalt = register(new ItemOre("ingotCobalt", "ingotCobalt"));
         ingotRhodium = register(new ItemOre("ingotRhodium", "ingotRhodium"));
+    }
+
+    private static void initDusts() {
         dustCobalt = register(new ItemOre("dustCobalt", "dustCobalt"));
         dustRhodium = register(new ItemOre("dustRhodium", "dustRhodium"));
-        airFilter = register(new ItemBase("airFilter"));
     }
 
     private static <T extends Item> T register(T item) {
