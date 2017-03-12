@@ -7,19 +7,34 @@ import com.quantumindustries.minecraft.mod.blocks.poweranalyzer.BlockPowerAnalyz
 import com.quantumindustries.minecraft.mod.items.ItemOreDict;
 import com.quantumindustries.minecraft.mod.tileentities.BlockTileEntity;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.item.ItemBlock;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class ModBlocks {
 
+    // BlockOres
     public static BlockOre oreCobalt;
     public static BlockOre oreRhodium;
+    public static BlockOre blockCobalt;
+    public static BlockOre blockRhodium;
 
+    // TODO(CM): Separate out different registers into functions (register ores, blocks, etc.)
     public static void init() {
-        oreCobalt = register(new BlockOre("oreCobalt", "oreCobalt", 3f, 5f));
-        oreRhodium = register(new BlockOre("oreRhodium", "oreRhodium", 3f, 5f));
+        initOres();
+        initOreBlocks();
         register(new BlockInfiniteProducer());
         register(new BlockPowerAnalyzer());
+    }
+
+    private static void initOres() {
+        oreCobalt = register(new BlockOre("oreCobalt", "oreCobalt", 3f, 5f));
+        oreRhodium = register(new BlockOre("oreRhodium", "oreRhodium", 3f, 5f));
+    }
+
+    private static void initOreBlocks() {
+        blockCobalt = register(new BlockOre("blockCobalt", "blockCobalt", 3f, 5f));
+        blockRhodium = register(new BlockOre("blockRhodium", "blockRhodium", 3f, 5f));
     }
 
     // Registers blocks and checks what they are instanceof

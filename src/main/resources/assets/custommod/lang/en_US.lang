@@ -2,7 +2,20 @@
 # tile.UNLOCALIZED.name = <name> for blocks
 # item.UNLOCALIZED.name = <name> for items
 
+# Mod Items
 item.airFilter.name=Air Filter
+item.ingotCobalt.name=Cobalt Ingot
+item.dustCobalt.name=Cobalt Dust
+item.ingotRhodium.name=Rhodium Ingot
+item.dustRhodium.name=Rhodium Dust
+
+# Mod Blocks
+tile.oreCobalt.name=Cobalt Ore
+tile.blockCobalt.name=Cobalt Block
+tile.oreRhodium.name=Rhodium Ore
+tile.blockRhodium.name=Rhodium Block
+
+# Mod Fluids
 tile.blockFluidNitrogen.name=Liquid Nitrogen
 tile.blockFluidOxygen.name=Liquid Oxygen
 tile.blockFluidArgon.name=Liquid Argon
