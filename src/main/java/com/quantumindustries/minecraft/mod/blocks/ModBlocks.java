@@ -1,13 +1,18 @@
 package com.quantumindustries.minecraft.mod.blocks;
 
+import com.quantumindustries.minecraft.mod.CustomMod;
 import com.quantumindustries.minecraft.mod.ItemModelProvider;
-import com.quantumindustries.minecraft.mod.blocks.counter.BlockCounter;
+import com.quantumindustries.minecraft.mod.blocks.grinder.BlockGrinder;
 import com.quantumindustries.minecraft.mod.blocks.infiniteproducer.BlockInfiniteProducer;
 import com.quantumindustries.minecraft.mod.blocks.poweranalyzer.BlockPowerAnalyzer;
 import com.quantumindustries.minecraft.mod.items.ItemOreDict;
+import com.quantumindustries.minecraft.mod.tileentities.BlockContainerTileEntity;
 import com.quantumindustries.minecraft.mod.tileentities.BlockTileEntity;
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
@@ -19,12 +24,15 @@ public class ModBlocks {
     public static BlockOre blockCobalt;
     public static BlockOre blockRhodium;
 
-    // TODO(CM): Separate out different registers into functions (register ores, blocks, etc.)
+    public static BlockGrinder blockGrinder;
+
     public static void init() {
         initOres();
         initOreBlocks();
         register(new BlockInfiniteProducer());
         register(new BlockPowerAnalyzer());
+
+        initBlockGrinder();
     }
 
     private static void initOres() {
@@ -35,6 +43,10 @@ public class ModBlocks {
     private static void initOreBlocks() {
         blockCobalt = register(new BlockOre("blockCobalt", "blockCobalt", 3f, 5f));
         blockRhodium = register(new BlockOre("blockRhodium", "blockRhodium", 3f, 5f));
+    }
+
+    private static void initBlockGrinder() {
+        blockGrinder = register(new BlockGrinder());
     }
 
     // Registers blocks and checks what they are instanceof
@@ -49,7 +61,8 @@ public class ModBlocks {
                 ((ItemModelProvider) block).registerItemModel(itemBlock);
             }
 
-            if(block instanceof BlockTileEntity) {
+            if(block instanceof BlockTileEntity ||
+                    block instanceof BlockContainerTileEntity) {
                 GameRegistry.registerTileEntity(
                         ((BlockTileEntity<?>) block).getTileEntityClass(),
                         block.getRegistryName().toString()

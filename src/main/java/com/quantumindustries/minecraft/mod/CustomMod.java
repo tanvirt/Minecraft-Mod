@@ -24,6 +24,10 @@ public class CustomMod  {
 
     public static final CustomTab tab = new CustomTab();
 
+    public enum GUI_ENUM {
+        GRINDER
+    }
+
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         proxy.preInit(event);

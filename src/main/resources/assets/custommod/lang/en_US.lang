@@ -19,3 +19,5 @@ tile.blockRhodium.name=Rhodium Block
 tile.blockFluidNitrogen.name=Liquid Nitrogen
 tile.blockFluidOxygen.name=Liquid Oxygen
 tile.blockFluidArgon.name=Liquid Argon
+
+container.grinder=Grinder
