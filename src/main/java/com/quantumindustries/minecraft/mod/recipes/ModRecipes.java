@@ -52,14 +52,6 @@ public class ModRecipes {
         GameRegistry.addSmelting(dust, ingot, 0);
     }
 
-    private static void initBlockOre(BlockOre block, ItemOre item) {
-        ItemStack blockOre = new ItemStack(block);
-        GameRegistry.addShapedRecipe(
-                blockOre, "III", "III", "III",
-                'I', item
-        );
-    }
-
     // ------------------------------------------------------------------------
     // Shapeless Recipes Section
     // ------------------------------------------------------------------------
@@ -105,6 +97,14 @@ public class ModRecipes {
                 neoRhodiumMagnet, "MRM", "RMR", "MRM",
                 'M', ModBlocks.blockNeoCobaltMagnet,
                 'R', ModItems.ingotRhodium
+        );
+    }
+
+    private static void initBlockOre(BlockOre block, ItemOre item) {
+        ItemStack blockOre = new ItemStack(block);
+        GameRegistry.addShapedRecipe(
+                blockOre, "III", "III", "III",
+                'I', item
         );
     }
 
