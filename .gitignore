@@ -70,3 +70,4 @@ gradle/
 gradlew
 gradlew.bat
 logs/
+!/run/eula.txt

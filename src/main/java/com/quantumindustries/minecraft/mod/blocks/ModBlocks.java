@@ -29,8 +29,8 @@ public class ModBlocks {
     public static void init() {
         initOres();
         initOreBlocks();
-        register(new BlockInfiniteProducer());
-        register(new BlockPowerAnalyzer());
+        /*register(new BlockInfiniteProducer());
+        register(new BlockPowerAnalyzer());*/
 
         initBlockGrinder();
     }
@@ -61,10 +61,16 @@ public class ModBlocks {
                 ((ItemModelProvider) block).registerItemModel(itemBlock);
             }
 
-            if(block instanceof BlockTileEntity ||
-                    block instanceof BlockContainerTileEntity) {
+            if(block instanceof BlockTileEntity) {
                 GameRegistry.registerTileEntity(
                         ((BlockTileEntity<?>) block).getTileEntityClass(),
+                        block.getRegistryName().toString()
+                );
+            }
+
+            if(block instanceof BlockContainerTileEntity) {
+                GameRegistry.registerTileEntity(
+                        ((BlockContainerTileEntity<?>) block).getTileEntityClass(),
                         block.getRegistryName().toString()
                 );
             }

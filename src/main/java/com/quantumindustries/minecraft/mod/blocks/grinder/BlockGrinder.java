@@ -11,9 +11,6 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderItem;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.InventoryHelper;
@@ -169,10 +166,6 @@ public class BlockGrinder extends BlockContainerTileEntity<TileEntityGrinder> {
         return state.getValue(FACING).getIndex();
     }
 
-    public boolean isGrinding() {
-        return isGrinding;
-    }
-
     @Override
     public Class<TileEntityGrinder> getTileEntityClass() {
         return TileEntityGrinder.class;
@@ -182,19 +175,6 @@ public class BlockGrinder extends BlockContainerTileEntity<TileEntityGrinder> {
     @Override
     public TileEntityGrinder createTileEntity(World world, IBlockState state) {
         return new TileEntityGrinder();
-    }
-
-    @Override
-    public void registerItemModel(Item item) {
-        RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
-        renderItem.getItemModelMesher().register(
-                Item.getItemFromBlock(this),
-                0,
-                new ModelResourceLocation(
-                        CustomMod.MODID + ":" + getUnlocalizedName(),
-                        "inventory"
-                )
-        );
     }
 
     @Override

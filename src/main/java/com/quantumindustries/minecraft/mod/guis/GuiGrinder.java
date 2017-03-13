@@ -11,7 +11,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class GuiGrinder  extends GuiContainer {
+public class GuiGrinder extends GuiContainer {
 
     private static final ResourceLocation grinderGuiTextures = new ResourceLocation(
             CustomMod.MODID + ":textures/gui/container/grinder.png"

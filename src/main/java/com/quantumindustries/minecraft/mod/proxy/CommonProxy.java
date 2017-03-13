@@ -14,18 +14,20 @@ public class CommonProxy {
 
     public void preInit(FMLPreInitializationEvent event) {
         // TODO
+        System.out.println("DEBUG: Server proxy preInit()");
     }
 
     public void init(FMLInitializationEvent event) {
-        // TODO
         NetworkRegistry.INSTANCE.registerGuiHandler(
                 CustomMod.instance,
                 new GuiHandler()
         );
+        System.out.println("DEBUG: Server proxy init()");
     }
 
     public void postInit(FMLPostInitializationEvent event) {
         // TODO
+        System.out.println("DEBUG: Server proxy postInit()");
     }
 
     public void registerItemRenderer(Item item, int meta, String id) {

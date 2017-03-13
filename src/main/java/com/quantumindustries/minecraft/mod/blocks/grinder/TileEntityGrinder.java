@@ -20,11 +20,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class TileEntityGrinder extends TileEntityLockable
         implements ITickable, ISidedInventory {
+
     public enum slotEnum {
         INPUT_SLOT, OUTPUT_SLOT
     }
-    private static final int[] slotsTop = new int[] {slotEnum.INPUT_SLOT.ordinal()};
-    private static final int[] slotsBottom = new int[] {slotEnum.OUTPUT_SLOT.ordinal()};
+    private static final int[] slotsTop = new int[] { slotEnum.INPUT_SLOT.ordinal() };
+    private static final int[] slotsBottom = new int[] { slotEnum.OUTPUT_SLOT.ordinal() };
     private static final int[] slotsSides = new int[] {};
     /** The ItemStacks that hold the items currently being used in the grinder */
     private ItemStack[] grinderItemStackArray = new ItemStack[2];
@@ -43,7 +44,7 @@ public class TileEntityGrinder extends TileEntityLockable
     @Override
     public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState,
                                  IBlockState newSate) {
-        return (oldState.getBlock() != newSate.getBlock());
+        return oldState.getBlock() != newSate.getBlock();
     }
 
     /**
@@ -399,11 +400,12 @@ public class TileEntityGrinder extends TileEntityLockable
 
     @Override
     public String getGuiID() {
-        return CustomMod.MODID + ":grinder";
+        return CustomMod.MODID + ":blockGrinder";
     }
 
     @Override
     public Container createContainer(InventoryPlayer playerInventory, EntityPlayer playerIn) {
+        System.out.println("DEBUG: TileEntityGrinder createContainer()");
         return new ContainerGrinder(playerInventory, this);
     }
 

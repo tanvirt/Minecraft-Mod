@@ -11,13 +11,19 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 
 public class GuiHandler implements IGuiHandler {
 
+    public GuiHandler() {
+        System.out.println("DEBUG: GuiHandler created");
+    }
+
     @Override
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
 
+        System.out.println("DEBUG: getServerGuiElement() called");
+
         if(tileEntity != null) {
             if(ID == CustomMod.GUI_ENUM.GRINDER.ordinal()) {
-                return new ContainerGrinder(player.inventory, (IInventory)tileEntity);
+                return new ContainerGrinder(player.inventory, (IInventory) tileEntity);
             }
         }
 
@@ -28,9 +34,11 @@ public class GuiHandler implements IGuiHandler {
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
 
+        System.out.println("DEBUG: getClientGuiElement() called");
+
         if(tileEntity != null) {
             if(ID == CustomMod.GUI_ENUM.GRINDER.ordinal()) {
-                return new GuiGrinder(player.inventory, (IInventory)tileEntity);
+                return new GuiGrinder(player.inventory, (IInventory) tileEntity);
             }
         }
         return null;

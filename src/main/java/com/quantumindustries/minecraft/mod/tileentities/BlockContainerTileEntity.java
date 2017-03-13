@@ -13,7 +13,7 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 public abstract class BlockContainerTileEntity<TE extends TileEntity>
-        extends BlockContainer implements ItemModelProvider {
+        extends BlockContainer {
 
     public BlockContainerTileEntity(Material material, String name) {
         super(material);
@@ -30,6 +30,7 @@ public abstract class BlockContainerTileEntity<TE extends TileEntity>
 
     @Override
     public boolean hasTileEntity(IBlockState state) {
+        System.out.println("DEBUG: hasTileEntity");
         return true;
     }
 

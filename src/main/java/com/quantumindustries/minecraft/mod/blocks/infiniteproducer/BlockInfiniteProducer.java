@@ -21,6 +21,7 @@ public class BlockInfiniteProducer extends BlockTileEntity<TileEntityInfinitePro
     @Nullable
     @Override
     public TileEntityInfiniteProducer createTileEntity(World world, IBlockState state) {
+        System.out.println("DEBUG: createTileEntity() TileEntityInfiniteProducer");
         return new TileEntityInfiniteProducer();
     }
 

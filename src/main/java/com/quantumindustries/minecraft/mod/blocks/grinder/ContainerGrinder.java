@@ -19,6 +19,8 @@ public class ContainerGrinder extends Container {
     private int timeCanGrind;
 
     public ContainerGrinder(InventoryPlayer parInventoryPlayer, IInventory parIInventory) {
+        System.out.println("DEBUG: ContainerGrinder constructor()");
+
         tileGrinder = parIInventory;
         sizeInventory = tileGrinder.getSizeInventory();
         addSlotToContainer(
