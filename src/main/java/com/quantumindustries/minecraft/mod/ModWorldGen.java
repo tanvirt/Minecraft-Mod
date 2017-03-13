@@ -34,7 +34,11 @@ public class ModWorldGen implements IWorldGenerator {
                 world, random, chunkX*16, chunkZ*16,
                 16, 64, 4 + random.nextInt(4), 6
         );
-
+        generateOre(
+                ModBlocks.oreRhodium.getDefaultState(),
+                world, random, chunkX*16, chunkZ*16,
+                16, 64, 4 + random.nextInt(4), 6
+        );
     }
 
     private void generateOre(IBlockState ore, World world, Random random,

@@ -1,0 +1,12 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "down": "custommod:block/magnetBottom",
+    "up": "custommod:block/magnetTop",
+    "north": "custommod:block/neoCobaltMagnetSide",
+    "south": "custommod:block/neoCobaltMagnetSide",
+    "east": "custommod:block/neoCobaltMagnetSide",
+    "west": "custommod:block/neoCobaltMagnetSide",
+    "particle": "custommod:block/neoCobaltMagnetSide"
+  }
+}

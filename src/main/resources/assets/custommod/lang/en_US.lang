@@ -1,19 +1,29 @@
 # Enter item/block names here in format:
 # tile.UNLOCALIZED.name = <name> for blocks
 # item.UNLOCALIZED.name = <name> for items
+itemGroup.custommod=Quantum Technology
 
 # Mod Items
 item.airFilter.name=Air Filter
 item.ingotCobalt.name=Cobalt Ingot
 item.dustCobalt.name=Cobalt Dust
+item.ingotNeodymium.name=Neodymium Ingot
+item.dustNeodymium.name=Neodymium Dust
 item.ingotRhodium.name=Rhodium Ingot
 item.dustRhodium.name=Rhodium Dust
 
 # Mod Blocks
 tile.oreCobalt.name=Cobalt Ore
 tile.blockCobalt.name=Cobalt Block
+tile.oreNeodymium.name=Neodymium Ore
+tile.blockNeodymium.name=Neodymium Block
 tile.oreRhodium.name=Rhodium Ore
 tile.blockRhodium.name=Rhodium Block
+tile.blockNeoIronMagnet.name=Neodymium-Iron Magnet
+tile.blockNeoCobaltMagnet.name=Neodymium-Cobalt Magnet
+tile.blockNeoRhodiumMagnet.name=Neodymium-Rhodium Magnet
+tile.powerAnalyzer.name=Power Analyzer
+tile.infiniteProducer.name=Infinite Power Block
 
 # Mod Fluids
 tile.blockFluidNitrogen.name=Liquid Nitrogen
