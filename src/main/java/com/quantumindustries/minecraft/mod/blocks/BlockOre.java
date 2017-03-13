@@ -9,13 +9,13 @@ public class BlockOre extends BlockBase implements ItemOreDict {
 
     private String oreName;
 
-    public BlockOre(String name, String oreName) {
+    public BlockOre(String name, String oreName, float hardness, float resistance) {
         super(Material.ROCK, name);
 
         this.oreName = oreName;
 
-        setHardness(3f);
-        setResistance(5f);
+        setHardness(hardness);
+        setResistance(resistance);
     }
 
     @Override

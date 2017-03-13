@@ -23,12 +23,22 @@ public class ModWorldGen implements IWorldGenerator {
 
     private void generateOverworld(Random random, int chunkX, int chunkZ, World world,
                                    IChunkGenerator chunkGenerator, IChunkProvider chunkProvider) {
-        /*// TODO: Remove this. This is a test mod item.
+        // TODO(CM): Change rarity and spawn rules for ores.
         generateOre(
-                ModBlocks.oreCopper.getDefaultState(),
-                world, random, chunkX * 16, chunkZ * 16,
+                ModBlocks.oreCobalt.getDefaultState(),
+                world, random, chunkX*16, chunkZ*16,
                 16, 64, 4 + random.nextInt(4), 6
-        );*/
+        );
+        generateOre(
+                ModBlocks.oreRhodium.getDefaultState(),
+                world, random, chunkX*16, chunkZ*16,
+                16, 64, 4 + random.nextInt(4), 6
+        );
+        generateOre(
+                ModBlocks.oreRhodium.getDefaultState(),
+                world, random, chunkX*16, chunkZ*16,
+                16, 64, 4 + random.nextInt(4), 6
+        );
     }
 
     private void generateOre(IBlockState ore, World world, Random random,
