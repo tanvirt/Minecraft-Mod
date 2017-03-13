@@ -4,7 +4,6 @@ import com.quantumindustries.minecraft.mod.CustomMod;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraftforge.fluids.BlockFluidClassic;
-import net.minecraftforge.fluids.BlockFluidFinite;
 import net.minecraftforge.fluids.Fluid;
 
 public class BlockFluidClassicBase extends BlockFluidClassic {
