@@ -25,29 +25,24 @@ public class GuiGrinder extends GuiContainer {
         tileGrinder = parInventoryGrinder;
     }
 
-    /**
-     * Draw the foreground layer for the GuiContainer (everything in front of the items). Args : mouseX, mouseY
-     */
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         String s = tileGrinder.getDisplayName().getUnformattedText();
+        int color = 4210752;
         fontRendererObj.drawString(
                 s,
                 xSize/2 - fontRendererObj.getStringWidth(s)/2,
                 6,
-                4210752
+                color
         );
         fontRendererObj.drawString(
                 inventoryPlayer.getDisplayName().getUnformattedText(),
                 8,
                 ySize - 96 + 2,
-                4210752
+                color
         );
     }
 
-    /**
-     * Args : renderPartialTicks, mouseX, mouseY
-     */
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);

@@ -1,6 +1,5 @@
 package com.quantumindustries.minecraft.mod.blocks;
 
-import com.quantumindustries.minecraft.mod.CustomMod;
 import com.quantumindustries.minecraft.mod.ItemModelProvider;
 import com.quantumindustries.minecraft.mod.blocks.grinder.BlockGrinder;
 import com.quantumindustries.minecraft.mod.blocks.infiniteproducer.BlockInfiniteProducer;
@@ -9,10 +8,6 @@ import com.quantumindustries.minecraft.mod.items.ItemOreDict;
 import com.quantumindustries.minecraft.mod.tileentities.BlockContainerTileEntity;
 import com.quantumindustries.minecraft.mod.tileentities.BlockTileEntity;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderItem;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
@@ -29,8 +24,9 @@ public class ModBlocks {
     public static void init() {
         initOres();
         initOreBlocks();
-        /*register(new BlockInfiniteProducer());
-        register(new BlockPowerAnalyzer());*/
+
+        register(new BlockInfiniteProducer());
+        register(new BlockPowerAnalyzer());
 
         initBlockGrinder();
     }
@@ -49,8 +45,7 @@ public class ModBlocks {
         blockGrinder = register(new BlockGrinder());
     }
 
-    // Registers blocks and checks what they are instanceof
-    // for further registrations.
+    // TODO(TT): Refactor to prevent/reduce instanceof checks
     private static <T extends Block> T register(T block, ItemBlock itemBlock) {
         GameRegistry.register(block);
 
@@ -78,7 +73,6 @@ public class ModBlocks {
             if(itemBlock instanceof ItemOreDict) {
                 ((ItemOreDict) itemBlock).initOreDict();
             }
-
         }
 
         return block;

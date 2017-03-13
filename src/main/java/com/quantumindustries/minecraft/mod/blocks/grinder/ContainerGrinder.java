@@ -19,53 +19,44 @@ public class ContainerGrinder extends Container {
     private int timeCanGrind;
 
     public ContainerGrinder(InventoryPlayer parInventoryPlayer, IInventory parIInventory) {
-        System.out.println("DEBUG: ContainerGrinder constructor()");
-
+        // TODO(TT): Break this method up. Too many lines.
         tileGrinder = parIInventory;
         sizeInventory = tileGrinder.getSizeInventory();
-        addSlotToContainer(
-                new Slot(
-                        tileGrinder,
-                        TileEntityGrinder.slotEnum.INPUT_SLOT.ordinal(),
-                        56,
-                        35
-                )
-        );
-        addSlotToContainer(
-                new SlotGrinderOutput(
-                        parInventoryPlayer.player,
-                        tileGrinder,
-                        TileEntityGrinder.slotEnum.OUTPUT_SLOT.ordinal(),
-                        116,
-                        35
-                )
-        );
+        addSlotToContainer(new Slot(
+                tileGrinder,
+                TileEntityGrinder.slotEnum.INPUT_SLOT.ordinal(),
+                56,
+                35
+        ));
+        addSlotToContainer(new SlotGrinderOutput(
+                parInventoryPlayer.player,
+                tileGrinder,
+                TileEntityGrinder.slotEnum.OUTPUT_SLOT.ordinal(),
+                116,
+                35
+        ));
 
         // add player inventory slots
         // note that the slot numbers are within the player inventory so can be same as the tile entity inventory
         for(int i = 0; i < 3; ++i) {
             for(int j = 0; j < 9; ++j) {
-                addSlotToContainer(
-                        new Slot(
-                                parInventoryPlayer,
-                                j + i * 9 + 9,
-                                8 + j * 18,
-                                84 + i * 18
-                        )
-                );
+                addSlotToContainer(new Slot(
+                        parInventoryPlayer,
+                        j + i * 9 + 9,
+                        8 + j * 18,
+                        84 + i * 18
+                ));
             }
         }
 
         // add hotbar slots
         for(int i = 0; i < 9; ++i) {
-            addSlotToContainer(
-                    new Slot(
-                            parInventoryPlayer,
-                            i,
-                            8 + i * 18,
-                            142
-                    )
-            );
+            addSlotToContainer(new Slot(
+                    parInventoryPlayer,
+                    i,
+                    8 + i * 18,
+                    142
+            ));
         }
     }
 
@@ -113,6 +104,7 @@ public class ContainerGrinder extends Container {
      */
     @Override
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int slotIndex) {
+        // TODO(TT): Break this method up. Too many lines.
         ItemStack itemStack1 = null;
         Slot slot = inventorySlots.get(slotIndex);
 

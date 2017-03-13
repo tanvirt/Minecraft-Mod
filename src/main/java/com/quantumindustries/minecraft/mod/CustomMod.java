@@ -24,7 +24,7 @@ public class CustomMod  {
 
     public static final CustomTab tab = new CustomTab();
 
-    public enum GUI_ENUM {
+    public enum GUI {
         GRINDER
     }
 

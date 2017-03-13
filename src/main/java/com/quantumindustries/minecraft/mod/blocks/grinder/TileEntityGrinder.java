@@ -5,7 +5,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -15,8 +14,6 @@ import net.minecraft.tileentity.TileEntityLockable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class TileEntityGrinder extends TileEntityLockable
         implements ITickable, ISidedInventory {
@@ -24,49 +21,33 @@ public class TileEntityGrinder extends TileEntityLockable
     public enum slotEnum {
         INPUT_SLOT, OUTPUT_SLOT
     }
+
     private static final int[] slotsTop = new int[] { slotEnum.INPUT_SLOT.ordinal() };
     private static final int[] slotsBottom = new int[] { slotEnum.OUTPUT_SLOT.ordinal() };
     private static final int[] slotsSides = new int[] {};
-    /** The ItemStacks that hold the items currently being used in the grinder */
     private ItemStack[] grinderItemStackArray = new ItemStack[2];
-    /** The number of ticks that the grinder will keep grinding */
     private int timeCanGrind;
-    /** The number of ticks that a fresh copy of the currently-grinding item would keep the grinder grinding for */
     private int currentItemGrindTime;
     private int ticksGrindingItemSoFar;
     private int ticksPerItem;
     private String grinderCustomName;
 
-    /**
-     * This controls whether the tile entity gets replaced whenever the block state is changed.
-     * Normally only want this when block actually is replaced.
-     */
     @Override
     public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState,
                                  IBlockState newSate) {
         return oldState.getBlock() != newSate.getBlock();
     }
 
-    /**
-     * Returns the number of slots in the inventory.
-     */
     @Override
     public int getSizeInventory() {
         return grinderItemStackArray.length;
     }
 
-    /**
-     * Returns the stack in slot i
-     */
     @Override
     public ItemStack getStackInSlot(int index) {
         return grinderItemStackArray[index];
     }
 
-    /**
-     * Removes from an inventory slot (first arg) up to a specified number (second arg) of items and returns them in a
-     * new stack.
-     */
     @Override
     public ItemStack decrStackSize(int index, int count) {
         if(grinderItemStackArray[index] != null) {
@@ -91,6 +72,7 @@ public class TileEntityGrinder extends TileEntityLockable
             return null;
         }
     }
+
     /**
      * When some containers are closed they call this on each slot, then drop whatever it returns as an EntityItem -
      * like when you close a workbench GUI.
@@ -107,12 +89,8 @@ public class TileEntityGrinder extends TileEntityLockable
         }
     }
 
-    /**
-     * Sets the given item stack to the specified slot in the inventory (can be crafting or armor sections).
-     */
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
-
         boolean isSameItemStackAlreadyInSlot = stack != null &&
                 stack.isItemEqual(grinderItemStackArray[index]) &&
                 ItemStack.areItemStackTagsEqual(stack, grinderItemStackArray[index]);
@@ -140,9 +118,6 @@ public class TileEntityGrinder extends TileEntityLockable
         }
     }
 
-    /**
-     * Returns true if this thing is named
-     */
     @Override
     public boolean hasCustomName() {
         return grinderCustomName != null && grinderCustomName.length() > 0;
@@ -202,30 +177,19 @@ public class TileEntityGrinder extends TileEntityLockable
         return compound;
     }
 
-    /**
-     * Returns the maximum stack size for a inventory slot. Seems to always be 64, possibly will be extended. *Isn't
-     * this more of a set than a get?*
-     */
     @Override
     public int getInventoryStackLimit() {
         return 64;
     }
 
-    /**
-     * Grinder is grinding
-     */
-    public boolean grindingSomething() {
-        return true;
-    }
-
-    // this function indicates whether container texture should be drawn
-    @SideOnly(Side.CLIENT)
-    public static boolean func_174903_a(IInventory parIInventory) {
+    private boolean grindingSomething() {
+        // TODO(TT): actually determine if we're grinding something
         return true;
     }
 
     @Override
     public void update() {
+        // TODO(TT): fix this method. it actually makes no sense
         boolean hasBeenGrinding = grindingSomething();
         boolean changedGrindingState = false;
 
@@ -234,39 +198,19 @@ public class TileEntityGrinder extends TileEntityLockable
         }
 
         if(!worldObj.isRemote) {
-            // if something in input slot
-            if(grinderItemStackArray[slotEnum.INPUT_SLOT.ordinal()] != null) {
-                // start grinding
-                if(!grindingSomething() && canGrind()) {
-                    timeCanGrind = 150;
-
-                    if(grindingSomething()) {
-                        changedGrindingState = true;
-                    }
+            if(inputSlotIsOccupied()) {
+                if(shouldStartGrinding()) {
+                    changedGrindingState = startGrinding(changedGrindingState);
                 }
 
-                // continue grinding
-                if(grindingSomething() && canGrind()) {
-                    ++ticksGrindingItemSoFar;
-
-                    // check if completed grinding an item
-                    if(ticksGrindingItemSoFar == ticksPerItem) {
-                        ticksGrindingItemSoFar = 0;
-                        ticksPerItem = timeToGrindOneItem(grinderItemStackArray[0]);
-                        grindItem();
-                        changedGrindingState = true;
-                    }
+                if(shouldContinueGrinding()) {
+                    changedGrindingState = continueGrinding(changedGrindingState);
                 }
                 else {
                     ticksGrindingItemSoFar = 0;
                 }
             }
-
-            // started or stopped grinding, update block to change to active or inactive model
-            if(hasBeenGrinding != grindingSomething()) {
-                // the isGrinding() value may have changed due to call to grindItem() earlier
-                changedGrindingState = true;
-            }
+            changedGrindingState = updateGrindingState(hasBeenGrinding, changedGrindingState);
         }
 
         if(changedGrindingState) {
@@ -274,43 +218,83 @@ public class TileEntityGrinder extends TileEntityLockable
         }
     }
 
-    public int timeToGrindOneItem(ItemStack parItemStack) {
+    private boolean updateGrindingState(boolean hasBeenGrinding, boolean changedGrindingState) {
+        // started or stopped grinding, update block to change to active or inactive model
+        if(hasBeenGrinding != grindingSomething()) {
+            // the isGrinding() value may have changed due to call to grindItem() earlier
+            changedGrindingState = true;
+        }
+        return changedGrindingState;
+    }
+
+    private boolean shouldContinueGrinding() {
+        return grindingSomething() && canGrind();
+    }
+
+    private boolean shouldStartGrinding() {
+        return !grindingSomething() && canGrind();
+    }
+
+    private boolean continueGrinding(boolean changedGrindingState) {
+        ++ticksGrindingItemSoFar;
+
+        // check if completed grinding an item
+        if(grindingCompleted()) {
+            ticksGrindingItemSoFar = 0;
+            ticksPerItem = timeToGrindOneItem(grinderItemStackArray[0]);
+            grindItem();
+            changedGrindingState = true;
+        }
+        return changedGrindingState;
+    }
+
+    private boolean grindingCompleted() {
+        return ticksGrindingItemSoFar == ticksPerItem;
+    }
+
+    private boolean startGrinding(boolean changedGrindingState) {
+        timeCanGrind = 150;
+
+        if(grindingSomething()) {
+            changedGrindingState = true;
+        }
+        return changedGrindingState;
+    }
+
+    private boolean inputSlotIsOccupied() {
+        return grinderItemStackArray[slotEnum.INPUT_SLOT.ordinal()] != null;
+    }
+
+    private int timeToGrindOneItem(ItemStack parItemStack) {
+        // TODO(TT): check types of item stack to determine grind time
         return 200;
     }
 
-    /**
-     * Returns true if the grinder can grind an item, i.e. has a source item, destination stack isn't full, etc.
-     */
     private boolean canGrind() {
         int inputSlot = slotEnum.INPUT_SLOT.ordinal();
         int outputSlot = slotEnum.OUTPUT_SLOT.ordinal();
         ItemStack inputStack = grinderItemStackArray[inputSlot];
         ItemStack outputStack = grinderItemStackArray[outputSlot];
-        // if nothing in input slot
         if(inputStack == null) {
             return false;
         }
-        else { // check if it has a grinding recipe
+        else {
             ItemStack itemStackToOutput = GrinderRecipes.instance().getGrindingResult(inputStack);
             if(itemStackToOutput == null) {
-                return false; // no valid recipe for grinding this item
+                return false;
             }
             if(outputStack == null) {
-                return true; // output slot is empty
+                return true;
             }
             if(!outputStack.isItemEqual(itemStackToOutput)) {
-                return false; // output slot has different item occupying it
+                return false;
             }
-            // check if output slot is full
             int result = outputStack.stackSize + itemStackToOutput.stackSize;
             return result <= getInventoryStackLimit() &&
                     result <= outputStack.getMaxStackSize();
         }
     }
 
-    /**
-     * Turn one item from the grinder source stack into the appropriate grinded item in the grinder result stack
-     */
     public void grindItem() {
         if(canGrind()) {
             int inputSlot = slotEnum.INPUT_SLOT.ordinal();
@@ -336,9 +320,6 @@ public class TileEntityGrinder extends TileEntityLockable
         }
     }
 
-    /**
-     * Do not make give this method the name canInteractWith because it clashes with Container
-     */
     @Override
     public boolean isUseableByPlayer(EntityPlayer playerIn) {
         if(worldObj.getTileEntity(pos) != this) {
@@ -380,19 +361,11 @@ public class TileEntityGrinder extends TileEntityLockable
         }
     }
 
-    /**
-     * Returns true if automation can insert the given item in the given slot from the given side. Args: slot, item,
-     * side
-     */
     @Override
     public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
         return isItemValidForSlot(index, itemStackIn);
     }
 
-    /**
-     * Returns true if automation can extract the given item in the given slot from the given side. Args: slot, item,
-     * side
-     */
     @Override
     public boolean canExtractItem(int parSlotIndex, ItemStack parStack, EnumFacing parFacing) {
         return true;
@@ -405,7 +378,6 @@ public class TileEntityGrinder extends TileEntityLockable
 
     @Override
     public Container createContainer(InventoryPlayer playerInventory, EntityPlayer playerIn) {
-        System.out.println("DEBUG: TileEntityGrinder createContainer()");
         return new ContainerGrinder(playerInventory, this);
     }
 

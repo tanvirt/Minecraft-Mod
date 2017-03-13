@@ -12,23 +12,13 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 public class CommonProxy {
 
-    public void preInit(FMLPreInitializationEvent event) {
-        // TODO
-        System.out.println("DEBUG: Server proxy preInit()");
-    }
+    public void preInit(FMLPreInitializationEvent event) {}
 
     public void init(FMLInitializationEvent event) {
-        NetworkRegistry.INSTANCE.registerGuiHandler(
-                CustomMod.instance,
-                new GuiHandler()
-        );
-        System.out.println("DEBUG: Server proxy init()");
+        registerGuiHandlers();
     }
 
-    public void postInit(FMLPostInitializationEvent event) {
-        // TODO
-        System.out.println("DEBUG: Server proxy postInit()");
-    }
+    public void postInit(FMLPostInitializationEvent event) {}
 
     public void registerItemRenderer(Item item, int meta, String id) {
         ModelResourceLocation location = new ModelResourceLocation(
@@ -36,6 +26,13 @@ public class CommonProxy {
                 "inventory"
         );
         ModelLoader.setCustomModelResourceLocation(item, meta, location);
+    }
+
+    private void registerGuiHandlers() {
+        NetworkRegistry.INSTANCE.registerGuiHandler(
+                CustomMod.instance,
+                new GuiHandler()
+        );
     }
 
 }

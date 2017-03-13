@@ -82,7 +82,7 @@ public class BlockGrinder extends BlockContainerTileEntity<TileEntityGrinder> {
         if(!parWorld.isRemote) {
             parPlayer.openGui(
                     CustomMod.instance,
-                    CustomMod.GUI_ENUM.GRINDER.ordinal(),
+                    CustomMod.GUI.GRINDER.ordinal(),
                     parWorld,
                     parBlockPos.getX(),
                     parBlockPos.getY(),
@@ -228,33 +228,6 @@ public class BlockGrinder extends BlockContainerTileEntity<TileEntityGrinder> {
         return enumFacing == EnumFacing.EAST &&
                 blockToEast.isFullBlock() &&
                 !blockToWest.isFullBlock();
-    }
-
-    @SideOnly(Side.CLIENT)
-    static final class SwitchEnumFacing {
-        static final int[] enumFacingArray = new int[EnumFacing.values().length];
-
-        static {
-            try {
-                enumFacingArray[EnumFacing.WEST.ordinal()] = 1;
-            }
-            catch(NoSuchFieldError e) {}
-
-            try {
-                enumFacingArray[EnumFacing.EAST.ordinal()] = 2;
-            }
-            catch(NoSuchFieldError e) {}
-
-            try {
-                enumFacingArray[EnumFacing.NORTH.ordinal()] = 3;
-            }
-            catch(NoSuchFieldError e) {}
-
-            try {
-                enumFacingArray[EnumFacing.SOUTH.ordinal()] = 4;
-            }
-            catch(NoSuchFieldError e) {}
-        }
     }
 
 }

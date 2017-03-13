@@ -17,6 +17,7 @@ public abstract class BlockContainerTileEntity<TE extends TileEntity>
 
     public BlockContainerTileEntity(Material material, String name) {
         super(material);
+
         setUnlocalizedName(name);
         setRegistryName(name);
         setCreativeTab(CustomMod.tab);
@@ -24,13 +25,8 @@ public abstract class BlockContainerTileEntity<TE extends TileEntity>
 
     public abstract Class<TE> getTileEntityClass();
 
-    public TE getTileEntity(IBlockAccess world, BlockPos pos) {
-        return (TE) world.getTileEntity(pos);
-    }
-
     @Override
     public boolean hasTileEntity(IBlockState state) {
-        System.out.println("DEBUG: hasTileEntity");
         return true;
     }
 

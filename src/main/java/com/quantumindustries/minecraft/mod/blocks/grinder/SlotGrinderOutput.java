@@ -8,7 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
 
 public class SlotGrinderOutput extends Slot {
-    /** The player that is using the GUI where this slot resides. */
+
     private final EntityPlayer thePlayer;
     private int numGrinderOutput;
 
@@ -18,24 +18,16 @@ public class SlotGrinderOutput extends Slot {
         thePlayer = parPlayer;
     }
 
-    /**
-     * Check if the stack is a valid item for this slot. .
-     */
     @Override
     public boolean isItemValid(ItemStack stack) {
-        return false; // can't place anything into it
+        return false;
     }
 
-    /**
-     * Decrease the size of the stack in slot by the amount of the int arg. Returns the new
-     * stack.
-     */
     @Override
     public ItemStack decrStackSize(int parAmount) {
         if(getHasStack()) {
             numGrinderOutput += Math.min(parAmount, getStack().stackSize);
         }
-
         return super.decrStackSize(parAmount);
     }
 
@@ -64,11 +56,11 @@ public class SlotGrinderOutput extends Slot {
             int expEarned = numGrinderOutput;
             float expFactor = GrinderRecipes.instance().getGrindingExperience(parItemStack);
 
-            if(expFactor == 0.0f) {
+            if(expFactor == 0) {
                 expEarned = 0;
             }
-            else if (expFactor < 1.0f) {
-                int possibleExpEarned = MathHelper.floor_float(expEarned * expFactor);
+            else if(expFactor < 1.0f) {
+                int possibleExpEarned = MathHelper.floor_float(expEarned*expFactor);
 
                 if(possibleExpEarned < MathHelper.ceiling_float_int(expEarned*expFactor) &&
                         Math.random() < expEarned*expFactor - possibleExpEarned) {
@@ -86,8 +78,8 @@ public class SlotGrinderOutput extends Slot {
                 thePlayer.worldObj.spawnEntityInWorld(new EntityXPOrb(
                         thePlayer.worldObj,
                         thePlayer.posX,
-                        thePlayer.posY + 0.5D,
-                        thePlayer.posZ + 0.5D,
+                        thePlayer.posY + 0.5d,
+                        thePlayer.posZ + 0.5d,
                         expInOrb
                 ));
             }
