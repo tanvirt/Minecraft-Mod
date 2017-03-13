@@ -2,6 +2,7 @@ package com.quantumindustries.minecraft.mod;
 
 import com.quantumindustries.minecraft.mod.proxy.CommonProxy;
 import net.minecraft.item.Item;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -26,6 +27,10 @@ public class CustomMod  {
 
     public enum GUI {
         GRINDER
+    }
+
+    static {
+        FluidRegistry.enableUniversalBucket();
     }
 
     @Mod.EventHandler

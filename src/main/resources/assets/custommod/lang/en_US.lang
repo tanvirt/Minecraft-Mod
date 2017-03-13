@@ -30,4 +30,10 @@ tile.blockFluidNitrogen.name=Liquid Nitrogen
 tile.blockFluidOxygen.name=Liquid Oxygen
 tile.blockFluidArgon.name=Liquid Argon
 
+# Fluid Buckets
+fluid.fluid_nitrogen=Liquid Nitrogen
+fluid.fluid_oxygen=Liquid Oxygen
+fluid.fluid_argon=Liquid Argon
+
+# Mod Containers
 container.grinder=Grinder
