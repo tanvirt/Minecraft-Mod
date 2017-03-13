@@ -1,6 +1,5 @@
 package com.quantumindustries.minecraft.mod;
 
-import com.quantumindustries.minecraft.mod.blocks.ModBlocks;
 import com.quantumindustries.minecraft.mod.items.ModItems;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
