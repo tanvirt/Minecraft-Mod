@@ -1,6 +1,7 @@
 # Enter item/block names here in format:
 # tile.UNLOCALIZED.name = <name> for blocks
 # item.UNLOCALIZED.name = <name> for items
+itemGroup.custommod=Quantum Technology
 
 # Mod Items
 item.airFilter.name=Air Filter
