@@ -1,7 +1,6 @@
 package com.quantumindustries.minecraft.mod.blocks;
 
 import com.quantumindustries.minecraft.mod.ItemModelProvider;
-import com.quantumindustries.minecraft.mod.blocks.counter.BlockCounter;
 import com.quantumindustries.minecraft.mod.blocks.infiniteproducer.BlockInfiniteProducer;
 import com.quantumindustries.minecraft.mod.blocks.poweranalyzer.BlockPowerAnalyzer;
 import com.quantumindustries.minecraft.mod.items.ItemOreDict;

@@ -50,6 +50,7 @@ public class ModFluids {
                 new ResourceLocation(texturePrefix + "_flow")
         );
         FluidRegistry.registerFluid(fluid);
+        FluidRegistry.addBucketForFluid(fluid);
         return fluid;
     }
 
