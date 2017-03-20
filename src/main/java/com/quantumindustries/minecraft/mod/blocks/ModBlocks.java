@@ -36,6 +36,12 @@ public class ModBlocks {
     public static ParticleAcceleratorBlockPort blockAcceleratorPowerPort;
     public static ParticleAcceleratorBlockPort blockAcceleratorInputPort;
     public static ParticleAcceleratorBlockPort blockAcceleratorOutputPort;
+    public static ParticleAcceleratorBlockBeamPipe blockAcceleratorBeamPipe;
+    public static ParticleAcceleratorBlockDetector blockAcceleratorDetector;
+    public static ParticleAcceleratorBlockMagnet blockAcceleratorMagnet;
+    public static ParticleAcceleratorBlockTarget blockAcceleratorTarget;
+    public static ParticleAcceleratorBlockController blockAcceleratorController;
+    public static ParticleAcceleratorBlockBeamSource blockAcceleratorBeamSource;
 
 
     public static void init() {
@@ -69,14 +75,20 @@ public class ModBlocks {
     }
 
     private static void initParticleAcceleratorBlocks() {
-        CommonProxy proxy = CustomMod.getProxy();
         blockAcceleratorWall = register(new ParticleAcceleratorBlockWall("particleAcceleratorCasing"));
         blockAcceleratorPowerPort = register(new ParticleAcceleratorBlockPort("particleAcceleratorPowerPort", ParticleAcceleratorBlockType.Power));
         blockAcceleratorInputPort = register(new ParticleAcceleratorBlockPort("particleAcceleratorInputPort", ParticleAcceleratorBlockType.Input));
         blockAcceleratorOutputPort = register(new ParticleAcceleratorBlockPort("particleAcceleratorOutputPort", ParticleAcceleratorBlockType.Output));
+        blockAcceleratorBeamPipe = register(new ParticleAcceleratorBlockBeamPipe("particleAcceleratorBeamPipe", ParticleAcceleratorBlockType.Pipe));
+        blockAcceleratorController = register(new ParticleAcceleratorBlockController("particleAcceleratorController", ParticleAcceleratorBlockType.Controller));
+        blockAcceleratorDetector = register(new ParticleAcceleratorBlockDetector("particleAcceleratorDetector", ParticleAcceleratorBlockType.Detector));
+        blockAcceleratorMagnet = register(new ParticleAcceleratorBlockMagnet("particleAcceleratorMagnet", ParticleAcceleratorBlockType.Magnet));
+        blockAcceleratorTarget = register(new ParticleAcceleratorBlockTarget("particleAcceleratorTarget", ParticleAcceleratorBlockType.Target));
+        blockAcceleratorBeamSource = register(new ParticleAcceleratorBlockBeamSource("particleAcceleratorBeamSource", ParticleAcceleratorBlockType.BeamSource));
         register(ParticleAcceleratorTileEntity.class);
         register(ParticleAcceleratorPowerTileEntity.class);
         register(ParticleAcceleratorIOPortTileEntity.class);
+        register(ParticleAcceleratorControllerTileEntity.class);
 
     }
 

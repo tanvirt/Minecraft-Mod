@@ -43,6 +43,8 @@ public abstract class ParticleAcceleratorBlockBase extends BlockBase {
                 return new ParticleAcceleratorIOPortTileEntity(true);
             case Output:
                 return new ParticleAcceleratorIOPortTileEntity(false);
+            case Controller:
+                return new ParticleAcceleratorControllerTileEntity();
             default:
                 return new ParticleAcceleratorTileEntity();
         }

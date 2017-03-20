@@ -17,6 +17,7 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
     private ParticleAcceleratorPowerTileEntity powerPort;
     private ParticleAcceleratorIOPortTileEntity inputPort;
     private ParticleAcceleratorIOPortTileEntity outputPort;
+    private ParticleAcceleratorControllerTileEntity controllerBlock;
     private boolean isActive;
 
     private static final int ACCELERATOR_SIZE_TOTAL = 27;
@@ -28,6 +29,7 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
         this.powerPort = null;
         this.inputPort = null;
         this.outputPort = null;
+        this.controllerBlock = null;
         this.isActive = false;
     }
 
@@ -136,6 +138,7 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
         ParticleAcceleratorPowerTileEntity powerPortFound = null;
         ParticleAcceleratorIOPortTileEntity inputPortFound = null;
         ParticleAcceleratorIOPortTileEntity outputPortFound = null;
+        ParticleAcceleratorController controllerFound = null;
 
         int controllerX = this.getReferenceCoord().getX();
         int controllerY = this.getReferenceCoord().getY();
