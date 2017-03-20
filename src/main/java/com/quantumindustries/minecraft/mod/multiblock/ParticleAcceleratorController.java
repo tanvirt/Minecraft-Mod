@@ -6,6 +6,7 @@ import it.zerono.mods.zerocore.api.multiblock.MultiblockTileEntityBase;
 import it.zerono.mods.zerocore.api.multiblock.validation.IMultiblockValidator;
 import it.zerono.mods.zerocore.api.multiblock.validation.ValidationError;
 import it.zerono.mods.zerocore.lib.block.ModTileEntity;
+import it.zerono.mods.zerocore.util.WorldHelper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -28,6 +29,35 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
         this.inputPort = null;
         this.outputPort = null;
         this.isActive = false;
+    }
+
+    public boolean isActive() {
+        return this.isActive;
+    }
+
+    public void toggleActive() {
+        this.setActive(!this.isActive);
+    }
+
+    public void setActive(boolean active) {
+
+        if (this.isActive == active)
+            return;
+
+        // the state was changed, set it
+        this.isActive = active;
+
+        if (WorldHelper.calledByLogicalServer(this.WORLD)) {
+
+            // on the server side, request an update to be sent to the client and mark the save delegate as dirty
+            this.markReferenceCoordForUpdate();
+            this.markReferenceCoordDirty();
+
+        } else {
+
+            // on the client, request a render update
+            this.markMultiblockForRenderUpdate();
+        }
     }
 
     @Override
@@ -111,50 +141,55 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
         int controllerY = this.getReferenceCoord().getY();
         int controllerZ = this.getReferenceCoord().getZ();
 
-        if (connectedParts.size() < getMinimumNumberOfBlocksForAssembledMachine()) {
-            validatorCallback.setLastError(ValidationError.VALIDATION_ERROR_TOO_FEW_PARTS);
-            return false;
-        }
 
-        BlockPos maximumCoord = this.getMaximumCoord();
-        BlockPos minimumCoord = this.getMinimumCoord();
+//        if (connectedParts.size() < getMinimumNumberOfBlocksForAssembledMachine()) {
+//            validatorCallback.setLastError(ValidationError.VALIDATION_ERROR_TOO_FEW_PARTS);
+//            return false;
+//        }
 
-        int minX = minimumCoord.getX();
-        int minY = minimumCoord.getY();
-        int minZ = minimumCoord.getZ();
-        int maxX = maximumCoord.getX();
-        int maxY = maximumCoord.getY();
-        int maxZ = maximumCoord.getZ();
-
-        int deltaX = getDelta(maxX, minX);
-        int deltaY = getDelta(maxY, minY);
-        int deltaZ = getDelta(maxZ, minZ);
-
-        int maxXSize = this.getMaximumXSize();
-        int maxYSize = this.getMaximumYSize();
-        int maxZSize = this.getMaximumZSize();
-        int minXSize = this.getMinimumXSize();
-        int minYSize = this.getMinimumYSize();
-        int minZSize = this.getMinimumZSize();
-
-        if (!isMachineTooLarge(maxXSize, deltaX, "X", validatorCallback))
-            return false;
-        if (!isMachineTooLarge(maxYSize, deltaY, "Y", validatorCallback))
-            return false;
-        if (!isMachineTooLarge(maxZSize, deltaZ, "Z", validatorCallback))
-            return false;
-        if (!isMachineTooSmall(minXSize, deltaX, "X", validatorCallback))
-            return false;
-        if (!isMachineTooSmall(minYSize, deltaY, "Y", validatorCallback))
-            return false;
-        if (!isMachineTooSmall(minZSize, deltaZ, "Z", validatorCallback))
-            return false;
+//        BlockPos maximumCoord = this.getMaximumCoord();
+//        BlockPos minimumCoord = this.getMinimumCoord();
+//
+//        int minX = minimumCoord.getX();
+//        int minY = minimumCoord.getY();
+//        int minZ = minimumCoord.getZ();
+//        int maxX = maximumCoord.getX();
+//        int maxY = maximumCoord.getY();
+//        int maxZ = maximumCoord.getZ();
+//
+//        int deltaX = getDelta(maxX, minX);
+//        int deltaY = getDelta(maxY, minY);
+//        int deltaZ = getDelta(maxZ, minZ);
+//
+//        int maxXSize = this.getMaximumXSize();
+//        int maxYSize = this.getMaximumYSize();
+//        int maxZSize = this.getMaximumZSize();
+//        int minXSize = this.getMinimumXSize();
+//        int minYSize = this.getMinimumYSize();
+//        int minZSize = this.getMinimumZSize();
+//
+//        if (!isMachineTooLarge(maxXSize, deltaX, "X", validatorCallback))
+//            return false;
+//        if (!isMachineTooLarge(maxYSize, deltaY, "Y", validatorCallback))
+//            return false;
+//        if (!isMachineTooLarge(maxZSize, deltaZ, "Z", validatorCallback))
+//            return false;
+//        if (!isMachineTooSmall(minXSize, deltaX, "X", validatorCallback))
+//            return false;
+//        if (!isMachineTooSmall(minYSize, deltaY, "Y", validatorCallback))
+//            return false;
+//        if (!isMachineTooSmall(minZSize, deltaZ, "Z", validatorCallback))
+//            return false;
 
         TileEntity tile;
         MultiblockTileEntityBase multiblockPart;
         Class<? extends MultiblockControllerBase> particleController = this.getClass();
         int extremes;
         boolean isPartValid;
+
+        for (int i = controllerX-1; i <= controllerX+1; i += 2) {
+
+        }
 
         return false;
     }

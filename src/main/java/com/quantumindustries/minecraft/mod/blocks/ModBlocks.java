@@ -1,13 +1,19 @@
 package com.quantumindustries.minecraft.mod.blocks;
 
+import com.quantumindustries.minecraft.mod.CustomMod;
 import com.quantumindustries.minecraft.mod.ItemModelProvider;
 import com.quantumindustries.minecraft.mod.blocks.infiniteproducer.BlockInfiniteProducer;
 import com.quantumindustries.minecraft.mod.blocks.poweranalyzer.BlockPowerAnalyzer;
 import com.quantumindustries.minecraft.mod.items.ItemOreDict;
+import com.quantumindustries.minecraft.mod.multiblock.*;
+import com.quantumindustries.minecraft.mod.proxy.CommonProxy;
 import com.quantumindustries.minecraft.mod.tileentities.BlockTileEntity;
+import it.zerono.mods.zerocore.internal.References;
+import it.zerono.mods.zerocore.internal.ZeroCore;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class ModBlocks {
@@ -25,10 +31,18 @@ public class ModBlocks {
     public static BlockBase blockNeoCobaltMagnet;
     public static BlockBase blockNeoRhodiumMagnet;
 
+    // Particle Accelerator Blocks
+    public static ParticleAcceleratorBlockWall blockAcceleratorWall;
+    public static ParticleAcceleratorBlockPort blockAcceleratorPowerPort;
+    public static ParticleAcceleratorBlockPort blockAcceleratorInputPort;
+    public static ParticleAcceleratorBlockPort blockAcceleratorOutputPort;
+
+
     public static void init() {
         initMagnetBlocks();
         initOres();
         initOreBlocks();
+        initParticleAcceleratorBlocks();
         register(new BlockInfiniteProducer());
         register(new BlockPowerAnalyzer());
     }
@@ -52,6 +66,18 @@ public class ModBlocks {
         blockCobalt = register(new BlockOre("blockCobalt", "blockCobalt", 3f, 5f));
         blockNeodymium = register(new BlockOre("blockNeodymium", "blockNeodymium", 3f, 5f));
         blockRhodium = register(new BlockOre("blockRhodium", "blockRhodium", 3f, 5f));
+    }
+
+    private static void initParticleAcceleratorBlocks() {
+        CommonProxy proxy = CustomMod.getProxy();
+        blockAcceleratorWall = register(new ParticleAcceleratorBlockWall("particleAcceleratorCasing"));
+        blockAcceleratorPowerPort = register(new ParticleAcceleratorBlockPort("particleAcceleratorPowerPort", ParticleAcceleratorBlockType.Power));
+        blockAcceleratorInputPort = register(new ParticleAcceleratorBlockPort("particleAcceleratorInputPort", ParticleAcceleratorBlockType.Input));
+        blockAcceleratorOutputPort = register(new ParticleAcceleratorBlockPort("particleAcceleratorOutputPort", ParticleAcceleratorBlockType.Output));
+        register(ParticleAcceleratorTileEntity.class);
+        register(ParticleAcceleratorPowerTileEntity.class);
+        register(ParticleAcceleratorIOPortTileEntity.class);
+
     }
 
     // Registers blocks and checks what they are instanceof
@@ -80,6 +106,10 @@ public class ModBlocks {
         }
 
         return block;
+    }
+
+    private static void register(Class<? extends TileEntity> tileEntityClass) {
+        GameRegistry.registerTileEntity(tileEntityClass, CustomMod.MODID + tileEntityClass.getSimpleName());
     }
 
     private static <T extends Block> T register(T block) {
