@@ -26,7 +26,6 @@ public class TileEntityGrinder extends TileEntityLockable
     private static final int[] slotsBottom = new int[] { slotEnum.OUTPUT_SLOT.ordinal() };
     private static final int[] slotsSides = new int[] {};
     private ItemStack[] grinderItemStackArray = new ItemStack[2];
-    private int timeCanGrind;
     private int currentItemGrindTime;
     private int ticksGrindingItemSoFar;
     private int ticksPerItem;
@@ -142,9 +141,8 @@ public class TileEntityGrinder extends TileEntityLockable
             }
         }
 
-        timeCanGrind = compound.getShort("GrindTime");
-        ticksGrindingItemSoFar = compound.getShort("CookTime");
-        ticksPerItem = compound.getShort("CookTimeTotal");
+        ticksGrindingItemSoFar = compound.getShort("GrindTime");
+        ticksPerItem = compound.getShort("GrindTimeTotal");
 
         if(compound.hasKey("CustomName", 8)) {
             grinderCustomName = compound.getString("CustomName");
@@ -154,9 +152,8 @@ public class TileEntityGrinder extends TileEntityLockable
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
-        compound.setShort("GrindTime", (short) timeCanGrind);
-        compound.setShort("CookTime", (short) ticksGrindingItemSoFar);
-        compound.setShort("CookTimeTotal", (short) ticksPerItem);
+        compound.setShort("GrindTime", (short) ticksGrindingItemSoFar);
+        compound.setShort("GrindTimeTotal", (short) ticksPerItem);
         NBTTagList nbttaglist = new NBTTagList();
 
         for(int i = 0; i < grinderItemStackArray.length; ++i) {
@@ -182,35 +179,19 @@ public class TileEntityGrinder extends TileEntityLockable
         return 64;
     }
 
-    private boolean grindingSomething() {
-        // TODO(TT): actually determine if we're grinding something
-        return true;
-    }
-
     @Override
     public void update() {
-        // TODO(TT): fix this method. it actually makes no sense
-        boolean hasBeenGrinding = grindingSomething();
         boolean changedGrindingState = false;
-
-        if(grindingSomething()) {
-            --timeCanGrind;
-        }
 
         if(!worldObj.isRemote) {
             if(inputSlotIsOccupied()) {
-                if(shouldStartGrinding()) {
-                    changedGrindingState = startGrinding(changedGrindingState);
-                }
-
-                if(shouldContinueGrinding()) {
+                if(canGrind()) {
                     changedGrindingState = continueGrinding(changedGrindingState);
                 }
                 else {
                     ticksGrindingItemSoFar = 0;
                 }
             }
-            changedGrindingState = updateGrindingState(hasBeenGrinding, changedGrindingState);
         }
 
         if(changedGrindingState) {
@@ -218,47 +199,19 @@ public class TileEntityGrinder extends TileEntityLockable
         }
     }
 
-    private boolean updateGrindingState(boolean hasBeenGrinding, boolean changedGrindingState) {
-        // started or stopped grinding, update block to change to active or inactive model
-        if(hasBeenGrinding != grindingSomething()) {
-            // the isGrinding() value may have changed due to call to grindItem() earlier
-            changedGrindingState = true;
-        }
-        return changedGrindingState;
-    }
-
-    private boolean shouldContinueGrinding() {
-        return grindingSomething() && canGrind();
-    }
-
-    private boolean shouldStartGrinding() {
-        return !grindingSomething() && canGrind();
-    }
-
     private boolean continueGrinding(boolean changedGrindingState) {
         ++ticksGrindingItemSoFar;
-
-        // check if completed grinding an item
-        if(grindingCompleted()) {
+        if(currentItemGrindingCompleted()) {
             ticksGrindingItemSoFar = 0;
             ticksPerItem = timeToGrindOneItem(grinderItemStackArray[0]);
-            grindItem();
+            grindNextItem();
             changedGrindingState = true;
         }
         return changedGrindingState;
     }
 
-    private boolean grindingCompleted() {
+    private boolean currentItemGrindingCompleted() {
         return ticksGrindingItemSoFar == ticksPerItem;
-    }
-
-    private boolean startGrinding(boolean changedGrindingState) {
-        timeCanGrind = 150;
-
-        if(grindingSomething()) {
-            changedGrindingState = true;
-        }
-        return changedGrindingState;
     }
 
     private boolean inputSlotIsOccupied() {
@@ -299,7 +252,7 @@ public class TileEntityGrinder extends TileEntityLockable
         }
     }
 
-    public void grindItem() {
+    public void grindNextItem() {
         if(canGrind()) {
             int inputSlot = slotEnum.INPUT_SLOT.ordinal();
             int outputSlot = slotEnum.OUTPUT_SLOT.ordinal();
@@ -388,12 +341,10 @@ public class TileEntityGrinder extends TileEntityLockable
     public int getField(int id) {
         switch(id) {
             case 0:
-                return timeCanGrind;
-            case 1:
                 return currentItemGrindTime;
-            case 2:
+            case 1:
                 return ticksGrindingItemSoFar;
-            case 3:
+            case 2:
                 return ticksPerItem;
         }
         return 0;
@@ -403,12 +354,10 @@ public class TileEntityGrinder extends TileEntityLockable
     public void setField(int id, int value) {
         switch(id) {
             case 0:
-                timeCanGrind = value;
-            case 1:
                 currentItemGrindTime = value;
-            case 2:
+            case 1:
                 ticksGrindingItemSoFar = value;
-            case 3:
+            case 2:
                 ticksPerItem = value;
         }
     }

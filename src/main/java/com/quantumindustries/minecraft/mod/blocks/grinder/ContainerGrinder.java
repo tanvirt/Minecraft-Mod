@@ -16,7 +16,6 @@ public class ContainerGrinder extends Container {
     private final int sizeInventory;
     private int ticksGrindingItemSoFar;
     private int ticksPerItem;
-    private int timeCanGrind;
 
     public ContainerGrinder(InventoryPlayer parInventoryPlayer, IInventory parIInventory) {
         tileGrinder = parIInventory;
@@ -33,25 +32,20 @@ public class ContainerGrinder extends Container {
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
 
-        for(int i = 0; i < listeners.size(); ++i) {
+        for(int i = 0; i < listeners.size(); i++) {
             IContainerListener listener = listeners.get(i);
 
-            if(ticksGrindingItemSoFar != tileGrinder.getField(2)) {
+            if(ticksGrindingItemSoFar != tileGrinder.getField(1)) {
+                listener.sendProgressBarUpdate(this, 1, tileGrinder.getField(1));
+            }
+
+            if(ticksPerItem != tileGrinder.getField(2)) {
                 listener.sendProgressBarUpdate(this, 2, tileGrinder.getField(2));
-            }
-
-            if(timeCanGrind != tileGrinder.getField(0)) {
-                listener.sendProgressBarUpdate(this, 0, tileGrinder.getField(0));
-            }
-
-            if(ticksPerItem != tileGrinder.getField(3)) {
-                listener.sendProgressBarUpdate(this, 3, tileGrinder.getField(3));
             }
         }
 
-        ticksGrindingItemSoFar = tileGrinder.getField(2); // tick grinding item so far
-        timeCanGrind = tileGrinder.getField(0); // time can grind
-        ticksPerItem = tileGrinder.getField(3); // ticks per item
+        ticksGrindingItemSoFar = tileGrinder.getField(1); // tick grinding item so far
+        ticksPerItem = tileGrinder.getField(2); // ticks per item
     }
 
     @Override

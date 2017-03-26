@@ -63,8 +63,8 @@ public class GuiGrinder extends GuiContainer {
     }
 
     private int getProgressLevel(int progressIndicatorPixelWidth) {
-        int ticksGrindingItemSoFar = tileGrinder.getField(2);
-        int ticksPerItem = tileGrinder.getField(3);
+        int ticksGrindingItemSoFar = tileGrinder.getField(1);
+        int ticksPerItem = tileGrinder.getField(2);
 
         if(ticksPerItem != 0 && ticksGrindingItemSoFar != 0) {
             return ticksGrindingItemSoFar*progressIndicatorPixelWidth/ticksPerItem;
