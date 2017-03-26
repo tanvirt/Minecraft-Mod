@@ -279,7 +279,7 @@ public class TileEntityGrinder extends TileEntityLockable
             return false;
         }
         else {
-            ItemStack itemStackToOutput = GrinderRecipes.instance().getGrindingResult(inputStack);
+            ItemStack itemStackToOutput = GrinderRecipes.getGrindingResult(inputStack);
             if(itemStackToOutput == null) {
                 return false;
             }
@@ -302,7 +302,7 @@ public class TileEntityGrinder extends TileEntityLockable
             ItemStack inputStack = grinderItemStackArray[inputSlot];
             ItemStack outputStack = grinderItemStackArray[outputSlot];
 
-            ItemStack itemstack = GrinderRecipes.instance().getGrindingResult(inputStack);
+            ItemStack itemstack = GrinderRecipes.getGrindingResult(inputStack);
 
             // check if output slot is empty
             if(outputStack == null) {
@@ -326,11 +326,10 @@ public class TileEntityGrinder extends TileEntityLockable
             return false;
         }
         else {
-            return playerIn.getDistanceSq(
-                    pos.getX() + 0.5D,
-                    pos.getY() + 0.5D,
-                    pos.getZ() + 0.5D
-            ) <= 64.0D;
+            double x = pos.getX() + 0.5d;
+            double y = pos.getY() + 0.5d;
+            double z = pos.getZ() + 0.5d;
+            return playerIn.getDistanceSq(x, y, z) <= 64.0d;
         }
     }
 

@@ -53,39 +53,43 @@ public class SlotGrinderOutput extends Slot {
     @Override
     protected void onCrafting(ItemStack parItemStack) {
         if(!thePlayer.worldObj.isRemote) {
-            int expEarned = numGrinderOutput;
-            float expFactor = GrinderRecipes.instance().getGrindingExperience(parItemStack);
-
-            if(expFactor == 0) {
-                expEarned = 0;
-            }
-            else if(expFactor < 1.0f) {
-                int possibleExpEarned = MathHelper.floor_float(expEarned*expFactor);
-
-                if(possibleExpEarned < MathHelper.ceiling_float_int(expEarned*expFactor) &&
-                        Math.random() < expEarned*expFactor - possibleExpEarned) {
-                    ++possibleExpEarned;
-                }
-
-                expEarned = possibleExpEarned;
-            }
-
-            // create experience orbs
-            int expInOrb;
-            while(expEarned > 0) {
-                expInOrb = EntityXPOrb.getXPSplit(expEarned);
-                expEarned -= expInOrb;
-                thePlayer.worldObj.spawnEntityInWorld(new EntityXPOrb(
-                        thePlayer.worldObj,
-                        thePlayer.posX,
-                        thePlayer.posY + 0.5d,
-                        thePlayer.posZ + 0.5d,
-                        expInOrb
-                ));
-            }
+            float expFactor = GrinderRecipes.getGrindingExperience(parItemStack);
+            int expEarned = getExpEarned(numGrinderOutput, expFactor);
+            createExperienceOrbs(expEarned);
         }
-
         numGrinderOutput = 0;
+    }
+
+    private int getExpEarned(int expEarned, float expFactor) {
+        if(expFactor == 0) {
+            expEarned = 0;
+        }
+        else if(expFactor < 1.0f) {
+            int possibleExpEarned = MathHelper.floor_float(expEarned*expFactor);
+
+            if(possibleExpEarned < MathHelper.ceiling_float_int(expEarned*expFactor) &&
+                    Math.random() < expEarned*expFactor - possibleExpEarned) {
+                ++possibleExpEarned;
+            }
+
+            expEarned = possibleExpEarned;
+        }
+        return expEarned;
+    }
+
+    private void createExperienceOrbs(int expEarned) {
+        int expInOrb;
+        while(expEarned > 0) {
+            expInOrb = EntityXPOrb.getXPSplit(expEarned);
+            expEarned -= expInOrb;
+            thePlayer.worldObj.spawnEntityInWorld(new EntityXPOrb(
+                    thePlayer.worldObj,
+                    thePlayer.posX,
+                    thePlayer.posY + 0.5d,
+                    thePlayer.posZ + 0.5d,
+                    expInOrb
+            ));
+        }
     }
 
 }

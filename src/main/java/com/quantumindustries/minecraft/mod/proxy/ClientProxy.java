@@ -3,6 +3,7 @@ package com.quantumindustries.minecraft.mod.proxy;
 import com.quantumindustries.minecraft.mod.CustomMod;
 import com.quantumindustries.minecraft.mod.ModWorldGen;
 import com.quantumindustries.minecraft.mod.blocks.ModBlocks;
+import com.quantumindustries.minecraft.mod.blocks.grinder.GrinderRecipes;
 import com.quantumindustries.minecraft.mod.fluids.ModFluids;
 import com.quantumindustries.minecraft.mod.items.ModItems;
 import com.quantumindustries.minecraft.mod.recipes.ModRecipes;
@@ -23,9 +24,8 @@ public class ClientProxy extends CommonProxy {
         ModFluids.init();
         ModItems.init();
         ModRecipes.init();
+        GrinderRecipes.init();
         GameRegistry.registerWorldGenerator(new ModWorldGen(), 3);
-
-        System.out.println("DEBUG: Client proxy preInit()");
     }
 
     @Override
@@ -41,14 +41,9 @@ public class ClientProxy extends CommonProxy {
                 )
         );
         super.init(event);
-
-        System.out.println("DEBUG: Client proxy init()");
     }
 
     @Override
-    public void postInit(FMLPostInitializationEvent event) {
-        // TODO
-        System.out.println("DEBUG: Client proxy postInit()");
-    }
+    public void postInit(FMLPostInitializationEvent event) {}
 
 }

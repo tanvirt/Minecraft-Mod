@@ -19,45 +19,11 @@ public class ContainerGrinder extends Container {
     private int timeCanGrind;
 
     public ContainerGrinder(InventoryPlayer parInventoryPlayer, IInventory parIInventory) {
-        // TODO(TT): Break this method up. Too many lines.
         tileGrinder = parIInventory;
         sizeInventory = tileGrinder.getSizeInventory();
-        addSlotToContainer(new Slot(
-                tileGrinder,
-                TileEntityGrinder.slotEnum.INPUT_SLOT.ordinal(),
-                56,
-                35
-        ));
-        addSlotToContainer(new SlotGrinderOutput(
-                parInventoryPlayer.player,
-                tileGrinder,
-                TileEntityGrinder.slotEnum.OUTPUT_SLOT.ordinal(),
-                116,
-                35
-        ));
-
-        // add player inventory slots
-        // note that the slot numbers are within the player inventory so can be same as the tile entity inventory
-        for(int i = 0; i < 3; ++i) {
-            for(int j = 0; j < 9; ++j) {
-                addSlotToContainer(new Slot(
-                        parInventoryPlayer,
-                        j + i * 9 + 9,
-                        8 + j * 18,
-                        84 + i * 18
-                ));
-            }
-        }
-
-        // add hotbar slots
-        for(int i = 0; i < 9; ++i) {
-            addSlotToContainer(new Slot(
-                    parInventoryPlayer,
-                    i,
-                    8 + i * 18,
-                    142
-            ));
-        }
+        addContainerSlots(parInventoryPlayer);
+        addPlayerInventorySlots(parInventoryPlayer);
+        addHotbarSlots(parInventoryPlayer);
     }
 
     /**
@@ -126,7 +92,7 @@ public class ContainerGrinder extends Container {
             }
             else if(slotIndex != TileEntityGrinder.slotEnum.INPUT_SLOT.ordinal()) {
                 // check if there is a grinding recipe for the stack
-                if(GrinderRecipes.instance().getGrindingResult(itemStack2) != null) {
+                if(GrinderRecipes.getGrindingResult(itemStack2) != null) {
                     if(!mergeItemStack(itemStack2, 0, 1, false)) {
                         return null;
                     }
@@ -176,6 +142,48 @@ public class ContainerGrinder extends Container {
         }
 
         return itemStack1;
+    }
+
+    private void addContainerSlots(InventoryPlayer parInventoryPlayer) {
+        addSlotToContainer(new Slot(
+                tileGrinder,
+                TileEntityGrinder.slotEnum.INPUT_SLOT.ordinal(),
+                56,
+                35
+        ));
+        addSlotToContainer(new SlotGrinderOutput(
+                parInventoryPlayer.player,
+                tileGrinder,
+                TileEntityGrinder.slotEnum.OUTPUT_SLOT.ordinal(),
+                116,
+                35
+        ));
+    }
+
+    private void addPlayerInventorySlots(InventoryPlayer parInventoryPlayer) {
+        // note that the slot numbers are within the player inventory
+        // so can they be the same those for the tile entity inventory
+        for(int i = 0; i < 3; ++i) {
+            for(int j = 0; j < 9; ++j) {
+                addSlotToContainer(new Slot(
+                        parInventoryPlayer,
+                        j + i * 9 + 9,
+                        8 + j * 18,
+                        84 + i * 18
+                ));
+            }
+        }
+    }
+
+    private void addHotbarSlots(InventoryPlayer parInventoryPlayer) {
+        for(int i = 0; i < 9; ++i) {
+            addSlotToContainer(new Slot(
+                    parInventoryPlayer,
+                    i,
+                    8 + i * 18,
+                    142
+            ));
+        }
     }
 
 }
