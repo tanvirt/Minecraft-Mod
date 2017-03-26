@@ -44,8 +44,8 @@ public class ContainerGrinder extends Container {
             }
         }
 
-        ticksGrindingItemSoFar = tileGrinder.getField(1); // tick grinding item so far
-        ticksPerItem = tileGrinder.getField(2); // ticks per item
+        ticksGrindingItemSoFar = tileGrinder.getField(1);
+        ticksPerItem = tileGrinder.getField(2);
     }
 
     @Override

@@ -64,7 +64,7 @@ public class GrinderRecipes {
             }
             entry = iterator.next();
         }
-        while(!areItemStacksEqual(parItemStack, entry.getKey()));
+        while(!itemStacksAreEqual(parItemStack, entry.getKey()));
 
         return entry.getValue();
     }
@@ -79,13 +79,16 @@ public class GrinderRecipes {
             }
             entry = iterator.next();
         }
-        while(!areItemStacksEqual(parItemStack, entry.getKey()));
+        while(!itemStacksAreEqual(parItemStack, entry.getKey()));
 
         return entry.getValue();
     }
 
     public static int getGrindingTime(String name) {
-        return grindingTimes.get(name);
+        if(grindingTimes.get(name) != null) {
+            return grindingTimes.get(name);
+        }
+        return 0;
     }
 
     private static void initRecipe(Block block, Item item, int amount, int time) {
@@ -95,7 +98,7 @@ public class GrinderRecipes {
         );
     }
 
-    private static boolean areItemStacksEqual(ItemStack parItemStack1, ItemStack parItemStack2) {
+    private static boolean itemStacksAreEqual(ItemStack parItemStack1, ItemStack parItemStack2) {
         return parItemStack2.getItem() == parItemStack1.getItem() &&
                 (parItemStack2.getMetadata() == metadata ||
                         parItemStack2.getMetadata() == parItemStack1.getMetadata()

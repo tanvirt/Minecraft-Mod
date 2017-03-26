@@ -355,10 +355,13 @@ public class TileEntityGrinder extends TileEntityLockable
         switch(id) {
             case 0:
                 currentItemGrindTime = value;
+                break;
             case 1:
                 ticksGrindingItemSoFar = value;
+                break;
             case 2:
                 ticksPerItem = value;
+                break;
         }
     }
 
