@@ -1,9 +1,17 @@
 {
   "forge_marker": 1,
   "variants": {
-    "facing=north": { "model": "custommod:blockGrinder" },
-    "facing=south": { "model": "custommod:blockGrinder", "y": 180 },
-    "facing=west":  { "model": "custommod:blockGrinder", "y": 270 },
-    "facing=east":  { "model": "custommod:blockGrinder", "y": 90 }
+    "facing=north": {
+      "model": "custommod:blockGrinder"
+    },
+    "facing=south": {
+      "model": "custommod:blockGrinder", "y": 180
+    },
+    "facing=west":  {
+      "model": "custommod:blockGrinder", "y": 270
+    },
+    "facing=east":  {
+      "model": "custommod:blockGrinder", "y": 90
+    }
   }
 }
