@@ -23,7 +23,7 @@ public class ParticleAcceleratorIOPortTileEntity extends ParticleAcceleratorTile
 
         super.syncDataFrom(data, syncReason);
 
-        if (data.hasKey("paIOdir"))
+        if(data.hasKey("paIOdir"))
             this.isInput = data.getBoolean("paIOdir");
     }
 

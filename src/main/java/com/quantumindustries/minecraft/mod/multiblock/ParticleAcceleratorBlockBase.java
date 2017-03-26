@@ -54,14 +54,14 @@ public abstract class ParticleAcceleratorBlockBase extends BlockBase {
     public boolean onBlockActivated(World world, BlockPos position, IBlockState state,
                                     EntityPlayer player, EnumHand hand, ItemStack heldItem,
                                     EnumFacing side, float hitX, float hitY, float hitZ) {
-        if (world.isRemote || (hand != EnumHand.OFF_HAND) || (null != heldItem))
+        if(world.isRemote || (hand != EnumHand.OFF_HAND) || (null != heldItem))
             return false;
 
         ParticleAcceleratorController controller = this.getAcceleratorController(world, position);
 
         // TODO(CM): fix this logic to actually work for our machine instead of tutorial
-        if (null != controller) {
-            if (player.isSneaking()) {
+        if(null != controller) {
+            if(player.isSneaking()) {
                 controller.toggleActive();
                 return true;
             } else {
