@@ -266,8 +266,12 @@ public class TileEntityGrinder extends TileEntityLockable
     }
 
     private int timeToGrindOneItem(ItemStack parItemStack) {
-        // TODO(TT): check types of item stack to determine grind time
-        return 200;
+        if(parItemStack != null && parItemStack.getItem() != null) {
+            return GrinderRecipes.getGrindingTime(
+                    parItemStack.getItem().getUnlocalizedName()
+            );
+        }
+        return 0;
     }
 
     private boolean canGrind() {
