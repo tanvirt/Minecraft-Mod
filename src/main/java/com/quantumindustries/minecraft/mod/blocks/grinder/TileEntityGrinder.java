@@ -59,11 +59,9 @@ public class TileEntityGrinder extends TileEntityLockable
             }
             else {
                 itemstack = grinderItemStackArray[index].splitStack(count);
-
                 if(grinderItemStackArray[index].stackSize == 0) {
                     grinderItemStackArray[index] = null;
                 }
-
                 return itemstack;
             }
         }
@@ -72,10 +70,6 @@ public class TileEntityGrinder extends TileEntityLockable
         }
     }
 
-    /**
-     * When some containers are closed they call this on each slot, then drop whatever it returns as an EntityItem -
-     * like when you close a workbench GUI.
-     */
     @Override
     public ItemStack removeStackFromSlot(int index) {
         if(grinderItemStackArray[index] != null) {
@@ -101,8 +95,7 @@ public class TileEntityGrinder extends TileEntityLockable
 
         // if input slot, reset the grinding timers
         if(index == slotEnum.INPUT_SLOT.ordinal() && !isSameItemStackAlreadyInSlot) {
-            ticksPerItem = timeToGrindOneItem(stack);
-            ticksGrindingItemSoFar = 0;
+            resetTimers(stack);
             markDirty();
         }
     }
@@ -199,59 +192,6 @@ public class TileEntityGrinder extends TileEntityLockable
         }
     }
 
-    private boolean continueGrinding(boolean changedGrindingState) {
-        ++ticksGrindingItemSoFar;
-        if(currentItemGrindingCompleted()) {
-            ticksGrindingItemSoFar = 0;
-            ticksPerItem = timeToGrindOneItem(grinderItemStackArray[0]);
-            grindNextItem();
-            changedGrindingState = true;
-        }
-        return changedGrindingState;
-    }
-
-    private boolean currentItemGrindingCompleted() {
-        return ticksGrindingItemSoFar == ticksPerItem;
-    }
-
-    private boolean inputSlotIsOccupied() {
-        return grinderItemStackArray[slotEnum.INPUT_SLOT.ordinal()] != null;
-    }
-
-    private int timeToGrindOneItem(ItemStack parItemStack) {
-        if(parItemStack != null && parItemStack.getItem() != null) {
-            return GrinderRecipes.getGrindingTime(
-                    parItemStack.getItem().getUnlocalizedName()
-            );
-        }
-        return 0;
-    }
-
-    private boolean canGrind() {
-        int inputSlot = slotEnum.INPUT_SLOT.ordinal();
-        int outputSlot = slotEnum.OUTPUT_SLOT.ordinal();
-        ItemStack inputStack = grinderItemStackArray[inputSlot];
-        ItemStack outputStack = grinderItemStackArray[outputSlot];
-        if(inputStack == null) {
-            return false;
-        }
-        else {
-            ItemStack itemStackToOutput = GrinderRecipes.getGrindingResult(inputStack);
-            if(itemStackToOutput == null) {
-                return false;
-            }
-            if(outputStack == null) {
-                return true;
-            }
-            if(!outputStack.isItemEqual(itemStackToOutput)) {
-                return false;
-            }
-            int result = outputStack.stackSize + itemStackToOutput.stackSize;
-            return result <= getInventoryStackLimit() &&
-                    result <= outputStack.getMaxStackSize();
-        }
-    }
-
     public void grindNextItem() {
         if(canGrind()) {
             int inputSlot = slotEnum.INPUT_SLOT.ordinal();
@@ -339,29 +279,28 @@ public class TileEntityGrinder extends TileEntityLockable
 
     @Override
     public int getField(int id) {
-        switch(id) {
-            case 0:
-                return currentItemGrindTime;
-            case 1:
-                return ticksGrindingItemSoFar;
-            case 2:
-                return ticksPerItem;
+        if(id == 0) {
+            return currentItemGrindTime;
+        }
+        else if(id == 1) {
+            return ticksGrindingItemSoFar;
+        }
+        else if(id == 2) {
+            return ticksPerItem;
         }
         return 0;
     }
 
     @Override
     public void setField(int id, int value) {
-        switch(id) {
-            case 0:
-                currentItemGrindTime = value;
-                break;
-            case 1:
-                ticksGrindingItemSoFar = value;
-                break;
-            case 2:
-                ticksPerItem = value;
-                break;
+        if(id == 0) {
+            currentItemGrindTime = value;
+        }
+        else if(id == 1) {
+            ticksGrindingItemSoFar = value;
+        }
+        else if(id == 2) {
+            ticksPerItem = value;
         }
     }
 
@@ -375,6 +314,64 @@ public class TileEntityGrinder extends TileEntityLockable
         for(int i = 0; i < grinderItemStackArray.length; ++i) {
             grinderItemStackArray[i] = null;
         }
+    }
+
+    private boolean continueGrinding(boolean changedGrindingState) {
+        ++ticksGrindingItemSoFar;
+        if(currentItemGrindingCompleted()) {
+            ticksGrindingItemSoFar = 0;
+            ticksPerItem = timeToGrindOneItem(grinderItemStackArray[0]);
+            grindNextItem();
+            changedGrindingState = true;
+        }
+        return changedGrindingState;
+    }
+
+    private boolean currentItemGrindingCompleted() {
+        return ticksGrindingItemSoFar == ticksPerItem;
+    }
+
+    private boolean inputSlotIsOccupied() {
+        return grinderItemStackArray[slotEnum.INPUT_SLOT.ordinal()] != null;
+    }
+
+    private int timeToGrindOneItem(ItemStack parItemStack) {
+        if(parItemStack != null && parItemStack.getItem() != null) {
+            return GrinderRecipes.getGrindingTime(
+                    parItemStack.getItem().getUnlocalizedName()
+            );
+        }
+        return 0;
+    }
+
+    private boolean canGrind() {
+        int inputSlot = slotEnum.INPUT_SLOT.ordinal();
+        int outputSlot = slotEnum.OUTPUT_SLOT.ordinal();
+        ItemStack inputStack = grinderItemStackArray[inputSlot];
+        ItemStack outputStack = grinderItemStackArray[outputSlot];
+        if(inputStack == null) {
+            return false;
+        }
+        else {
+            ItemStack itemStackToOutput = GrinderRecipes.getGrindingResult(inputStack);
+            if(itemStackToOutput == null) {
+                return false;
+            }
+            if(outputStack == null) {
+                return true;
+            }
+            if(!outputStack.isItemEqual(itemStackToOutput)) {
+                return false;
+            }
+            int result = outputStack.stackSize + itemStackToOutput.stackSize;
+            return result <= getInventoryStackLimit() &&
+                    result <= outputStack.getMaxStackSize();
+        }
+    }
+
+    private void resetTimers(ItemStack stack) {
+        ticksPerItem = timeToGrindOneItem(stack);
+        ticksGrindingItemSoFar = 0;
     }
 
 }

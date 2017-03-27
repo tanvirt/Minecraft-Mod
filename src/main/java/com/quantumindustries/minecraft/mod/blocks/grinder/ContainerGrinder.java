@@ -64,61 +64,32 @@ public class ContainerGrinder extends Container {
      */
     @Override
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int slotIndex) {
-        // TODO(TT): Break this method up. Too many lines.
         ItemStack itemStack1 = null;
         Slot slot = inventorySlots.get(slotIndex);
 
-        if(slot != null && slot.getHasStack()) {
+        if(isValidSlot(slot)) {
             ItemStack itemStack2 = slot.getStack();
             itemStack1 = itemStack2.copy();
 
-            if(slotIndex == TileEntityGrinder.slotEnum.OUTPUT_SLOT.ordinal()) {
-                if(!mergeItemStack(
-                        itemStack2,
-                        sizeInventory,
-                        sizeInventory + 36,
-                        true
-                )) {
+            if(isOutputSlot(slotIndex)) {
+                int start = sizeInventory;
+                int end = sizeInventory + 36;
+                if(!mergeItemStack(itemStack2, start, end, true)) {
                     return null;
                 }
-
                 slot.onSlotChange(itemStack2, itemStack1);
             }
-            else if(slotIndex != TileEntityGrinder.slotEnum.INPUT_SLOT.ordinal()) {
-                // check if there is a grinding recipe for the stack
-                if(GrinderRecipes.getGrindingResult(itemStack2) != null) {
-                    if(!mergeItemStack(itemStack2, 0, 1, false)) {
-                        return null;
-                    }
-                }
-                else if(slotIndex >= sizeInventory && slotIndex < sizeInventory + 27) { // player inventory slots
-                    if(!mergeItemStack(
-                            itemStack2,
-                            sizeInventory + 27,
-                            sizeInventory + 36,
-                            false
-                    )) {
-                        return null;
-                    }
-                }
-                else if(slotIndex >= sizeInventory + 27 &&
-                        slotIndex < sizeInventory + 36 &&
+            else {
+                Indices indices = getMergeIndices(itemStack2, slotIndex);
+                if(indices != null &&
                         !mergeItemStack(
                                 itemStack2,
-                                sizeInventory + 1,
-                                sizeInventory + 27,
-                                false
-                        )) { // hotbar slots
+                                indices.start,
+                                indices.end,
+                                false)
+                        ) {
                     return null;
                 }
-            }
-            else if(!mergeItemStack(
-                    itemStack2,
-                    sizeInventory,
-                    sizeInventory + 36,
-                    false
-            )) {
-                return null;
             }
 
             if(itemStack2.stackSize == 0) {
@@ -138,6 +109,10 @@ public class ContainerGrinder extends Container {
         return itemStack1;
     }
 
+    private boolean isPlayerInventorySlot(int slotIndex) {
+        return slotIndex >= sizeInventory && slotIndex < sizeInventory + 27;
+    }
+
     private void addContainerSlots(InventoryPlayer parInventoryPlayer) {
         addSlotToContainer(new Slot(
                 tileGrinder,
@@ -155,8 +130,6 @@ public class ContainerGrinder extends Container {
     }
 
     private void addPlayerInventorySlots(InventoryPlayer parInventoryPlayer) {
-        // note that the slot numbers are within the player inventory
-        // so can they be the same those for the tile entity inventory
         for(int i = 0; i < 3; ++i) {
             for(int j = 0; j < 9; ++j) {
                 addSlotToContainer(new Slot(
@@ -178,6 +151,57 @@ public class ContainerGrinder extends Container {
                     142
             ));
         }
+    }
+
+    private boolean isValidSlot(Slot slot) {
+        return slot != null && slot.getHasStack();
+    }
+
+    private boolean isInputSlot(int slotIndex) {
+        return slotIndex == TileEntityGrinder.slotEnum.INPUT_SLOT.ordinal();
+    }
+
+    private boolean isOutputSlot(int slotIndex) {
+        return slotIndex == TileEntityGrinder.slotEnum.OUTPUT_SLOT.ordinal();
+    }
+
+    private Indices getMergeIndices(ItemStack itemStack, int slotIndex) {
+        if(!isInputSlot(slotIndex)) {
+            if(grindingRecipeExists(itemStack)) {
+                return new Indices(0, 1);
+            }
+            else if(isPlayerInventorySlot(slotIndex)) {
+                return new Indices(sizeInventory + 27, sizeInventory + 36);
+            }
+            else if(isHotbarSlot(slotIndex)) {
+                return new Indices(sizeInventory + 1, sizeInventory + 27);
+            }
+            return null;
+        }
+        else {
+            return new Indices(sizeInventory, sizeInventory + 36);
+        }
+    }
+
+    private boolean grindingRecipeExists(ItemStack itemStack2) {
+        return GrinderRecipes.getGrindingResult(itemStack2) != null;
+    }
+
+    private boolean isHotbarSlot(int slotIndex) {
+        return slotIndex >= sizeInventory + 27 &&
+                slotIndex < sizeInventory + 36;
+    }
+
+    private class Indices {
+
+        public int start;
+        public int end;
+
+        public Indices(int start, int end) {
+            this.start = start;
+            this.end = end;
+        }
+
     }
 
 }
