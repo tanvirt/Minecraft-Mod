@@ -8,4 +8,5 @@ public class ParticleAcceleratorBlockPort extends ParticleAcceleratorBlockBase {
         if(ParticleAcceleratorBlockType.Wall == portType)
             throw new IllegalArgumentException("Invalid port type");
     }
+
 }

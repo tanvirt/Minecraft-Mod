@@ -25,7 +25,7 @@ tile.blockNeoRhodiumMagnet.name=Neodymium-Rhodium Magnet
 tile.powerAnalyzer.name=Power Analyzer
 tile.infiniteProducer.name=Infinite Power Block
 
-#Particle Accelerator Blocks
+# Particle Accelerator Blocks
 tile.particleAcceleratorPowerPort.name=PA Power Port
 tile.particleAcceleratorInputPort.name=PA Input Port
 tile.particleAcceleratorOutputPort.name=PA Output Port

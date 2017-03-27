@@ -20,7 +20,6 @@ public class ParticleAcceleratorIOPortTileEntity extends ParticleAcceleratorTile
 
     @Override
     protected void syncDataFrom(NBTTagCompound data, SyncReason syncReason) {
-
         super.syncDataFrom(data, syncReason);
 
         if(data.hasKey("paIOdir"))
@@ -29,8 +28,8 @@ public class ParticleAcceleratorIOPortTileEntity extends ParticleAcceleratorTile
 
     @Override
     protected void syncDataTo(NBTTagCompound data, SyncReason syncReason) {
-
         super.syncDataTo(data, syncReason);
         data.setBoolean("paIOdir", this.isInput);
     }
+
 }

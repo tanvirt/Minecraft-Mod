@@ -54,8 +54,9 @@ public abstract class ParticleAcceleratorBlockBase extends BlockBase {
     public boolean onBlockActivated(World world, BlockPos position, IBlockState state,
                                     EntityPlayer player, EnumHand hand, ItemStack heldItem,
                                     EnumFacing side, float hitX, float hitY, float hitZ) {
-        if(world.isRemote || (hand != EnumHand.OFF_HAND) || (null != heldItem))
+        if(world.isRemote || (hand != EnumHand.OFF_HAND) || (null != heldItem)) {
             return false;
+        }
 
         ParticleAcceleratorController controller = this.getAcceleratorController(world, position);
 
@@ -64,7 +65,8 @@ public abstract class ParticleAcceleratorBlockBase extends BlockBase {
             if(player.isSneaking()) {
                 controller.toggleActive();
                 return true;
-            } else {
+            }
+            else {
                 ValidationError status = controller.getLastError();
                 if(null != status) {
                     player.addChatMessage(status.getChatMessage());
@@ -77,16 +79,31 @@ public abstract class ParticleAcceleratorBlockBase extends BlockBase {
 
     protected IMultiblockPart getMultiblockPartAt(IBlockAccess world, BlockPos position) {
         TileEntity tile = world.getTileEntity(position);
-        return tile instanceof IMultiblockPart ? (IMultiblockPart)tile : null;
+        if(tile instanceof IMultiblockPart) {
+            return (IMultiblockPart) tile;
+        }
+        else {
+            return null;
+        }
     }
 
     protected MultiblockControllerBase getMultiblockController(IBlockAccess world, BlockPos position) {
         IMultiblockPart part = this.getMultiblockPartAt(world, position);
-        return null != part ? part.getMultiblockController() : null;
+        if(null != part) {
+            return part.getMultiblockController();
+        }
+        else {
+            return null;
+        }
     }
 
     protected ParticleAcceleratorController getAcceleratorController(IBlockAccess world, BlockPos position) {
         MultiblockControllerBase controller = this.getMultiblockController(world, position);
-        return controller instanceof ParticleAcceleratorController ? (ParticleAcceleratorController)controller : null;
+        if(controller instanceof ParticleAcceleratorController) {
+            return (ParticleAcceleratorController) controller;
+        }
+        else {
+            return null;
+        }
     }
 }

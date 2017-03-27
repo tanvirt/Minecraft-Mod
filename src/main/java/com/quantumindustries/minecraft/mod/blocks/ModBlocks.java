@@ -40,7 +40,6 @@ public class ModBlocks {
     public static ParticleAcceleratorBlockController blockAcceleratorController;
     public static ParticleAcceleratorBlockBeamSource blockAcceleratorBeamSource;
 
-
     public static void init() {
         initMagnetBlocks();
         initOres();
@@ -113,7 +112,6 @@ public class ModBlocks {
         register(ParticleAcceleratorPowerTileEntity.class);
         register(ParticleAcceleratorIOPortTileEntity.class);
         register(ParticleAcceleratorControllerTileEntity.class);
-
     }
 
     // Registers blocks and checks what they are instanceof

@@ -6,4 +6,5 @@ public class ParticleAcceleratorPowerTileEntity extends ParticleAcceleratorTileE
 
     private static ValidationError s_invalidPosition = new ValidationError(
             "custommod:api.multiblock.validation.powerport_invalid_position");
+
 }

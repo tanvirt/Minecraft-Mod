@@ -5,4 +5,5 @@ public class ParticleAcceleratorBlockBeamPipe extends ParticleAcceleratorBlockBa
     public ParticleAcceleratorBlockBeamPipe(String name, ParticleAcceleratorBlockType type) {
         super(name, type);
     }
+
 }

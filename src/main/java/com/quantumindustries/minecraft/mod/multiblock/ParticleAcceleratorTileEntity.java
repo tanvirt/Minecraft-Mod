@@ -39,17 +39,17 @@ public class ParticleAcceleratorTileEntity extends MultiblockTileEntityBase {
 
     @Override
     public void onMachineAssembled(MultiblockControllerBase multiblockControllerBase) {
-
+        // TODO(CM): Either fix empty method or format to show we aren't using it.
     }
 
     @Override
     public void onPreMachineAssembled(MultiblockControllerBase multiblockControllerBase) {
-
+        // TODO(CM): Either fix empty method or format to show we aren't using it.
     }
 
     @Override
     public void onPostMachineAssembled(MultiblockControllerBase multiblockControllerBase) {
-
+        // TODO(CM): Either fix empty method or format to show we aren't using it.
     }
 
     @Override
@@ -60,22 +60,22 @@ public class ParticleAcceleratorTileEntity extends MultiblockTileEntityBase {
 
     @Override
     public void onPreMachineBroken() {
-
+        // TODO(CM): Either fix empty method or format to show we aren't using it.
     }
 
     @Override
     public void onPostMachineBroken() {
-
+        // TODO(CM): Either fix empty method or format to show we aren't using it.
     }
 
     @Override
     public void onMachineActivated() {
-
+        // TODO(CM): Either fix empty method or format to show we aren't using it.
     }
 
     @Override
     public void onMachineDeactivated() {
-
+        // TODO(CM): Either fix empty method or format to show we aren't using it.
     }
 
     @Override
@@ -89,6 +89,7 @@ public class ParticleAcceleratorTileEntity extends MultiblockTileEntityBase {
     }
 
     public ParticleAcceleratorController getAcceleratorController() {
-        return (ParticleAcceleratorController)this.getMultiblockController();
+        return (ParticleAcceleratorController) this.getMultiblockController();
     }
+
 }
