@@ -1,8 +1,7 @@
 package com.quantumindustries.minecraft.mod.multiblock;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -12,11 +11,14 @@ public class ParticleAcceleratorBlockWall extends ParticleAcceleratorBlockBase {
         super(name, ParticleAcceleratorBlockType.Wall);
     }
 
-//    @SideOnly(Side.CLIENT)
-//    public EnumBlockRenderType blockRenderType() {
-//        return EnumBlockRenderType.valueOf();
-//    }
-    public boolean isVisuallyOpaque() {
+    @SideOnly(Side.CLIENT)
+    public BlockRenderLayer getBlockLayer()
+    {
+        return BlockRenderLayer.CUTOUT_MIPPED;
+    }
+
+    public boolean isFullCube(IBlockState state)
+    {
         return false;
     }
 }

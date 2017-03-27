@@ -6,10 +6,7 @@ import com.quantumindustries.minecraft.mod.blocks.infiniteproducer.BlockInfinite
 import com.quantumindustries.minecraft.mod.blocks.poweranalyzer.BlockPowerAnalyzer;
 import com.quantumindustries.minecraft.mod.items.ItemOreDict;
 import com.quantumindustries.minecraft.mod.multiblock.*;
-import com.quantumindustries.minecraft.mod.proxy.CommonProxy;
 import com.quantumindustries.minecraft.mod.tileentities.BlockTileEntity;
-import it.zerono.mods.zerocore.internal.References;
-import it.zerono.mods.zerocore.internal.ZeroCore;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.ItemBlock;
@@ -76,15 +73,42 @@ public class ModBlocks {
 
     private static void initParticleAcceleratorBlocks() {
         blockAcceleratorWall = register(new ParticleAcceleratorBlockWall("particleAcceleratorCasing"));
-        blockAcceleratorPowerPort = register(new ParticleAcceleratorBlockPort("particleAcceleratorPowerPort", ParticleAcceleratorBlockType.Power));
-        blockAcceleratorInputPort = register(new ParticleAcceleratorBlockPort("particleAcceleratorInputPort", ParticleAcceleratorBlockType.Input));
-        blockAcceleratorOutputPort = register(new ParticleAcceleratorBlockPort("particleAcceleratorOutputPort", ParticleAcceleratorBlockType.Output));
-        blockAcceleratorBeamPipe = register(new ParticleAcceleratorBlockBeamPipe("particleAcceleratorBeamPipe", ParticleAcceleratorBlockType.Pipe));
-        blockAcceleratorController = register(new ParticleAcceleratorBlockController("particleAcceleratorController", ParticleAcceleratorBlockType.Controller));
-        blockAcceleratorDetector = register(new ParticleAcceleratorBlockDetector("particleAcceleratorDetector", ParticleAcceleratorBlockType.Detector));
-        blockAcceleratorMagnet = register(new ParticleAcceleratorBlockMagnet("particleAcceleratorMagnet", ParticleAcceleratorBlockType.Magnet));
-        blockAcceleratorTarget = register(new ParticleAcceleratorBlockTarget("particleAcceleratorTarget", ParticleAcceleratorBlockType.Target));
-        blockAcceleratorBeamSource = register(new ParticleAcceleratorBlockBeamSource("particleAcceleratorBeamSource", ParticleAcceleratorBlockType.BeamSource));
+        blockAcceleratorPowerPort = register(new ParticleAcceleratorBlockPort(
+                "particleAcceleratorPowerPort",
+                ParticleAcceleratorBlockType.Power)
+        );
+        blockAcceleratorInputPort = register(new ParticleAcceleratorBlockPort(
+                "particleAcceleratorInputPort",
+                ParticleAcceleratorBlockType.Input)
+        );
+        blockAcceleratorOutputPort = register(new ParticleAcceleratorBlockPort(
+                "particleAcceleratorOutputPort",
+                ParticleAcceleratorBlockType.Output)
+        );
+        blockAcceleratorBeamPipe = register(new ParticleAcceleratorBlockBeamPipe(
+                "particleAcceleratorBeamPipe",
+                ParticleAcceleratorBlockType.Pipe)
+        );
+        blockAcceleratorController = register(new ParticleAcceleratorBlockController(
+                "particleAcceleratorController",
+                ParticleAcceleratorBlockType.Controller)
+        );
+        blockAcceleratorDetector = register(new ParticleAcceleratorBlockDetector(
+                "particleAcceleratorDetector",
+                ParticleAcceleratorBlockType.Detector)
+        );
+        blockAcceleratorMagnet = register(new ParticleAcceleratorBlockMagnet(
+                "particleAcceleratorMagnet",
+                ParticleAcceleratorBlockType.Magnet)
+        );
+        blockAcceleratorTarget = register(new ParticleAcceleratorBlockTarget(
+                "particleAcceleratorTarget",
+                ParticleAcceleratorBlockType.Target)
+        );
+        blockAcceleratorBeamSource = register(new ParticleAcceleratorBlockBeamSource(
+                "particleAcceleratorBeamSource",
+                ParticleAcceleratorBlockType.BeamSource)
+        );
         register(ParticleAcceleratorTileEntity.class);
         register(ParticleAcceleratorPowerTileEntity.class);
         register(ParticleAcceleratorIOPortTileEntity.class);

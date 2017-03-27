@@ -1,7 +1,5 @@
 package com.quantumindustries.minecraft.mod.multiblock;
 
-import com.quantumindustries.minecraft.mod.blocks.poweranalyzer.BlockPowerAnalyzer;
-import com.sun.jna.platform.unix.X11;
 import it.zerono.mods.zerocore.api.multiblock.IMultiblockPart;
 import it.zerono.mods.zerocore.api.multiblock.MultiblockControllerBase;
 import it.zerono.mods.zerocore.api.multiblock.validation.IMultiblockValidator;
@@ -14,11 +12,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLLog;
-import scala.tools.nsc.Global;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import static java.lang.Math.abs;
