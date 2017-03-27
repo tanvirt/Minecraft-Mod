@@ -93,7 +93,6 @@ public class TileEntityGrinder extends TileEntityLockable
             stack.stackSize = getInventoryStackLimit();
         }
 
-        // if input slot, reset the grinding timers
         if(index == slotEnum.INPUT_SLOT.ordinal() && !isSameItemStackAlreadyInSlot) {
             resetTimers(stack);
             markDirty();
@@ -201,12 +200,11 @@ public class TileEntityGrinder extends TileEntityLockable
 
             ItemStack itemstack = GrinderRecipes.getGrindingResult(inputStack);
 
-            // check if output slot is empty
             if(outputStack == null) {
                 grinderItemStackArray[outputSlot] = itemstack.copy();
             }
             else if(outputStack.getItem() == itemstack.getItem()) {
-                outputStack.stackSize += itemstack.stackSize; // Forge BugFix: Results may have multiple items
+                outputStack.stackSize += itemstack.stackSize;
             }
 
             --inputStack.stackSize;
@@ -238,7 +236,6 @@ public class TileEntityGrinder extends TileEntityLockable
 
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
-        // can always put things in input (may not grind though) and can't put anything in output
         return index == slotEnum.INPUT_SLOT.ordinal();
     }
 

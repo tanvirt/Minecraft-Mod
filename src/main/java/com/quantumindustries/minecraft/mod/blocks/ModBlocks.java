@@ -66,7 +66,6 @@ public class ModBlocks {
         blockGrinder = register(new BlockGrinder());
     }
 
-    // TODO(TT): Refactor to prevent/reduce instanceof checks
     private static <T extends Block> T register(T block, ItemBlock itemBlock) {
         GameRegistry.register(block);
 

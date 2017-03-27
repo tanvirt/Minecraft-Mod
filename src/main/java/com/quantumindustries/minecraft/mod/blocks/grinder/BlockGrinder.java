@@ -47,7 +47,7 @@ public class BlockGrinder extends BlockContainerTileEntity<TileEntityGrinder> {
         blockSoundType = SoundType.SNOW;
         blockParticleGravity = 1.0f;
         slipperiness = 0.6f;
-        lightOpacity = 20; // cast a light shadow
+        lightOpacity = 20;
         setTickRandomly(false);
         useNeighborBrightness = false;
     }

@@ -25,9 +25,6 @@ public class ContainerGrinder extends Container {
         addHotbarSlots(parInventoryPlayer);
     }
 
-    /**
-     * Looks for changes made in the container, sends them to every listener.
-     */
     @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
@@ -59,9 +56,6 @@ public class ContainerGrinder extends Container {
         return tileGrinder.isUseableByPlayer(playerIn);
     }
 
-    /**
-     * Take a stack from the specified inventory slot.
-     */
     @Override
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int slotIndex) {
         ItemStack itemStack1 = null;
