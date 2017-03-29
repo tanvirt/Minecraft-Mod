@@ -80,7 +80,7 @@ public class ParticleAcceleratorTileEntity extends MultiblockTileEntityBase {
 
     @Override
     public MultiblockControllerBase createNewMultiblock() {
-        return new ParticleAcceleratorController(this.worldObj);
+        return new ParticleAcceleratorController(worldObj);
     }
 
     @Override
@@ -89,7 +89,7 @@ public class ParticleAcceleratorTileEntity extends MultiblockTileEntityBase {
     }
 
     public ParticleAcceleratorController getAcceleratorController() {
-        return (ParticleAcceleratorController) this.getMultiblockController();
+        return (ParticleAcceleratorController) getMultiblockController();
     }
 
 }

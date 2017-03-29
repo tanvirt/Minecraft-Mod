@@ -22,14 +22,15 @@ public class ParticleAcceleratorIOPortTileEntity extends ParticleAcceleratorTile
     protected void syncDataFrom(NBTTagCompound data, SyncReason syncReason) {
         super.syncDataFrom(data, syncReason);
 
-        if(data.hasKey("paIOdir"))
-            this.isInput = data.getBoolean("paIOdir");
+        if(data.hasKey("isInputAcceleratorIOPort")) {
+            this.isInput = data.getBoolean("isInputAcceleratorIOPort");
+        }
     }
 
     @Override
     protected void syncDataTo(NBTTagCompound data, SyncReason syncReason) {
         super.syncDataTo(data, syncReason);
-        data.setBoolean("paIOdir", this.isInput);
+        data.setBoolean("isInputAcceleratorIOPort", this.isInput);
     }
 
 }

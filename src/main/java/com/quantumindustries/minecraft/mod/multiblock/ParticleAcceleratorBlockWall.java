@@ -35,7 +35,8 @@ public class ParticleAcceleratorBlockWall extends ParticleAcceleratorBlockBase {
     }
 
     @Override
-    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
+    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess,
+                                        BlockPos pos, EnumFacing side) {
         return super.shouldSideBeRendered(blockState, blockAccess, pos, side);
     }
 
