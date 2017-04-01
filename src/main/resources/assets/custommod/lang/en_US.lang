@@ -25,6 +25,18 @@ tile.blockNeoRhodiumMagnet.name=Neodymium-Rhodium Magnet
 tile.powerAnalyzer.name=Power Analyzer
 tile.infiniteProducer.name=Infinite Power Block
 
+# Particle Accelerator Blocks
+tile.particleAcceleratorPowerPort.name=PA Power Port
+tile.particleAcceleratorInputPort.name=PA Input Port
+tile.particleAcceleratorOutputPort.name=PA Output Port
+tile.particleAcceleratorController.name=PA Controller
+tile.particleAcceleratorBeamPipe.name=PA Beam Pipe
+tile.particleAcceleratorDetector.name=PA Detector Block
+tile.particleAcceleratorTarget.name=PA Target Block
+tile.particleAcceleratorBeamSource.name=PA Beam Source
+tile.particleAcceleratorCasing.name=PA Casing
+tile.particleAcceleratorMagnet.name=PA Magnet
+
 # Mod Fluids
 tile.blockFluidNitrogen.name=Liquid Nitrogen
 tile.blockFluidOxygen.name=Liquid Oxygen
