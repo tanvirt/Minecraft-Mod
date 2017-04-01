@@ -15,6 +15,8 @@ import net.minecraftforge.fml.common.FMLLog;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import static java.lang.Math.abs;
 
@@ -41,6 +43,7 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
         outputPort = null;
         controllerBlock = null;
         isActive = false;
+        actualAcceleratorSizes = new ActualAcceleratorSizes();
     }
 
     public boolean isActive() {
@@ -194,6 +197,7 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
                 }
             }
 
+
             validateBlockCounts();
 
             validateControllerTopBottom();
@@ -204,14 +208,16 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
             validateBeamSourcesTopBottom(beamSourcePositions.get(BeamSourceIndices.RIGHT));
 
             cornerPositions = getAllCorners(beamSourcePositions);
+
             actualAcceleratorSizes.lengthPipe = calculateDistanceBetweenCorners(
                     cornerPositions.get(CornerIndices.FRONT_LEFT),
                     cornerPositions.get(CornerIndices.FRONT_RIGHT)
-            );
+            ) - 1;
+
             actualAcceleratorSizes.depthPipe = calculateDistanceBetweenCorners(
                     cornerPositions.get(CornerIndices.FRONT_LEFT),
                     cornerPositions.get(CornerIndices.BACK_LEFT)
-            );
+            ) - 1;
 
             if(actualAcceleratorSizes.lengthPipe < ExpectedMinimumAcceleratorSizes.LENGTH_OF_PIPE) {
                 throw new InvalidShapeException("Particle Accelerator must have a length of at least 9.");
@@ -411,7 +417,7 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
         validateSide(corners.get(CornerIndices.FRONT_RIGHT), corners.get(CornerIndices.BACK_RIGHT));
 
         // Check the back side
-        validateBackSide(corners.get(CornerIndices.BACK_LEFT), corners.get(CornerIndices.BACK_RIGHT));
+        validateSide(corners.get(CornerIndices.BACK_LEFT), corners.get(CornerIndices.BACK_RIGHT));
     }
 
     private void validateSide(BlockPos startCorner, BlockPos endCorner) {
@@ -423,107 +429,192 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
         }
     }
 
-    // TODO(CM): Change this to validate special cases for back side (detector and target)
-    private void validateBackSide(BlockPos startCorner, BlockPos endCorner) {
-        if(zCoordinatesAreEqual(endCorner, startCorner)) {
-            validateSingleSideXDir(startCorner, endCorner);
-        }
-        else {
-            validateSingleSideZDir(startCorner, endCorner);
-        }
-    }
-
     private void validateSingleSideXDir(BlockPos startCorner, BlockPos endCorner) {
-        int endingX = abs(startCorner.getX() - endCorner.getX()) + 1;
+        int numBlocks = abs(startCorner.getX() - endCorner.getX()) + 1;
         Vec3i xVector;
-        BlockPos current = startCorner;
         if(startCorner.getX() < endCorner.getX()) {
             xVector = new Vec3i(1, 0, 0);
         }
         else {
             xVector = new Vec3i(-1, 0, 0);
         }
-        for(int x = 0; x <= endingX; ++x) {
-            BlockPos block = new BlockPos(current);
-            if(x == 0) {
-                // DO NOTHING
-            }
-            else if(x == (endingX - 1)) {
-                if(getBlockAtPosition(block) instanceof ParticleAcceleratorBlockBeamPipe) {
-                    validateAroundPipeZDirCorner(block);
-                }
-            }
-            else if(x == endingX) {
-                if(getBlockAtPosition(block) instanceof ParticleAcceleratorBlockWall &&
-                        getBlockAtPosition(block.up()) instanceof ParticleAcceleratorBlockWall) {
-                    validateAroundPipeZDir(block, getBlockAtPosition(block.up()).getClass());
-                }
-                else {
-                    throw new InvalidSurroundBeamPipeException("Invalid blocks surrounding beam pipe corner.");
-                }
-            }
-            else {
-                if(getBlockAtPosition(block.up()) instanceof BlockAir) {
-                    throw new InvalidSurroundBeamPipeException("[xDir] Air block found around beam pipe(up).");
-                }
-                else if(!(getBlockAtPosition(block.up()) instanceof ParticleAcceleratorBlockBase)) {
-                    throw new InvalidSurroundBeamPipeException("Block is not a valid accelerator block");
-                }
-                else if(!(getBlockAtPosition(block) instanceof ParticleAcceleratorBlockBeamPipe)) {
-                    throw new InvalidBeamPipeException("Missing beam pipe");
-                }
-                else {
-                    validateAroundPipeZDir(block, getBlockAtPosition(block.up()).getClass());
-                }
-            }
-            current = current.add(xVector);
-        }
+        validateSingleSide(
+                startCorner, endCorner, xVector, numBlocks,
+                this::validateAroundPipeZDirCorner,
+                this::validateAroundPipeZDir
+        );
     }
 
     private void validateSingleSideZDir(BlockPos startCorner, BlockPos endCorner) {
-        int endingZ = abs(startCorner.getZ() - endCorner.getZ()) + 1;
+        int numBlocks = abs(startCorner.getZ() - endCorner.getZ()) + 1;
         Vec3i zVector;
-        BlockPos current = startCorner;
         if(startCorner.getZ() < endCorner.getZ()) {
             zVector = new Vec3i(0, 0, 1);
         }
         else {
             zVector = new Vec3i(0, 0, -1);
         }
-        for(int z = 0; z <= endingZ; ++z) {
-            BlockPos block = new BlockPos(current);
-            if(z == 0) {
+        validateSingleSide(
+                startCorner, endCorner, zVector, numBlocks,
+                this::validateAroundPipeXDirCorner,
+                this::validateAroundPipeXDir
+        );
+    }
+
+    private void validateSingleSide(BlockPos startCorner,
+                                    BlockPos endCorner,
+                                    Vec3i translationVector,
+                                    int numBlocks,
+                                    Consumer<BlockPos> pipeEndValidator,
+                                    BiConsumer<BlockPos, Class> wallEndValidator) {
+        BlockPos currentPosition = startCorner;
+        for(int i = 0; i <= numBlocks; ++i) {
+            Block block = getBlockAtPosition(currentPosition);
+            Block upperBlock = getBlockAtPosition(currentPosition.up());
+            if(i == 0) {
                 // DO NOTHING
             }
-            else if(z == (endingZ - 1)) {
-                if(getBlockAtPosition(block) instanceof ParticleAcceleratorBlockBeamPipe) {
-                    validateAroundPipeXDirCorner(block);
-                }
+            else if(i == numBlocks - 1) {
+                validatePipeEnd(block, currentPosition, pipeEndValidator);
             }
-            else if(z == endingZ) {
-                if(getBlockAtPosition(block) instanceof ParticleAcceleratorBlockWall &&
-                        getBlockAtPosition(block.up()) instanceof ParticleAcceleratorBlockWall) {
-                    validateAroundPipeXDir(block, getBlockAtPosition(block.up()).getClass());
-                }
-                else {
-                    throw new InvalidSurroundBeamPipeException("Invalid blocks surrounding beam pipe corner.");
-                }
+            else if(i == numBlocks) {
+                validateWallEnd(block, upperBlock, currentPosition, wallEndValidator);
             }
             else {
-                if(getBlockAtPosition(block.up()) instanceof BlockAir) {
-                    throw new InvalidSurroundBeamPipeException("[zDir] Air block found around beam pipe(up).");
-                }
-                else if(!(getBlockAtPosition(block.up()) instanceof ParticleAcceleratorBlockBase)) {
-                    throw new InvalidSurroundBeamPipeException("Block is not a valid accelerator block");
-                }
-                else if(!(getBlockAtPosition(block) instanceof ParticleAcceleratorBlockBeamPipe)) {
-                    throw new InvalidBeamPipeException("Missing beam pipe");
-                }
-                else {
-                    validateAroundPipeXDir(block, getBlockAtPosition(block.up()).getClass());
-                }
+                validatePipeMiddle(block, upperBlock, currentPosition, wallEndValidator);
             }
-            current = current.add(zVector);
+            currentPosition = currentPosition.add(translationVector);
+        }
+    }
+
+    private void validatePipeEnd(Block block,
+                                 BlockPos position,
+                                 Consumer<BlockPos> pipeEndValidator) {
+        if(block instanceof ParticleAcceleratorBlockBeamPipe) {
+            pipeEndValidator.accept(position);
+        }
+    }
+
+    private void validateWallEnd(Block block,
+                                 Block upperBlock,
+                                 BlockPos position,
+                                 BiConsumer<BlockPos, Class> wallEndValidator) {
+        if(block instanceof ParticleAcceleratorBlockWall &&
+                upperBlock instanceof ParticleAcceleratorBlockWall) {
+            wallEndValidator.accept(position, upperBlock.getClass());
+        }
+        else {
+            throw new InvalidSurroundBeamPipeException(
+                    "Invalid blocks surrounding beam pipe corner."
+            );
+        }
+    }
+
+    private void validatePipeMiddle(Block block,
+                                    Block upperBlock,
+                                    BlockPos position,
+                                    BiConsumer<BlockPos, Class> wallEndValidator) {
+        if(upperBlock instanceof BlockAir) {
+            throw new InvalidSurroundBeamPipeException(
+                    "Air block found around beam pipe(up)."
+            );
+        }
+        else if(!(upperBlock instanceof ParticleAcceleratorBlockBase)) {
+            throw new InvalidSurroundBeamPipeException(
+                    "Block is not a valid accelerator block"
+            );
+        }
+        else if(!(block instanceof ParticleAcceleratorBlockBeamPipe)) {
+            throw new InvalidBeamPipeException("Missing beam pipe");
+        }
+        else {
+            wallEndValidator.accept(position, upperBlock.getClass());
+        }
+    }
+
+    private boolean validateAroundPipeXDir(BlockPos centerPosition, Class classType) {
+        return validateAroundPipe(
+                classType, centerPosition, centerPosition.east(), centerPosition.west()
+        );
+    }
+
+    private boolean validateAroundPipeZDir(BlockPos centerPosition, Class classType) {
+        return validateAroundPipe(
+                classType, centerPosition, centerPosition.north(), centerPosition.south()
+        );
+    }
+
+    private boolean validateAroundPipe(Class classType, BlockPos centerPosition,
+                                       BlockPos leftPosition, BlockPos rightPosition) {
+        List<Block> surroundingBlocks = new ArrayList<Block>(8);
+        surroundingBlocks.add(getBlockAtPosition(centerPosition.up()));
+        surroundingBlocks.add(getBlockAtPosition(centerPosition.down()));
+        surroundingBlocks.add(getBlockAtPosition(leftPosition));
+        surroundingBlocks.add(getBlockAtPosition(rightPosition));
+        surroundingBlocks.add(getBlockAtPosition(leftPosition.up()));
+        surroundingBlocks.add(getBlockAtPosition(leftPosition.down()));
+        surroundingBlocks.add(getBlockAtPosition(rightPosition.up()));
+        surroundingBlocks.add(getBlockAtPosition(rightPosition.down()));
+        for(int block = 0; block < 8; ++block) {
+            if(!(surroundingBlocks.get(block).getClass().isAssignableFrom(classType))) {
+                throw new InvalidSurroundBeamPipeException(
+                        "Block surrounding beam pipe does not match the expected type."
+                );
+            }
+        }
+        return true;
+    }
+
+    private void validateAroundPipeXDirCorner(BlockPos centerPosition) {
+        validateAroundPipeCorner(
+                centerPosition, centerPosition.east(), centerPosition.west()
+        );
+    }
+
+    private void validateAroundPipeZDirCorner(BlockPos centerPosition) {
+        validateAroundPipeCorner(
+                centerPosition, centerPosition.north(), centerPosition.south()
+        );
+    }
+
+    // this is the generic method that will be used for both XDirCorner and zDirCorner
+    private void validateAroundPipeCorner(BlockPos centerPosition,
+                                          BlockPos leftPosition,
+                                          BlockPos rightPosition) {
+        List<Block> surroundingBlocks = new ArrayList<Block>(6);
+        List<Block> sideBlocks = new ArrayList<Block>(2);
+        surroundingBlocks.add(getBlockAtPosition(centerPosition.up()));
+        surroundingBlocks.add(getBlockAtPosition(centerPosition.down()));
+        surroundingBlocks.add(getBlockAtPosition(leftPosition.up()));
+        surroundingBlocks.add(getBlockAtPosition(leftPosition.down()));
+        surroundingBlocks.add(getBlockAtPosition(rightPosition.up()));
+        surroundingBlocks.add(getBlockAtPosition(rightPosition.down()));
+        for(int block = 0; block < surroundingBlocks.size(); ++block) {
+            if(!(surroundingBlocks.get(block) instanceof ParticleAcceleratorBlockWall)) {
+                throw new InvalidSurroundBeamPipeException(
+                        "Block surrounding beam pipe does not match the expected type at corner."
+                );
+            }
+        }
+        int beamPipeCount = 0;
+        sideBlocks.add(getBlockAtPosition(leftPosition));
+        sideBlocks.add(getBlockAtPosition(rightPosition));
+        for(int block = 0; block < sideBlocks.size(); ++block) {
+            if(sideBlocks.get(block) instanceof ParticleAcceleratorBlockBeamPipe) {
+                ++beamPipeCount;
+            }
+            else if(sideBlocks.get(block) instanceof ParticleAcceleratorBlockWall) {
+                continue;
+            }
+            else {
+                throw new InvalidSurroundBeamPipeException(
+                        "Invalid block surrounding beam pipe corner."
+                );
+            }
+        }
+
+        if(beamPipeCount != 1) {
+            throw new InvalidBeamPipeException("Missing beam pipe at corner turn.");
         }
     }
 
@@ -576,6 +667,8 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
     }
 
     private List<BlockPos> calculateLengthCorners(List<BlockPos> beamPositions, Vec3i positiveLength, Vec3i negativeLength) {
+        int left = 0;
+        int right = 1;
         List<BlockPos> lengthCorners = new ArrayList<BlockPos>(2);
         BlockPos leftCorner = getSingleCorner(beamPositions.get(BeamSourceIndices.LEFT), positiveLength);
         BlockPos rightCorner = getSingleCorner(beamPositions.get(BeamSourceIndices.RIGHT), negativeLength);
@@ -583,7 +676,7 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
         lengthCorners.add(CornerIndices.FRONT_LEFT, leftCorner);
         lengthCorners.add(CornerIndices.FRONT_RIGHT, rightCorner);
 
-        if(areBlocksSymmetricalToController(lengthCorners.get(0), lengthCorners.get(1))) {
+        if(areBlocksSymmetricalToController(lengthCorners.get(left), lengthCorners.get(right))) {
             return lengthCorners;
         }
 
@@ -591,6 +684,8 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
     }
 
     private List<BlockPos> calculateDepthCorners(List<BlockPos> lengthCorners, Vec3i depthVector) {
+        int left = 0;
+        int right = 1;
         List<BlockPos> depthCorners = new ArrayList<BlockPos>(2);
         BlockPos leftCorner = getSingleCorner(lengthCorners.get(CornerIndices.FRONT_LEFT), depthVector);
         BlockPos rightCorner = getSingleCorner(lengthCorners.get(CornerIndices.FRONT_RIGHT), depthVector);
@@ -598,7 +693,7 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
         depthCorners.add(leftCorner);
         depthCorners.add(rightCorner);
 
-        if(areBlocksSymmetricalToController(depthCorners.get(0), depthCorners.get(1))) {
+        if(areBlocksSymmetricalToController(depthCorners.get(left), depthCorners.get(right))) {
             return depthCorners;
         }
 
@@ -618,116 +713,6 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
         }
         while(nextBlock instanceof ParticleAcceleratorBlockBeamPipe);
         return position.subtract(addition);
-    }
-
-    private boolean validateAroundPipeXDir(BlockPos centerPosition, Class classType) {
-        List<Block> surroundingBlocks = new ArrayList<Block>(8);
-        surroundingBlocks.add(getBlockAtPosition(centerPosition.up()));
-        surroundingBlocks.add(getBlockAtPosition(centerPosition.down()));
-        surroundingBlocks.add(getBlockAtPosition(centerPosition.east()));
-        surroundingBlocks.add(getBlockAtPosition(centerPosition.west()));
-        surroundingBlocks.add(getBlockAtPosition(centerPosition.east().up()));
-        surroundingBlocks.add(getBlockAtPosition(centerPosition.east().down()));
-        surroundingBlocks.add(getBlockAtPosition(centerPosition.west().up()));
-        surroundingBlocks.add(getBlockAtPosition(centerPosition.west().down()));
-        for(int block = 0; block < 8; ++block) {
-            if(!(surroundingBlocks.get(block).getClass().isAssignableFrom(classType))) {
-                throw new InvalidSurroundBeamPipeException("Block surrounding beam pipe does not match the expected type.");
-            }
-        }
-        return true;
-    }
-
-    private void validateAroundPipeXDirCorner(BlockPos centerPosition) {
-        List<Block> surroundingBlocks = new ArrayList<Block>(6);
-        List<Block> sideBlocks = new ArrayList<Block>(2);
-        surroundingBlocks.add(getBlockAtPosition(centerPosition.up()));
-        surroundingBlocks.add(getBlockAtPosition(centerPosition.down()));
-        surroundingBlocks.add(getBlockAtPosition(centerPosition.east().up()));
-        surroundingBlocks.add(getBlockAtPosition(centerPosition.east().down()));
-        surroundingBlocks.add(getBlockAtPosition(centerPosition.west().up()));
-        surroundingBlocks.add(getBlockAtPosition(centerPosition.west().down()));
-        for(int block = 0; block < surroundingBlocks.size(); ++block) {
-            if(!(surroundingBlocks.get(block) instanceof ParticleAcceleratorBlockWall)) {
-                throw new InvalidSurroundBeamPipeException(
-                        "Block surrounding beam pipe does not match the expected type at corner."
-                );
-            }
-        }
-        int beamPipeCount = 0;
-        sideBlocks.add(getBlockAtPosition(centerPosition.east()));
-        sideBlocks.add(getBlockAtPosition(centerPosition.west()));
-        for(int block = 0; block < sideBlocks.size(); ++block) {
-            if(sideBlocks.get(block) instanceof ParticleAcceleratorBlockBeamPipe) {
-                ++beamPipeCount;
-            }
-            else if(sideBlocks.get(block) instanceof ParticleAcceleratorBlockWall) {
-                continue;
-            }
-            else {
-                throw new InvalidSurroundBeamPipeException("Invalid block surrounding beam pipe corner.");
-            }
-        }
-
-        if(beamPipeCount != 1) {
-            throw new InvalidBeamPipeException("Missing beam pipe at corner turn.");
-        }
-    }
-
-    private boolean validateAroundPipeZDir(BlockPos centerPosition, Class classType) {
-        List<Block> surroundingBlocks = new ArrayList<Block>(8);
-        surroundingBlocks.add(getBlockAtPosition(centerPosition.up()));
-        surroundingBlocks.add(getBlockAtPosition(centerPosition.down()));
-        surroundingBlocks.add(getBlockAtPosition(centerPosition.north()));
-        surroundingBlocks.add(getBlockAtPosition(centerPosition.south()));
-        surroundingBlocks.add(getBlockAtPosition(centerPosition.north().up()));
-        surroundingBlocks.add(getBlockAtPosition(centerPosition.north().down()));
-        surroundingBlocks.add(getBlockAtPosition(centerPosition.south().up()));
-        surroundingBlocks.add(getBlockAtPosition(centerPosition.south().down()));
-        for(int block = 0; block < 8; ++block) {
-            if(!(surroundingBlocks.get(block).getClass().isAssignableFrom(classType))) {
-                throw new InvalidSurroundBeamPipeException(
-                        "Block surrounding beam pipe does not match the expected type."
-                );
-            }
-        }
-        return true;
-    }
-
-    private void validateAroundPipeZDirCorner(BlockPos centerPosition) {
-        List<Block> surroundingBlocks = new ArrayList<Block>(6);
-        List<Block> sideBlocks = new ArrayList<Block>(2);
-        surroundingBlocks.add(getBlockAtPosition(centerPosition.up()));
-        surroundingBlocks.add(getBlockAtPosition(centerPosition.down()));
-        surroundingBlocks.add(getBlockAtPosition(centerPosition.north().up()));
-        surroundingBlocks.add(getBlockAtPosition(centerPosition.north().down()));
-        surroundingBlocks.add(getBlockAtPosition(centerPosition.south().up()));
-        surroundingBlocks.add(getBlockAtPosition(centerPosition.south().down()));
-        for(int block = 0; block < surroundingBlocks.size(); ++block) {
-            if(!(surroundingBlocks.get(block) instanceof ParticleAcceleratorBlockWall)) {
-                throw new InvalidSurroundBeamPipeException(
-                        "Block surrounding beam pipe does not match the expected type at corner."
-                );
-            }
-        }
-        int beamPipeCount = 0;
-        sideBlocks.add(getBlockAtPosition(centerPosition.north()));
-        sideBlocks.add(getBlockAtPosition(centerPosition.south()));
-        for(int block = 0; block < sideBlocks.size(); ++block) {
-            if(sideBlocks.get(block) instanceof ParticleAcceleratorBlockBeamPipe) {
-                ++beamPipeCount;
-            }
-            else if(sideBlocks.get(block) instanceof ParticleAcceleratorBlockWall) {
-                continue;
-            }
-            else {
-                throw new InvalidSurroundBeamPipeException("Invalid block surrounding beam pipe corner.");
-            }
-        }
-
-        if(beamPipeCount != 1) {
-            throw new InvalidBeamPipeException("Missing beam pipe at corner turn.");
-        }
     }
 
     private boolean areCornerCoordinatesValid(List<BlockPos> cornerPositions) {
@@ -850,7 +835,7 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
 
     private class BeamSourceIndices {
         static final int LEFT = 0;
-        static final int RIGHT = 0;
+        static final int RIGHT = 1;
     }
 
     private class CornerIndices {
@@ -867,8 +852,8 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
     }
 
     private class ExpectedMinimumAcceleratorSizes {
-        static final int LENGTH_OF_PIPE = 9;
-        static final int DEPTH_OF_PIPE = 5;
+        static final int LENGTH_OF_PIPE = 5;
+        static final int DEPTH_OF_PIPE = 3;
     }
 
     // -----------------------------------------------------------------------
