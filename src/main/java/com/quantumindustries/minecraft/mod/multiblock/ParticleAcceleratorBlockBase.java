@@ -78,16 +78,16 @@ public abstract class ParticleAcceleratorBlockBase extends BlockBase {
     }
 
     private boolean canActivate(World world, EnumHand hand, ItemStack heldItem) {
-        if (world.isRemote) {
+        if(world.isRemote) {
             return false;
         }
-        else if (hand != EnumHand.OFF_HAND) {
+        else if(hand != EnumHand.OFF_HAND) {
             return false;
         }
-        else if (heldItem != null) {
+        else if(heldItem != null) {
             return false;
         }
-        else {
+        else{
             return true;
         }
     }
