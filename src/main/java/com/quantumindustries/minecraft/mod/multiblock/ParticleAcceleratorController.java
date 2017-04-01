@@ -22,9 +22,6 @@ import static java.lang.Math.abs;
 
 public class ParticleAcceleratorController extends MultiblockControllerBase {
 
-    private ParticleAcceleratorPowerTileEntity powerPort;
-    private ParticleAcceleratorIOPortTileEntity inputPort;
-    private ParticleAcceleratorIOPortTileEntity outputPort;
     private List<ParticleAcceleratorIOPortTileEntity> outputPorts;
     private List<ParticleAcceleratorIOPortTileEntity> inputPorts;
     private List<ParticleAcceleratorPowerTileEntity> powerPorts;
@@ -41,13 +38,11 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
     public ParticleAcceleratorController(World world) {
         super(world);
 
-        powerPort = null;
-        inputPort = null;
-        outputPort = null;
         outputPorts =  new ArrayList<ParticleAcceleratorIOPortTileEntity>();
         inputPorts =  new ArrayList<ParticleAcceleratorIOPortTileEntity>();
         powerPorts =  new ArrayList<ParticleAcceleratorPowerTileEntity>();
         controllerBlock = null;
+        controllerBlockPosition = null;
         isActive = false;
         actualAcceleratorSizes = new ActualAcceleratorSizes();
     }
@@ -152,20 +147,16 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
     @Override
     protected boolean isMachineWhole(IMultiblockValidator validatorCallback) {
         resetCounts();
-        ParticleAcceleratorBlocksFound blocksFound = new ParticleAcceleratorBlocksFound();
 
         List<BlockPos> beamSourcePositions;
         List<BlockPos> cornerPositions;
 
         try {
-            blocksFound = countBlocks(blocksFound);
-
+            ParticleAcceleratorBlocksFound blocksFound = countBlocks();
             validateBlockCounts();
-
             validateControllerTopBottom();
 
             beamSourcePositions = getBeamSources(controllerBlockPosition);
-
             validateBeamSourcesTopBottom(beamSourcePositions.get(BeamSourceIndices.LEFT));
             validateBeamSourcesTopBottom(beamSourcePositions.get(BeamSourceIndices.RIGHT));
 
@@ -175,7 +166,6 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
                     cornerPositions.get(CornerIndices.FRONT_LEFT),
                     cornerPositions.get(CornerIndices.FRONT_RIGHT)
             ) - 1;
-
             actualAcceleratorSizes.depthPipe = calculateDistanceBetweenCorners(
                     cornerPositions.get(CornerIndices.FRONT_LEFT),
                     cornerPositions.get(CornerIndices.BACK_LEFT)
@@ -220,7 +210,8 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
         }
     }
 
-    private ParticleAcceleratorBlocksFound countBlocks(ParticleAcceleratorBlocksFound blocksFound) {
+    private ParticleAcceleratorBlocksFound countBlocks() {
+        ParticleAcceleratorBlocksFound blocksFound = new ParticleAcceleratorBlocksFound();
         for(IMultiblockPart part : connectedParts) {
             Block currentBlock = getBlockAtPosition(part.getWorldPosition());
             if(part instanceof ParticleAcceleratorControllerTileEntity && currentCounts.controllerBlock == 0) {
@@ -647,7 +638,7 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
                                                  Vec3i positiveDirection, Vec3i negativeDirection,
                                                  Vec3i positiveDepthDirection, Vec3i negativeDepthDirection) {
         List<BlockPos> lengthCorners = calculateLengthCorners(beamPositions, positiveDirection, negativeDirection);
-        List<BlockPos> depthCorners = new ArrayList<BlockPos>(2);
+        List<BlockPos> depthCorners;
         List<BlockPos> cornerPositions = new ArrayList<BlockPos>(4);
 
         Block frontLeft = getBlockAtPosition(lengthCorners.get(CornerIndices.FRONT_LEFT).add(positiveDepthDirection));

@@ -87,9 +87,7 @@ public abstract class ParticleAcceleratorBlockBase extends BlockBase {
         else if(heldItem != null) {
             return false;
         }
-        else{
-            return true;
-        }
+        return true;
     }
 
     protected IMultiblockPart getMultiblockPartAt(IBlockAccess world, BlockPos position) {
@@ -97,9 +95,7 @@ public abstract class ParticleAcceleratorBlockBase extends BlockBase {
         if(tile instanceof IMultiblockPart) {
             return (IMultiblockPart) tile;
         }
-        else {
-            return null;
-        }
+        return null;
     }
 
     protected MultiblockControllerBase getMultiblockController(IBlockAccess world, BlockPos position) {
@@ -107,9 +103,7 @@ public abstract class ParticleAcceleratorBlockBase extends BlockBase {
         if(part != null) {
             return part.getMultiblockController();
         }
-        else {
-            return null;
-        }
+        return null;
     }
 
     protected ParticleAcceleratorController getAcceleratorController(IBlockAccess world, BlockPos position) {
