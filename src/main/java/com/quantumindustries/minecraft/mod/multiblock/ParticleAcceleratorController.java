@@ -5,6 +5,8 @@ import it.zerono.mods.zerocore.api.multiblock.MultiblockControllerBase;
 import it.zerono.mods.zerocore.api.multiblock.validation.IMultiblockValidator;
 import it.zerono.mods.zerocore.lib.block.ModTileEntity;
 import it.zerono.mods.zerocore.util.WorldHelper;
+import net.darkhax.tesla.api.ITeslaConsumer;
+import net.darkhax.tesla.api.ITeslaHolder;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.nbt.NBTTagCompound;
@@ -20,7 +22,7 @@ import java.util.function.Consumer;
 
 import static java.lang.Math.abs;
 
-public class ParticleAcceleratorController extends MultiblockControllerBase {
+public class ParticleAcceleratorController extends MultiblockControllerBase implements ITeslaConsumer, ITeslaHolder{
 
     private ParticleAcceleratorPowerTileEntity powerPort;
     private ParticleAcceleratorIOPortTileEntity inputPort;
@@ -34,6 +36,12 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
 
     private static final int ACCELERATOR_SIZE_TOTAL = 27;
     private static final int ACCELERATOR_DIMENSIONAL_SIZE = 10;
+
+    // Power Related Variables
+    private int maxPowerConsumptionRate;
+    private int minPowerConsumptionRate;
+    private int maxPowerStorage;
+    private int currentPowerStored;
 
     public ParticleAcceleratorController(World world) {
         super(world);
@@ -86,27 +94,62 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
 
     @Override
     protected void onBlockRemoved(IMultiblockPart iMultiblockPart) {
-        // TODO(CM): Either fix empty method or format to show we aren't using it.
+        if(iMultiblockPart instanceof ParticleAcceleratorPowerTileEntity) {
+
+            ParticleAcceleratorPowerTileEntity tile = (ParticleAcceleratorPowerTileEntity) iMultiblockPart;
+
+            if(powerPort == tile) {
+                powerPort = null;
+            }
+
+        }
+        else if(iMultiblockPart instanceof ParticleAcceleratorIOPortTileEntity) {
+
+            ParticleAcceleratorIOPortTileEntity tile = (ParticleAcceleratorIOPortTileEntity) iMultiblockPart;
+
+            if(outputPort == tile) {
+                outputPort = null;
+            }
+            else if(inputPort == tile) {
+                inputPort = null;
+            }
+        }
     }
 
     @Override
     protected void onMachineAssembled() {
-        // TODO(CM): Either fix empty method or format to show we aren't using it.
+        lookupPorts();
+
+        // on the client, force a render update
+        if(WorldHelper.calledByLogicalClient(WORLD)) {
+            markMultiblockForRenderUpdate();
+        }
     }
 
     @Override
     protected void onMachineRestored() {
-        // TODO(CM): Either fix empty method or format to show we aren't using it.
+        this.lookupPorts();
+
+        // on the client, force a render update
+        if(WORLD.isRemote) {
+            markMultiblockForRenderUpdate();
+        }
     }
 
     @Override
     protected void onMachinePaused() {
-        // TODO(CM): Either fix empty method or format to show we aren't using it.
+        // on the client, force a render update
+        if(WORLD.isRemote) {
+            markMultiblockForRenderUpdate();
+        }
     }
 
     @Override
     protected void onMachineDisassembled() {
-        // TODO(CM): This function in particular needs to be written to make sure all proper variables have been reset.
+        // on the client, force a render update
+        if(WORLD.isRemote) {
+            markMultiblockForRenderUpdate();
+        }
     }
 
     @Override
@@ -752,6 +795,30 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
     private boolean zCoordinatesAreEqual(BlockPos start, BlockPos end) {
         return (start.getZ() - end.getZ()) == 0;
     }
+
+    private void lookupPorts() {
+        outputPort = inputPort = null;
+        powerPort = null;
+
+        for(IMultiblockPart part : connectedParts) {
+            if(part instanceof ParticleAcceleratorPowerTileEntity) {
+                powerPort = (ParticleAcceleratorPowerTileEntity) part;
+            }
+            if(part instanceof ParticleAcceleratorIOPortTileEntity) {
+                ParticleAcceleratorIOPortTileEntity io = (ParticleAcceleratorIOPortTileEntity)part;
+                if (io.isInput()) {
+                    inputPort = io;
+                }
+                else {
+                    outputPort = io;
+                }
+            }
+            if(part instanceof ParticleAcceleratorControllerTileEntity) {
+                controllerBlock = (ParticleAcceleratorControllerTileEntity) part;
+                controllerBlockPosition = part.getWorldPosition();
+            }
+        }
+    }
     @Override
     protected void onAssimilate(MultiblockControllerBase multiblockControllerBase) {
         // TODO(CM): Either fix empty method or format to show we aren't using it.
@@ -806,6 +873,25 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
     @Override
     protected void syncDataTo(NBTTagCompound nbtTagCompound, ModTileEntity.SyncReason syncReason) {
         // TODO(CM): Either fix empty method or format to show we aren't using it.
+    }
+
+    // -----------------------------------------------------------------------
+    // Power Functions
+    // -----------------------------------------------------------------------
+
+    @Override
+    public long givePower(long l, boolean b) {
+        return 0;
+    }
+
+    @Override
+    public long getStoredPower() {
+        return 0;
+    }
+
+    @Override
+    public long getCapacity() {
+        return 0;
     }
 
     // -----------------------------------------------------------------------

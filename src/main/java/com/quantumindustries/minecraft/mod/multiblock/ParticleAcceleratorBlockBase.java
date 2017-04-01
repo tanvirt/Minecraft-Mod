@@ -13,6 +13,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -58,12 +59,24 @@ public abstract class ParticleAcceleratorBlockBase extends BlockBase {
             return false;
         }
 
-        ParticleAcceleratorController controller = this.getAcceleratorController(world, position);
+        ParticleAcceleratorController controller = getAcceleratorController(world, position);
+
+//        if(isControllerHit(hitX, hitY, hitZ, controller.getReferenceCoord())) {
+//            if(player.isSneaking()) {
+//                controller.toggleActive();
+//                player.addChatMessage(new TextComponentString("activated PA"));
+//                return true;
+//            }
+//        }
 
         // TODO(CM): fix this logic to actually work for our machine instead of tutorial
         if(controller != null) {
+            if(isPlayerHittingController(state)) {
+
+            }
             if(player.isSneaking()) {
                 controller.toggleActive();
+                player.addChatMessage(new TextComponentString("activated PA"));
                 return true;
             }
             else {
@@ -81,7 +94,7 @@ public abstract class ParticleAcceleratorBlockBase extends BlockBase {
         if (world.isRemote) {
             return false;
         }
-        else if (hand != EnumHand.OFF_HAND) {
+        else if (hand != EnumHand.MAIN_HAND) {
             return false;
         }
         else if (heldItem != null) {
@@ -120,5 +133,9 @@ public abstract class ParticleAcceleratorBlockBase extends BlockBase {
         else {
             return null;
         }
+    }
+
+    private boolean isPlayerHittingController(IBlockState state) {
+        return state.getBlock() instanceof ParticleAcceleratorBlockController;
     }
 }
