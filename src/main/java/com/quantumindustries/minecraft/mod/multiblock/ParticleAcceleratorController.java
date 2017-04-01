@@ -24,9 +24,9 @@ import static java.lang.Math.abs;
 
 public class ParticleAcceleratorController extends MultiblockControllerBase implements ITeslaConsumer, ITeslaHolder{
 
-    private ParticleAcceleratorPowerTileEntity powerPort;
-    private ParticleAcceleratorIOPortTileEntity inputPort;
-    private ParticleAcceleratorIOPortTileEntity outputPort;
+    private List<ParticleAcceleratorIOPortTileEntity> outputPorts;
+    private List<ParticleAcceleratorIOPortTileEntity> inputPorts;
+    private List<ParticleAcceleratorPowerTileEntity> powerPorts;
     private ParticleAcceleratorControllerTileEntity controllerBlock;
     private BlockPos controllerBlockPosition;
     private boolean isActive;
@@ -46,10 +46,11 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
     public ParticleAcceleratorController(World world) {
         super(world);
 
-        powerPort = null;
-        inputPort = null;
-        outputPort = null;
+        outputPorts =  new ArrayList<ParticleAcceleratorIOPortTileEntity>();
+        inputPorts =  new ArrayList<ParticleAcceleratorIOPortTileEntity>();
+        powerPorts =  new ArrayList<ParticleAcceleratorPowerTileEntity>();
         controllerBlock = null;
+        controllerBlockPosition = null;
         isActive = false;
         actualAcceleratorSizes = new ActualAcceleratorSizes();
     }
@@ -74,7 +75,6 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
             // on the server side, request an update to be sent to the client and mark the save delegate as dirty
             markReferenceCoordForUpdate();
             markReferenceCoordDirty();
-
         }
         else {
             // on the client, request a render update
@@ -190,63 +190,16 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
     @Override
     protected boolean isMachineWhole(IMultiblockValidator validatorCallback) {
         resetCounts();
-        ParticleAcceleratorPowerTileEntity powerPortFound = null;
-        ParticleAcceleratorIOPortTileEntity inputPortFound = null;
-        ParticleAcceleratorIOPortTileEntity outputPortFound = null;
-        ParticleAcceleratorControllerTileEntity controllerFound = null;
-        List<ParticleAcceleratorIOPortTileEntity> outputPortsFound = new ArrayList<ParticleAcceleratorIOPortTileEntity>();
-        List<ParticleAcceleratorIOPortTileEntity> inputPortsFound = new ArrayList<ParticleAcceleratorIOPortTileEntity>();
 
         List<BlockPos> beamSourcePositions;
         List<BlockPos> cornerPositions;
 
         try {
-            for(IMultiblockPart part : connectedParts) {
-                Block currentBlock = getBlockAtPosition(part.getWorldPosition());
-                if(part instanceof ParticleAcceleratorControllerTileEntity && currentCounts.controllerBlock == 0) {
-                    ++currentCounts.controllerBlock;
-                    controllerBlockPosition = part.getWorldPosition();
-                    controllerFound = (ParticleAcceleratorControllerTileEntity) part;
-                }
-                else if(part instanceof ParticleAcceleratorControllerTileEntity && currentCounts.controllerBlock == 1) {
-                    throw new InvalidControllerException("Found 2 controllers, there should only be 1.");
-                }
-                else if(currentBlock instanceof ParticleAcceleratorBlockMagnet) {
-                    ++currentCounts.magnetBlock;
-                }
-                else if(currentBlock instanceof ParticleAcceleratorBlockDetector) {
-                    ++currentCounts.detectorBlock;
-                }
-                else if(currentBlock instanceof ParticleAcceleratorBlockTarget) {
-                    ++currentCounts.targetBlock;
-                }
-                else if(currentBlock instanceof ParticleAcceleratorBlockBeamSource) {
-                    ++currentCounts.beamSource;
-                }
-                else if(part instanceof ParticleAcceleratorPowerTileEntity) {
-                    ++currentCounts.powerPort;
-                    powerPortFound = (ParticleAcceleratorPowerTileEntity) part;
-                }
-                else if(part instanceof ParticleAcceleratorIOPortTileEntity) {
-                    ParticleAcceleratorIOPortTileEntity tempIO = (ParticleAcceleratorIOPortTileEntity) part;
-                    if(tempIO.isInput()) {
-                        ++currentCounts.inputPort;
-                        inputPortFound = tempIO;
-                    }
-                    else {
-                        ++currentCounts.outputPort;
-                        outputPortFound = tempIO;
-                    }
-                }
-            }
-
-
+            ParticleAcceleratorBlocksFound blocksFound = countBlocks();
             validateBlockCounts();
-
             validateControllerTopBottom();
 
             beamSourcePositions = getBeamSources(controllerBlockPosition);
-
             validateBeamSourcesTopBottom(beamSourcePositions.get(BeamSourceIndices.LEFT));
             validateBeamSourcesTopBottom(beamSourcePositions.get(BeamSourceIndices.RIGHT));
 
@@ -256,7 +209,6 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
                     cornerPositions.get(CornerIndices.FRONT_LEFT),
                     cornerPositions.get(CornerIndices.FRONT_RIGHT)
             ) - 1;
-
             actualAcceleratorSizes.depthPipe = calculateDistanceBetweenCorners(
                     cornerPositions.get(CornerIndices.FRONT_LEFT),
                     cornerPositions.get(CornerIndices.BACK_LEFT)
@@ -286,10 +238,10 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
             FMLLog.warning("[%s] Sides are valid", WORLD.isRemote ? "CLIENT" : "SERVER");
 
             // Set class variables for Tile Entities
-            powerPort = powerPortFound;
-            inputPort = inputPortFound;
-            outputPort = outputPortFound;
-            controllerBlock = controllerFound;
+            powerPorts = blocksFound.powerPortsFound;
+            inputPorts = blocksFound.inputPortsFound;
+            outputPorts = blocksFound.outputPortsFound;
+            controllerBlock = blocksFound.controllerFound;
 
             return true;
         }
@@ -299,6 +251,49 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
             resetCounts();
             return false;
         }
+    }
+
+    private ParticleAcceleratorBlocksFound countBlocks() {
+        ParticleAcceleratorBlocksFound blocksFound = new ParticleAcceleratorBlocksFound();
+        for(IMultiblockPart part : connectedParts) {
+            Block currentBlock = getBlockAtPosition(part.getWorldPosition());
+            if(part instanceof ParticleAcceleratorControllerTileEntity && currentCounts.controllerBlock == 0) {
+                ++currentCounts.controllerBlock;
+                controllerBlockPosition = part.getWorldPosition();
+                blocksFound.controllerFound = (ParticleAcceleratorControllerTileEntity) part;
+            }
+            else if(part instanceof ParticleAcceleratorControllerTileEntity && currentCounts.controllerBlock == 1) {
+                throw new InvalidControllerException("Found 2 controllers, there should only be 1.");
+            }
+            else if(currentBlock instanceof ParticleAcceleratorBlockMagnet) {
+                ++currentCounts.magnetBlock;
+            }
+            else if(currentBlock instanceof ParticleAcceleratorBlockDetector) {
+                ++currentCounts.detectorBlock;
+            }
+            else if(currentBlock instanceof ParticleAcceleratorBlockTarget) {
+                ++currentCounts.targetBlock;
+            }
+            else if(currentBlock instanceof ParticleAcceleratorBlockBeamSource) {
+                ++currentCounts.beamSource;
+            }
+            else if(part instanceof ParticleAcceleratorPowerTileEntity) {
+                ++currentCounts.powerPort;
+                blocksFound.powerPortsFound.add((ParticleAcceleratorPowerTileEntity) part);
+            }
+            else if(part instanceof ParticleAcceleratorIOPortTileEntity) {
+                ParticleAcceleratorIOPortTileEntity tempIO = (ParticleAcceleratorIOPortTileEntity) part;
+                if(tempIO.isInput()) {
+                    ++currentCounts.inputPort;
+                    blocksFound.inputPortsFound.add(tempIO);
+                }
+                else {
+                    ++currentCounts.outputPort;
+                    blocksFound.outputPortsFound.add(tempIO);
+                }
+            }
+        }
+        return blocksFound;
     }
 
     private void resetCounts() {
@@ -342,7 +337,7 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
         if(totalBlocks != connectedParts.size()) {
             throw new InvalidShapeException(
                     "Found too many blocks for current accelerator size, " +
-                            "maybe there is an extra block connected somewhere?"
+                    "maybe there is an extra block connected somewhere?"
             );
         }
         actualAcceleratorSizes.total = totalBlocks;
@@ -418,36 +413,33 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
 
     private List<BlockPos> getBeamSources(BlockPos controllerPosition) {
         List<BlockPos> sources = new ArrayList<BlockPos>(2);
-        boolean sourceXDir = isBeamSourceXDirection(controllerPosition);
-        boolean sourceZDir = isBeamSourceZDirection(controllerPosition);
+
+        boolean sourceXDir = beamSourcesAreInDirection(controllerPosition, new Vec3i(1, 0, 0));
+        boolean sourceZDir = beamSourcesAreInDirection(controllerPosition, new Vec3i(0, 0, 1));
+
         if(sourceXDir && sourceZDir) {
             throw new InvalidBeamSourceException("Beam sources found in both Z and X directions.");
         }
-        else if(sourceXDir) {
-            Vec3i xVector = new Vec3i(1, 0, 0);
-            sources.add(controllerPosition.add(xVector));
-            sources.add(controllerPosition.subtract(xVector));
-            return sources;
+        if(!sourceXDir && !sourceZDir) {
+            throw new InvalidBeamSourceException("Beam Sources not found.");
         }
-        else if(sourceZDir) {
-            Vec3i zVector = new Vec3i(0, 0, 1);
-            sources.add(controllerPosition.add(zVector));
-            sources.add(controllerPosition.subtract(zVector));
-            return sources;
+
+        Vec3i translationVector;
+        if(sourceXDir) {
+            translationVector = new Vec3i(1, 0, 0);
         }
-        throw new InvalidBeamSourceException("Beam Sources not found.");
+        else {
+            translationVector = new Vec3i(0, 0, 1);
+        }
+        sources.add(controllerPosition.add(translationVector));
+        sources.add(controllerPosition.subtract(translationVector));
+
+        return sources;
     }
 
-    private boolean isBeamSourceXDirection(BlockPos position) {
-        Vec3i xVector = new Vec3i(1, 0, 0);
-        return getBlockAtPosition(position.add(xVector)) instanceof ParticleAcceleratorBlockBeamSource &&
-                getBlockAtPosition(position.subtract(xVector)) instanceof ParticleAcceleratorBlockBeamSource;
-    }
-
-    private boolean isBeamSourceZDirection(BlockPos position) {
-        Vec3i zVector = new Vec3i(0, 0, 1);
-        return getBlockAtPosition(position.add(zVector)) instanceof ParticleAcceleratorBlockBeamSource &&
-                getBlockAtPosition(position.subtract(zVector)) instanceof ParticleAcceleratorBlockBeamSource;
+    private boolean beamSourcesAreInDirection(BlockPos position, Vec3i direction) {
+        return getBlockAtPosition(position.add(direction)) instanceof ParticleAcceleratorBlockBeamSource &&
+                getBlockAtPosition(position.subtract(direction)) instanceof ParticleAcceleratorBlockBeamSource;
     }
 
     private void validateAcceleratorSides(List<BlockPos> corners, List<BlockPos> beamSources) {
@@ -662,49 +654,48 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
     }
 
     private List<BlockPos> getAllCorners(List<BlockPos> beamPositions) {
-        List<BlockPos> lengthCorners = new ArrayList<BlockPos>(2);
-        List<BlockPos> depthCorners = new ArrayList<BlockPos>(2);
         List<BlockPos> cornerPositions = new ArrayList<BlockPos>(4);
-        Vec3i positiveXVector = new Vec3i(1, 0, 0);
-        Vec3i negativeXVector = new Vec3i(-1, 0, 0);
+
         Vec3i positiveZVector = new Vec3i(0, 0, 1);
         Vec3i negativeZVector = new Vec3i(0, 0, -1);
+        Vec3i positiveXVector = new Vec3i(1, 0, 0);
+        Vec3i negativeXVector = new Vec3i(-1, 0, 0);
 
         if(beamPositions.get(BeamSourceIndices.LEFT).getZ() ==
                 beamPositions.get(BeamSourceIndices.RIGHT).getZ()) {
-            lengthCorners = calculateLengthCorners(beamPositions, positiveXVector, negativeXVector);
-
-            Block frontLeft = getBlockAtPosition(lengthCorners.get(CornerIndices.FRONT_LEFT).add(positiveZVector));
-            Block frontRight = getBlockAtPosition(lengthCorners.get(CornerIndices.FRONT_RIGHT).add(positiveZVector));
-            if(frontLeft instanceof ParticleAcceleratorBlockBeamPipe &&
-                    frontRight instanceof ParticleAcceleratorBlockBeamPipe) {
-                depthCorners = calculateDepthCorners(lengthCorners, positiveZVector);
-            }
-            else {
-                depthCorners = calculateDepthCorners(lengthCorners, negativeZVector);
-            }
+            cornerPositions = getCornersByDirection(beamPositions, positiveXVector, negativeXVector, positiveZVector, negativeZVector);
         }
         else if(beamPositions.get(BeamSourceIndices.LEFT).getX() ==
                 beamPositions.get(BeamSourceIndices.RIGHT).getX()) {
-            lengthCorners = calculateLengthCorners(beamPositions, positiveZVector, negativeZVector);
+            cornerPositions = getCornersByDirection(beamPositions, positiveZVector, negativeZVector, positiveXVector, negativeXVector);
+        }
 
-            Block frontLeft = getBlockAtPosition(lengthCorners.get(CornerIndices.FRONT_LEFT).add(positiveXVector));
-            Block frontRight = getBlockAtPosition(lengthCorners.get(CornerIndices.FRONT_RIGHT).add(positiveXVector));
-            if(frontLeft instanceof ParticleAcceleratorBlockBeamPipe &&
-                    frontRight instanceof ParticleAcceleratorBlockBeamPipe) {
-                depthCorners = calculateDepthCorners(lengthCorners, positiveXVector);
-            }
-            else {
-                depthCorners = calculateDepthCorners(lengthCorners, negativeXVector);
-            }
+        if(!cornerCoordinatesAreValid(cornerPositions)) {
+            throw new InvalidShapeException("Not a valid rectangle according to the corners.");
+        }
+
+        return cornerPositions;
+    }
+
+    private List<BlockPos> getCornersByDirection(List<BlockPos> beamPositions,
+                                                 Vec3i positiveDirection, Vec3i negativeDirection,
+                                                 Vec3i positiveDepthDirection, Vec3i negativeDepthDirection) {
+        List<BlockPos> lengthCorners = calculateLengthCorners(beamPositions, positiveDirection, negativeDirection);
+        List<BlockPos> depthCorners;
+        List<BlockPos> cornerPositions = new ArrayList<BlockPos>(4);
+
+        Block frontLeft = getBlockAtPosition(lengthCorners.get(CornerIndices.FRONT_LEFT).add(positiveDepthDirection));
+        Block frontRight = getBlockAtPosition(lengthCorners.get(CornerIndices.FRONT_RIGHT).add(positiveDepthDirection));
+        if(frontLeft instanceof ParticleAcceleratorBlockBeamPipe &&
+                frontRight instanceof ParticleAcceleratorBlockBeamPipe) {
+            depthCorners = calculateDepthCorners(lengthCorners, positiveDepthDirection);
+        }
+        else {
+            depthCorners = calculateDepthCorners(lengthCorners, negativeDepthDirection);
         }
 
         cornerPositions.addAll(lengthCorners);
         cornerPositions.addAll(depthCorners);
-
-        if(!areCornerCoordinatesValid(cornerPositions)) {
-            throw new InvalidShapeException("Not a valid rectangle according to the corners.");
-        }
 
         return cornerPositions;
     }
@@ -719,7 +710,7 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
         lengthCorners.add(CornerIndices.FRONT_LEFT, leftCorner);
         lengthCorners.add(CornerIndices.FRONT_RIGHT, rightCorner);
 
-        if(areBlocksSymmetricalToController(lengthCorners.get(left), lengthCorners.get(right))) {
+        if(blocksAreSymmetricalToController(lengthCorners.get(left), lengthCorners.get(right))) {
             return lengthCorners;
         }
 
@@ -736,7 +727,7 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
         depthCorners.add(leftCorner);
         depthCorners.add(rightCorner);
 
-        if(areBlocksSymmetricalToController(depthCorners.get(left), depthCorners.get(right))) {
+        if(blocksAreSymmetricalToController(depthCorners.get(left), depthCorners.get(right))) {
             return depthCorners;
         }
 
@@ -758,7 +749,7 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
         return position.subtract(addition);
     }
 
-    private boolean areCornerCoordinatesValid(List<BlockPos> cornerPositions) {
+    private boolean cornerCoordinatesAreValid(List<BlockPos> cornerPositions) {
         int length1 = calculateCoordinateDistance(
                 cornerPositions.get(CornerIndices.FRONT_LEFT),
                 cornerPositions.get(CornerIndices.FRONT_RIGHT)
@@ -782,7 +773,7 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
         return WORLD.getBlockState(position).getBlock();
     }
 
-    private boolean areBlocksSymmetricalToController(BlockPos block1, BlockPos block2) {
+    private boolean blocksAreSymmetricalToController(BlockPos block1, BlockPos block2) {
         int distanceToController1 = calculateCoordinateDistance(block1, controllerBlockPosition);
         int distanceToController2 = calculateCoordinateDistance(block2, controllerBlockPosition);
         return distanceToController1 == distanceToController2;
@@ -940,6 +931,13 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
     private class ExpectedMinimumAcceleratorSizes {
         static final int LENGTH_OF_PIPE = 5;
         static final int DEPTH_OF_PIPE = 3;
+    }
+
+    private class ParticleAcceleratorBlocksFound {
+        ParticleAcceleratorControllerTileEntity controllerFound = null;
+        List<ParticleAcceleratorPowerTileEntity> powerPortsFound = new ArrayList<ParticleAcceleratorPowerTileEntity>();
+        List<ParticleAcceleratorIOPortTileEntity> outputPortsFound = new ArrayList<ParticleAcceleratorIOPortTileEntity>();
+        List<ParticleAcceleratorIOPortTileEntity> inputPortsFound = new ArrayList<ParticleAcceleratorIOPortTileEntity>();
     }
 
     // -----------------------------------------------------------------------
