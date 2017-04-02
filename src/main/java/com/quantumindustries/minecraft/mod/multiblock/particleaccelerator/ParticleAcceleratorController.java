@@ -9,13 +9,19 @@ import net.darkhax.tesla.api.ITeslaConsumer;
 import net.darkhax.tesla.api.ITeslaHolder;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
+import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
+import net.minecraftforge.fluids.capability.ItemFluidContainer;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.items.ItemStackHandler;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -23,7 +29,8 @@ import java.util.function.Consumer;
 
 import static java.lang.Math.abs;
 
-public class ParticleAcceleratorController extends MultiblockControllerBase implements ITeslaConsumer, ITeslaHolder{
+public class ParticleAcceleratorController extends MultiblockControllerBase implements
+        ITeslaConsumer, ITeslaHolder, IFluidHandler{
 
     private List<ParticleAcceleratorIOPortTileEntity> outputPorts;
     private List<ParticleAcceleratorIOPortTileEntity> inputPorts;
@@ -31,6 +38,7 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
     private ParticleAcceleratorControllerTileEntity controllerBlock;
     private BlockPos controllerBlockPosition;
     private boolean isActive;
+    private boolean isAcceleratorBuilt;
 
     private CurrentCounts currentCounts;
     private ActualAcceleratorSizes actualAcceleratorSizes;
@@ -41,9 +49,6 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
     private int maxPowerStorage;
     private int currentPowerStored;
 
-    // GUI Related Variables
-    private static final int INVENTORY_SIZE = 9;
-
     public ParticleAcceleratorController(World world) {
         super(world);
 
@@ -53,7 +58,14 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
         controllerBlock = null;
         controllerBlockPosition = null;
         isActive = false;
+        isAcceleratorBuilt = false;
         actualAcceleratorSizes = new ActualAcceleratorSizes();
+
+        // Power Variables
+        maxPowerConsumptionRate = 0;
+        minPowerConsumptionRate = 0;
+        maxPowerStorage = 0;
+        currentPowerStored = 0;
     }
 
     public boolean isActive() {
@@ -117,9 +129,46 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
         }
     }
 
+    private void resetPowerVariables() {
+        maxPowerConsumptionRate = 0;
+        minPowerConsumptionRate = 0;
+        maxPowerStorage = 0;
+    }
+
+    private void calculatePowerVariables() {
+        int oneHundredThousand = 100000;
+        int oneMillion = 1000000;
+        int tenMillion = 10000000;
+        int oneHundredMillion = 100000000;
+
+        int acceleratorPerimeter = calculatePerimeter();
+        int powerMagnetRatio = currentCounts.magnetBlock / 10;
+        maxPowerConsumptionRate = (acceleratorPerimeter * 1000) * powerMagnetRatio;
+        minPowerConsumptionRate = (acceleratorPerimeter * 500) * powerMagnetRatio;
+
+        if(maxPowerConsumptionRate < oneHundredThousand) {
+            maxPowerStorage = oneHundredThousand;
+        }
+        else if(maxPowerConsumptionRate < oneMillion) {
+            maxPowerStorage = oneMillion;
+        }
+        else if(maxPowerStorage < tenMillion) {
+            maxPowerStorage = tenMillion;
+        }
+        else {
+            maxPowerStorage = oneHundredMillion;
+        }
+    }
+
+    private int calculatePerimeter() {
+        int length = abs(getMaximumCoord().getX() - getMinimumCoord().getX()) - 2;
+        int width = abs(getMaximumCoord().getZ() - getMinimumCoord().getZ()) - 2;
+        return length * 2 + width * 2;
+    }
+
     @Override
     protected void onMachineAssembled() {
-//        lookupPorts();
+        isAcceleratorBuilt = true;
         calculatePowerVariables();
 
         // on the client, force a render update
@@ -128,13 +177,10 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
         }
     }
 
-    private void calculatePowerVariables() {
-
-    }
-
     @Override
     protected void onMachineRestored() {
-//        lookupPorts();
+        isAcceleratorBuilt = true;
+        calculatePowerVariables();
 
         // on the client, force a render update
         if(WORLD.isRemote) {
@@ -144,6 +190,8 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
 
     @Override
     protected void onMachinePaused() {
+        isAcceleratorBuilt = false;
+        resetPowerVariables();
         // on the client, force a render update
         if(WORLD.isRemote) {
             markMultiblockForRenderUpdate();
@@ -152,6 +200,8 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
 
     @Override
     protected void onMachineDisassembled() {
+        isAcceleratorBuilt = false;
+        resetPowerVariables();
         // on the client, force a render update
         if(WORLD.isRemote) {
             markMultiblockForRenderUpdate();
@@ -184,7 +234,6 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
     @Override
     protected boolean isMachineWhole(IMultiblockValidator validatorCallback) {
         resetCounts();
-
         List<BlockPos> beamSourcePositions;
         List<BlockPos> cornerPositions;
 
@@ -236,7 +285,7 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
             inputPorts = blocksFound.inputPortsFound;
             outputPorts = blocksFound.outputPortsFound;
             controllerBlock = blocksFound.controllerFound;
-
+            isAcceleratorBuilt = true;
             return true;
         }
         catch(Exception e) {
@@ -836,10 +885,24 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
     }
 
     // -----------------------------------------------------------------------
-    // Inventory/GUID Functions
+    // Crafting Functions
     // -----------------------------------------------------------------------
 
-
+    private boolean canAccelerate(){
+        if (controllerBlock.particleAcceleratorItemStacks[0] == null)
+        {
+            return false;
+        }
+        else
+        {
+            ItemStack itemstack = FurnaceRecipes.instance().getSmeltingResult(this.furnaceItemStacks[0]);
+            if (itemstack == null) return false;
+            if (this.furnaceItemStacks[2] == null) return true;
+            if (!this.furnaceItemStacks[2].isItemEqual(itemstack)) return false;
+            int result = furnaceItemStacks[2].stackSize + itemstack.stackSize;
+            return result <= getInventoryStackLimit() && result <= this.furnaceItemStacks[2].getMaxStackSize(); //Forge BugFix: Make it respect stack sizes properly.
+        }
+    }
 
     // -----------------------------------------------------------------------
     // Power Functions
@@ -858,6 +921,28 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
     @Override
     public long getCapacity() {
         return 0;
+    }
+
+    @Override
+    public IFluidTankProperties[] getTankProperties() {
+        return new IFluidTankProperties[0];
+    }
+
+    @Override
+    public int fill(FluidStack resource, boolean doFill) {
+        return 0;
+    }
+
+    @Nullable
+    @Override
+    public FluidStack drain(FluidStack resource, boolean doDrain) {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public FluidStack drain(int maxDrain, boolean doDrain) {
+        return null;
     }
 
     // -----------------------------------------------------------------------

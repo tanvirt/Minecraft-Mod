@@ -30,32 +30,29 @@ public class ParticleAcceleratorControllerContainer extends Container {
         // Slots for the main inventory
         for (int row = 0; row < 3; ++row) {
             for (int col = 0; col < 9; ++col) {
-                int x = 9 + col * 18;
-                int y = row * 18 + 70;
+                int x = 8 + col * 18;
+                int y = row * 18 + 84;
                 this.addSlotToContainer(new Slot(playerInventory, col + row * 9 + 10, x, y));
             }
         }
 
         // Slots for the hotbar
         for (int row = 0; row < 9; ++row) {
-            int x = 9 + row * 18;
-            int y = 58 + 70;
+            int x = 8 + row * 18;
+            int y = 72 + 70;
             this.addSlotToContainer(new Slot(playerInventory, row, x, y));
         }
     }
 
     private void addOwnSlots() {
         IItemHandler itemHandler = this.te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-        int x = 9;
-        int y = 6;
 
-        // Add our own slots
-        int slotIndex = 0;
-        for (int i = 0; i < itemHandler.getSlots(); i++) {
-            addSlotToContainer(new SlotItemHandler(itemHandler, slotIndex, x, y));
-            slotIndex++;
-            x += 18;
-        }
+        // TODO(CM): Convert the 'slot' value to an enum list for different types of slots.
+        SlotCoordinates input = new SlotCoordinates(64, 9, 0);
+        SlotCoordinates output = new SlotCoordinates(64, 53, 1);
+
+        addSlotToContainer(new SlotItemHandler(itemHandler, input.slotNumber, input.x, input.y));
+        addSlotToContainer(new SlotItemHandler(itemHandler, output.slotNumber, output.x, output.y));
     }
 
     @Nullable
@@ -65,18 +62,20 @@ public class ParticleAcceleratorControllerContainer extends Container {
         Slot slot = this.inventorySlots.get(index);
 
         if (slot != null && slot.getHasStack()) {
-            ItemStack itemstack1 = slot.getStack();
-            itemstack = itemstack1.copy();
+            ItemStack itemStack1 = slot.getStack();
+            itemstack = itemStack1.copy();
 
-            if (index < ParticleAcceleratorControllerTileEntity.INVENTORY_SIZE) {
-                if (!this.mergeItemStack(itemstack1, ParticleAcceleratorControllerTileEntity.INVENTORY_SIZE, this.inventorySlots.size(), true)) {
+            if (index < ParticleAcceleratorControllerTileEntity.SIZE) {
+                if (!this.mergeItemStack(itemStack1, ParticleAcceleratorControllerTileEntity.SIZE,
+                        this.inventorySlots.size(), true)) {
                     return null;
                 }
-            } else if (!this.mergeItemStack(itemstack1, 0, ParticleAcceleratorControllerTileEntity.INVENTORY_SIZE, false)) {
+            } else if (!this.mergeItemStack(itemStack1, 0,
+                    ParticleAcceleratorControllerTileEntity.SIZE, false)) {
                 return null;
             }
 
-            if (itemstack1.stackSize == 0) {
+            if (itemStack1.stackSize == 0) {
                 slot.putStack(null);
             } else {
                 slot.onSlotChanged();
@@ -89,5 +88,17 @@ public class ParticleAcceleratorControllerContainer extends Container {
     @Override
     public boolean canInteractWith(EntityPlayer playerIn) {
         return te.canInteractWith(playerIn);
+    }
+
+    public class SlotCoordinates {
+        int x;
+        int y;
+        int slotNumber;
+
+        SlotCoordinates(int xIn, int yIn, int slot) {
+            x = xIn;
+            y = yIn;
+            slotNumber = slot;
+        }
     }
 }

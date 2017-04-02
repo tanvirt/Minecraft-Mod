@@ -56,39 +56,21 @@ public abstract class ParticleAcceleratorBlockBase extends BlockBase {
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos position, IBlockState state,
-                                    EntityPlayer player, EnumHand hand, ItemStack heldItem,
-                                    EnumFacing side, float hitX, float hitY, float hitZ) {
-        if(!canActivate(world, hand, heldItem)) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state,
+                                    EntityPlayer player, EnumHand hand,
+                                    ItemStack heldItem, EnumFacing side,
+                                    float hitX, float hitY, float hitZ) {
+        // Only execute on the server
+        if (world.isRemote) {
+            return true;
+        }
+        TileEntity te = world.getTileEntity(pos);
+        if (!(te instanceof ParticleAcceleratorControllerTileEntity)) {
             return false;
         }
-
-        ParticleAcceleratorController controller = getAcceleratorController(world, position);
-
-//        if(isControllerHit(hitX, hitY, hitZ, controller.getReferenceCoord())) {
-//            if(player.isSneaking()) {
-//                controller.toggleActive();
-//                player.addChatMessage(new TextComponentString("activated PA"));
-//                return true;
-//            }
-//        }
-
-        // TODO(CM): fix this logic to actually work for our machine instead of tutorial
-        if(controller != null) {
-            if(isPlayerHittingController(state)) {
-                player.addChatMessage(new TextComponentString("activated PA"));
-                player.openGui(CustomMod.instance, CONTROLLER_GUI_ID, world, position.getX(), position.getY(), position.getZ());
-                return true;
-            }
-            else {
-                ValidationError status = controller.getLastError();
-                if(status != null) {
-                    player.addChatMessage(status.getChatMessage());
-                    return true;
-                }
-            }
-        }
-        return false;
+        player.addChatMessage(new TextComponentString("activated PA"));
+        player.openGui(CustomMod.instance, CONTROLLER_GUI_ID, world, pos.getX(), pos.getY(), pos.getZ());
+        return true;
     }
 
     private boolean canActivate(World world, EnumHand hand, ItemStack heldItem) {

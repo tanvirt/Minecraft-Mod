@@ -8,12 +8,17 @@ import net.minecraft.util.ResourceLocation;
 
 public class ParticleAcceleratorControllerGui extends GuiContainer {
 
-    public static final int WIDTH = 180;
-    public static final int HEIGHT = 152;
+    public static final int WIDTH = 176;
+    public static final int HEIGHT = 166;
 
-    private static final ResourceLocation background = new ResourceLocation(CustomMod.MODID, "textures/gui/testcontainer.png");
+    private static final ResourceLocation background =
+            new ResourceLocation(
+                CustomMod.MODID,
+                "textures/gui/acceleratorControllerGui.png"
+            );
 
-    public ParticleAcceleratorControllerGui(ParticleAcceleratorControllerTileEntity tileEntity, ParticleAcceleratorControllerContainer container) {
+    public ParticleAcceleratorControllerGui(ParticleAcceleratorControllerTileEntity tileEntity,
+                                            ParticleAcceleratorControllerContainer container) {
         super(container);
 
         xSize = WIDTH;
