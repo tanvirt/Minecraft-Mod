@@ -1,4 +1,4 @@
-package com.quantumindustries.minecraft.mod.multiblock;
+package com.quantumindustries.minecraft.mod.multiblock.particleaccelerator;
 
 import it.zerono.mods.zerocore.api.multiblock.validation.ValidationError;
 

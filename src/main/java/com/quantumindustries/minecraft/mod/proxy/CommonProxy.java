@@ -7,6 +7,7 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 public class CommonProxy {
 
@@ -15,7 +16,7 @@ public class CommonProxy {
     }
 
     public void init(FMLInitializationEvent event) {
-        // TODO
+        NetworkRegistry.INSTANCE.registerGuiHandler(CustomMod.instance, new GuiProxy() );
     }
 
     public void postInit(FMLPostInitializationEvent event) {

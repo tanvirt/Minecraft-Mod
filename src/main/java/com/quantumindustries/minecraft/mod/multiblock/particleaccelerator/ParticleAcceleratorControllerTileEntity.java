@@ -1,4 +1,4 @@
-package com.quantumindustries.minecraft.mod.multiblock;
+package com.quantumindustries.minecraft.mod.multiblock.particleaccelerator;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -10,10 +10,10 @@ import net.minecraftforge.items.ItemStackHandler;
 public class ParticleAcceleratorControllerTileEntity extends ParticleAcceleratorTileEntity {
     // TODO(CM): Either fix empty class or format to show we aren't using it.
 
-    public static final int SIZE = 9;
+    public static final int INVENTORY_SIZE = 9;
 
     // This item handler will hold our nine inventory slots
-    private ItemStackHandler itemStackHandler = new ItemStackHandler(SIZE) {
+    private ItemStackHandler itemStackHandler = new ItemStackHandler(INVENTORY_SIZE) {
         @Override
         protected void onContentsChanged(int slot) {
             // We need to tell the tile entity that something has changed so

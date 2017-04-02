@@ -1,4 +1,4 @@
-package com.quantumindustries.minecraft.mod.multiblock;
+package com.quantumindustries.minecraft.mod.multiblock.particleaccelerator;
 
 public class ParticleAcceleratorBlockDetector extends ParticleAcceleratorBlockBase {
 

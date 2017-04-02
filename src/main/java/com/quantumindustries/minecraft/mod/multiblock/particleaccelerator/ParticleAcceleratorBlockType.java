@@ -1,4 +1,4 @@
-package com.quantumindustries.minecraft.mod.multiblock;
+package com.quantumindustries.minecraft.mod.multiblock.particleaccelerator;
 
 import net.minecraft.util.IStringSerializable;
 

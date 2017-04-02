@@ -1,4 +1,4 @@
-package com.quantumindustries.minecraft.mod.multiblock;
+package com.quantumindustries.minecraft.mod.multiblock.particleaccelerator;
 
 import it.zerono.mods.zerocore.api.multiblock.IMultiblockPart;
 import it.zerono.mods.zerocore.api.multiblock.MultiblockControllerBase;
@@ -14,6 +14,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,21 +35,21 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
     private CurrentCounts currentCounts;
     private ActualAcceleratorSizes actualAcceleratorSizes;
 
-    private static final int ACCELERATOR_SIZE_TOTAL = 27;
-    private static final int ACCELERATOR_DIMENSIONAL_SIZE = 10;
-
     // Power Related Variables
     private int maxPowerConsumptionRate;
     private int minPowerConsumptionRate;
     private int maxPowerStorage;
     private int currentPowerStored;
 
+    // GUI Related Variables
+    private static final int INVENTORY_SIZE = 9;
+
     public ParticleAcceleratorController(World world) {
         super(world);
 
-        outputPorts =  new ArrayList<ParticleAcceleratorIOPortTileEntity>();
-        inputPorts =  new ArrayList<ParticleAcceleratorIOPortTileEntity>();
-        powerPorts =  new ArrayList<ParticleAcceleratorPowerTileEntity>();
+        outputPorts =  new ArrayList<>();
+        inputPorts =  new ArrayList<>();
+        powerPorts =  new ArrayList<>();
         controllerBlock = null;
         controllerBlockPosition = null;
         isActive = false;
@@ -95,30 +96,31 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
     @Override
     protected void onBlockRemoved(IMultiblockPart iMultiblockPart) {
         if(iMultiblockPart instanceof ParticleAcceleratorPowerTileEntity) {
-
             ParticleAcceleratorPowerTileEntity tile = (ParticleAcceleratorPowerTileEntity) iMultiblockPart;
-
-            if(powerPort == tile) {
-                powerPort = null;
+            if(powerPorts.contains(tile)) {
+                powerPorts.remove(tile);
             }
-
         }
         else if(iMultiblockPart instanceof ParticleAcceleratorIOPortTileEntity) {
-
             ParticleAcceleratorIOPortTileEntity tile = (ParticleAcceleratorIOPortTileEntity) iMultiblockPart;
 
-            if(outputPort == tile) {
-                outputPort = null;
+            if(outputPorts.contains(tile)) {
+                outputPorts.remove(tile);
             }
-            else if(inputPort == tile) {
-                inputPort = null;
+            else if(inputPorts.contains(tile)) {
+                inputPorts.remove(tile);
             }
+        }
+        else if(iMultiblockPart instanceof ParticleAcceleratorControllerTileEntity) {
+            controllerBlock = null;
+            controllerBlockPosition = null;
         }
     }
 
     @Override
     protected void onMachineAssembled() {
-        lookupPorts();
+//        lookupPorts();
+        calculatePowerVariables();
 
         // on the client, force a render update
         if(WorldHelper.calledByLogicalClient(WORLD)) {
@@ -126,9 +128,13 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
         }
     }
 
+    private void calculatePowerVariables() {
+
+    }
+
     @Override
     protected void onMachineRestored() {
-        this.lookupPorts();
+//        lookupPorts();
 
         // on the client, force a render update
         if(WORLD.isRemote) {
@@ -152,39 +158,27 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
         }
     }
 
+    // TODO(CM): Verify this number is right, may have miscalculated
     @Override
     protected int getMinimumNumberOfBlocksForAssembledMachine() {
-        return ACCELERATOR_SIZE_TOTAL;
+        return 198;
     }
 
+    // TODO(CM): Determine what we want maximum X to be
     @Override
     protected int getMaximumXSize() {
-        return ACCELERATOR_DIMENSIONAL_SIZE;
+        return 0;
     }
 
+    // TODO(CM): Determine what we want maximum Z to be
     @Override
     protected int getMaximumZSize() {
-        return ACCELERATOR_DIMENSIONAL_SIZE;
+        return 0;
     }
 
     @Override
     protected int getMaximumYSize() {
         return 3;
-    }
-
-    @Override
-    protected int getMinimumXSize() {
-        return 3;
-    }
-
-    @Override
-    protected int getMinimumZSize() {
-        return ACCELERATOR_DIMENSIONAL_SIZE;
-    }
-
-    @Override
-    protected int getMinimumYSize() {
-        return ACCELERATOR_DIMENSIONAL_SIZE;
     }
 
     @Override
@@ -412,7 +406,7 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
     }
 
     private List<BlockPos> getBeamSources(BlockPos controllerPosition) {
-        List<BlockPos> sources = new ArrayList<BlockPos>(2);
+        List<BlockPos> sources = new ArrayList<>(2);
 
         boolean sourceXDir = beamSourcesAreInDirection(controllerPosition, new Vec3i(1, 0, 0));
         boolean sourceZDir = beamSourcesAreInDirection(controllerPosition, new Vec3i(0, 0, 1));
@@ -581,7 +575,7 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
 
     private boolean validateAroundPipe(Class classType, BlockPos centerPosition,
                                        BlockPos leftPosition, BlockPos rightPosition) {
-        List<Block> surroundingBlocks = new ArrayList<Block>(8);
+        List<Block> surroundingBlocks = new ArrayList<>(8);
         surroundingBlocks.add(getBlockAtPosition(centerPosition.up()));
         surroundingBlocks.add(getBlockAtPosition(centerPosition.down()));
         surroundingBlocks.add(getBlockAtPosition(leftPosition));
@@ -616,16 +610,16 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
     private void validateAroundPipeCorner(BlockPos centerPosition,
                                           BlockPos leftPosition,
                                           BlockPos rightPosition) {
-        List<Block> surroundingBlocks = new ArrayList<Block>(6);
-        List<Block> sideBlocks = new ArrayList<Block>(2);
+        List<Block> surroundingBlocks = new ArrayList<>(6);
+        List<Block> sideBlocks = new ArrayList<>(2);
         surroundingBlocks.add(getBlockAtPosition(centerPosition.up()));
         surroundingBlocks.add(getBlockAtPosition(centerPosition.down()));
         surroundingBlocks.add(getBlockAtPosition(leftPosition.up()));
         surroundingBlocks.add(getBlockAtPosition(leftPosition.down()));
         surroundingBlocks.add(getBlockAtPosition(rightPosition.up()));
         surroundingBlocks.add(getBlockAtPosition(rightPosition.down()));
-        for(int block = 0; block < surroundingBlocks.size(); ++block) {
-            if(!(surroundingBlocks.get(block) instanceof ParticleAcceleratorBlockWall)) {
+        for(Block surroundingBlock : surroundingBlocks) {
+            if (!(surroundingBlock instanceof ParticleAcceleratorBlockWall)) {
                 throw new InvalidSurroundBeamPipeException(
                         "Block surrounding beam pipe does not match the expected type at corner."
                 );
@@ -634,14 +628,12 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
         int beamPipeCount = 0;
         sideBlocks.add(getBlockAtPosition(leftPosition));
         sideBlocks.add(getBlockAtPosition(rightPosition));
-        for(int block = 0; block < sideBlocks.size(); ++block) {
-            if(sideBlocks.get(block) instanceof ParticleAcceleratorBlockBeamPipe) {
+        for(Block sideBlock : sideBlocks) {
+            if (sideBlock instanceof ParticleAcceleratorBlockBeamPipe) {
                 ++beamPipeCount;
-            }
-            else if(sideBlocks.get(block) instanceof ParticleAcceleratorBlockWall) {
+            } else if (sideBlock instanceof ParticleAcceleratorBlockWall) {
                 continue;
-            }
-            else {
+            } else {
                 throw new InvalidSurroundBeamPipeException(
                         "Invalid block surrounding beam pipe corner."
                 );
@@ -654,7 +646,7 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
     }
 
     private List<BlockPos> getAllCorners(List<BlockPos> beamPositions) {
-        List<BlockPos> cornerPositions = new ArrayList<BlockPos>(4);
+        List<BlockPos> cornerPositions = new ArrayList<>(4);
 
         Vec3i positiveZVector = new Vec3i(0, 0, 1);
         Vec3i negativeZVector = new Vec3i(0, 0, -1);
@@ -682,7 +674,7 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
                                                  Vec3i positiveDepthDirection, Vec3i negativeDepthDirection) {
         List<BlockPos> lengthCorners = calculateLengthCorners(beamPositions, positiveDirection, negativeDirection);
         List<BlockPos> depthCorners;
-        List<BlockPos> cornerPositions = new ArrayList<BlockPos>(4);
+        List<BlockPos> cornerPositions = new ArrayList<>(4);
 
         Block frontLeft = getBlockAtPosition(lengthCorners.get(CornerIndices.FRONT_LEFT).add(positiveDepthDirection));
         Block frontRight = getBlockAtPosition(lengthCorners.get(CornerIndices.FRONT_RIGHT).add(positiveDepthDirection));
@@ -703,7 +695,7 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
     private List<BlockPos> calculateLengthCorners(List<BlockPos> beamPositions, Vec3i positiveLength, Vec3i negativeLength) {
         int left = 0;
         int right = 1;
-        List<BlockPos> lengthCorners = new ArrayList<BlockPos>(2);
+        List<BlockPos> lengthCorners = new ArrayList<>(2);
         BlockPos leftCorner = getSingleCorner(beamPositions.get(BeamSourceIndices.LEFT), positiveLength);
         BlockPos rightCorner = getSingleCorner(beamPositions.get(BeamSourceIndices.RIGHT), negativeLength);
 
@@ -720,7 +712,7 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
     private List<BlockPos> calculateDepthCorners(List<BlockPos> lengthCorners, Vec3i depthVector) {
         int left = 0;
         int right = 1;
-        List<BlockPos> depthCorners = new ArrayList<BlockPos>(2);
+        List<BlockPos> depthCorners = new ArrayList<>(2);
         BlockPos leftCorner = getSingleCorner(lengthCorners.get(CornerIndices.FRONT_LEFT), depthVector);
         BlockPos rightCorner = getSingleCorner(lengthCorners.get(CornerIndices.FRONT_RIGHT), depthVector);
 
@@ -787,29 +779,6 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
         return (start.getZ() - end.getZ()) == 0;
     }
 
-    private void lookupPorts() {
-        outputPort = inputPort = null;
-        powerPort = null;
-
-        for(IMultiblockPart part : connectedParts) {
-            if(part instanceof ParticleAcceleratorPowerTileEntity) {
-                powerPort = (ParticleAcceleratorPowerTileEntity) part;
-            }
-            if(part instanceof ParticleAcceleratorIOPortTileEntity) {
-                ParticleAcceleratorIOPortTileEntity io = (ParticleAcceleratorIOPortTileEntity)part;
-                if (io.isInput()) {
-                    inputPort = io;
-                }
-                else {
-                    outputPort = io;
-                }
-            }
-            if(part instanceof ParticleAcceleratorControllerTileEntity) {
-                controllerBlock = (ParticleAcceleratorControllerTileEntity) part;
-                controllerBlockPosition = part.getWorldPosition();
-            }
-        }
-    }
     @Override
     protected void onAssimilate(MultiblockControllerBase multiblockControllerBase) {
         // TODO(CM): Either fix empty method or format to show we aren't using it.
@@ -865,6 +834,12 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
     protected void syncDataTo(NBTTagCompound nbtTagCompound, ModTileEntity.SyncReason syncReason) {
         // TODO(CM): Either fix empty method or format to show we aren't using it.
     }
+
+    // -----------------------------------------------------------------------
+    // Inventory/GUID Functions
+    // -----------------------------------------------------------------------
+
+
 
     // -----------------------------------------------------------------------
     // Power Functions
@@ -935,9 +910,9 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
 
     private class ParticleAcceleratorBlocksFound {
         ParticleAcceleratorControllerTileEntity controllerFound = null;
-        List<ParticleAcceleratorPowerTileEntity> powerPortsFound = new ArrayList<ParticleAcceleratorPowerTileEntity>();
-        List<ParticleAcceleratorIOPortTileEntity> outputPortsFound = new ArrayList<ParticleAcceleratorIOPortTileEntity>();
-        List<ParticleAcceleratorIOPortTileEntity> inputPortsFound = new ArrayList<ParticleAcceleratorIOPortTileEntity>();
+        List<ParticleAcceleratorPowerTileEntity> powerPortsFound = new ArrayList<>();
+        List<ParticleAcceleratorIOPortTileEntity> outputPortsFound = new ArrayList<>();
+        List<ParticleAcceleratorIOPortTileEntity> inputPortsFound = new ArrayList<>();
     }
 
     // -----------------------------------------------------------------------

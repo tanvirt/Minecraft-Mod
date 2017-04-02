@@ -1,9 +1,11 @@
-package com.quantumindustries.minecraft.mod.multiblock;
+package com.quantumindustries.minecraft.mod.multiblock.particleaccelerator;
 
+import com.quantumindustries.minecraft.mod.CustomMod;
 import com.quantumindustries.minecraft.mod.blocks.BlockBase;
 import it.zerono.mods.zerocore.api.multiblock.IMultiblockPart;
 import it.zerono.mods.zerocore.api.multiblock.MultiblockControllerBase;
 import it.zerono.mods.zerocore.api.multiblock.validation.ValidationError;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -16,10 +18,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Mod;
 
 public abstract class ParticleAcceleratorBlockBase extends BlockBase {
 
     private ParticleAcceleratorBlockType blockType;
+    private static int CONTROLLER_GUI_ID = 1;
 
     public ParticleAcceleratorBlockBase(String name, ParticleAcceleratorBlockType type) {
         super(Material.IRON, name);
@@ -72,11 +76,8 @@ public abstract class ParticleAcceleratorBlockBase extends BlockBase {
         // TODO(CM): fix this logic to actually work for our machine instead of tutorial
         if(controller != null) {
             if(isPlayerHittingController(state)) {
-
-            }
-            if(player.isSneaking()) {
-                controller.toggleActive();
                 player.addChatMessage(new TextComponentString("activated PA"));
+                player.openGui(CustomMod.instance, CONTROLLER_GUI_ID, world, position.getX(), position.getY(), position.getZ());
                 return true;
             }
             else {
