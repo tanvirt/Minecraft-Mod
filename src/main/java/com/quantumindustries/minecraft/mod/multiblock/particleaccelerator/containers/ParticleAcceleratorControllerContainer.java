@@ -45,7 +45,7 @@ public class ParticleAcceleratorControllerContainer extends Container {
     }
 
     private void addOwnSlots() {
-        IItemHandler itemHandler = this.te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+        IItemHandler itemHandler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
 
         // TODO(CM): Convert the 'slot' value to an enum list for different types of slots.
         SlotCoordinates input = new SlotCoordinates(64, 9, 0);
@@ -59,15 +59,15 @@ public class ParticleAcceleratorControllerContainer extends Container {
     @Override
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
         ItemStack itemstack = null;
-        Slot slot = this.inventorySlots.get(index);
+        Slot slot = (Slot) inventorySlots.get(index);
 
         if (slot != null && slot.getHasStack()) {
             ItemStack itemStack1 = slot.getStack();
             itemstack = itemStack1.copy();
 
             if (index < ParticleAcceleratorControllerTileEntity.SIZE) {
-                if (!this.mergeItemStack(itemStack1, ParticleAcceleratorControllerTileEntity.SIZE,
-                        this.inventorySlots.size(), true)) {
+                if (!mergeItemStack(itemStack1, ParticleAcceleratorControllerTileEntity.SIZE,
+                        inventorySlots.size(), true)) {
                     return null;
                 }
             } else if (!this.mergeItemStack(itemStack1, 0,

@@ -1,5 +1,6 @@
 package com.quantumindustries.minecraft.mod.multiblock.particleaccelerator;
 
+import com.quantumindustries.minecraft.mod.recipes.ParticleAcceleratorRecipes;
 import it.zerono.mods.zerocore.api.multiblock.IMultiblockPart;
 import it.zerono.mods.zerocore.api.multiblock.MultiblockControllerBase;
 import it.zerono.mods.zerocore.api.multiblock.validation.IMultiblockValidator;
@@ -9,7 +10,10 @@ import net.darkhax.tesla.api.ITeslaConsumer;
 import net.darkhax.tesla.api.ITeslaHolder;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
+import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
@@ -66,6 +70,10 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
         minPowerConsumptionRate = 0;
         maxPowerStorage = 0;
         currentPowerStored = 0;
+    }
+
+    public boolean isAcceleratorBuilt() {
+        return isAcceleratorBuilt;
     }
 
     public boolean isActive() {
@@ -230,6 +238,10 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
     protected int getMaximumYSize() {
         return 3;
     }
+
+    // -----------------------------------------------------------------------
+    // Validation Code
+    // -----------------------------------------------------------------------
 
     @Override
     protected boolean isMachineWhole(IMultiblockValidator validatorCallback) {
@@ -810,7 +822,7 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
         return length1 - length2 + depth1 - depth2 == 0;
     }
 
-    private Block getBlockAtPosition(BlockPos position) {
+    public Block getBlockAtPosition(BlockPos position) {
         return WORLD.getBlockState(position).getBlock();
     }
 
@@ -840,7 +852,11 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
 
     @Override
     protected boolean updateServer() {
-        return false;
+        if(controllerBlock.canAccelerate()) {
+            FMLLog.warning("YOU CAN ACCELERATE");
+            controllerBlock.accelerateItem();
+        }
+        return true;
     }
 
     @Override
@@ -888,20 +904,11 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
     // Crafting Functions
     // -----------------------------------------------------------------------
 
-    private boolean canAccelerate(){
-        if (controllerBlock.particleAcceleratorItemStacks[0] == null)
-        {
-            return false;
-        }
-        else
-        {
-            ItemStack itemstack = FurnaceRecipes.instance().getSmeltingResult(this.furnaceItemStacks[0]);
-            if (itemstack == null) return false;
-            if (this.furnaceItemStacks[2] == null) return true;
-            if (!this.furnaceItemStacks[2].isItemEqual(itemstack)) return false;
-            int result = furnaceItemStacks[2].stackSize + itemstack.stackSize;
-            return result <= getInventoryStackLimit() && result <= this.furnaceItemStacks[2].getMaxStackSize(); //Forge BugFix: Make it respect stack sizes properly.
-        }
+    // TODO(CM): In below functions, create enum for item slots so they aren't 0, 1, etc.
+
+
+    public int getInventoryStackLimit() {
+        return 64;
     }
 
     // -----------------------------------------------------------------------

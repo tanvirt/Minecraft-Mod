@@ -1,14 +1,17 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "cube_all",
-    "textures": {
-      "all": "custommod:block/blockParticleAcceleratorController"
-    }
+    "model": "custommod:particleAcceleratorController"
   },
   "variants": {
     "normal": [{}],
-    "inventory": [{}]
+    "inventory": [{}],
+    "facing": {
+      "north": {},
+      "south": {"y": 180},
+      "west": {"y": 270},
+      "east": {"y": 90}
+    }
   }
 }
 

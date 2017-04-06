@@ -1,0 +1,10 @@
+{
+  "parent": "custommod:block/pa_case_top",
+  "textures": {
+    "extras": "custommod:block/pa_case_extras",
+    "mid": "custommod:block/pa_case_mid",
+    "null": "custommod:block/null",
+    "bottom": "custommod:block/pa_case_lower_bottom_sides",
+    "top": "custommod:block/pa_case_top"
+  }
+}

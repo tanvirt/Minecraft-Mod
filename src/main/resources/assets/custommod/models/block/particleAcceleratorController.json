@@ -1,0 +1,12 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "particle": "custommod:block/pa_controller_front",
+    "down": "custommod:block/pa_controller_bottom",
+    "up": "custommod:block/pa_controller_top",
+    "east": "custommod:block/pa_controller_side_east",
+    "west": "custommod:block/pa_controller_side_west",
+    "north": "custommod:block/pa_controller_front",
+    "south": "custommod:block/pa_controller_back"
+  }
+}

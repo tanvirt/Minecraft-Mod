@@ -20,10 +20,14 @@ public class ModItems {
     // Accelerator Targets
     public static ItemBase netherStarTarget;
 
+    // Accelerator Output
+    public static ItemBase neutronStarParticle;
+
     public static void init() {
         initIngots();
         initDusts();
         initTargets();
+        initParticles();
         airFilter = register(new ItemBase("airFilter"));
     }
 
@@ -41,6 +45,10 @@ public class ModItems {
 
     private static void initTargets() {
         netherStarTarget = register(new ItemBase("netherStarTarget"));
+    }
+
+    private static void initParticles() {
+        neutronStarParticle = register(new ItemBase("neutronStarParticle"));
     }
 
     private static <T extends Item> T register(T item) {

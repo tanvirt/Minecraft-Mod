@@ -4,26 +4,26 @@ import com.quantumindustries.minecraft.mod.CustomMod;
 import com.quantumindustries.minecraft.mod.blocks.BlockBase;
 import it.zerono.mods.zerocore.api.multiblock.IMultiblockPart;
 import it.zerono.mods.zerocore.api.multiblock.MultiblockControllerBase;
-import it.zerono.mods.zerocore.api.multiblock.validation.ValidationError;
-import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.Mod;
 
 public abstract class ParticleAcceleratorBlockBase extends BlockBase {
 
     private ParticleAcceleratorBlockType blockType;
     private static int CONTROLLER_GUI_ID = 1;
+
 
     public ParticleAcceleratorBlockBase(String name, ParticleAcceleratorBlockType type) {
         super(Material.IRON, name);
@@ -56,31 +56,31 @@ public abstract class ParticleAcceleratorBlockBase extends BlockBase {
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state,
+    public boolean onBlockActivated(World world, BlockPos position, IBlockState state,
                                     EntityPlayer player, EnumHand hand,
                                     ItemStack heldItem, EnumFacing side,
                                     float hitX, float hitY, float hitZ) {
         // Only execute on the server
-        if (world.isRemote) {
+        if (!canActivate(world)) {
+            return false;
+        }
+
+        ParticleAcceleratorController controller = this.getAcceleratorController(world, position);
+
+        if(!controller.isAssembled()) {
+            return false;
+        }
+
+        TileEntity te = world.getTileEntity(position);
+        if (te instanceof ParticleAcceleratorControllerTileEntity) {
+            player.openGui(CustomMod.instance, CONTROLLER_GUI_ID, world, position.getX(), position.getY(), position.getZ());
             return true;
         }
-        TileEntity te = world.getTileEntity(pos);
-        if (!(te instanceof ParticleAcceleratorControllerTileEntity)) {
-            return false;
-        }
-        player.addChatMessage(new TextComponentString("activated PA"));
-        player.openGui(CustomMod.instance, CONTROLLER_GUI_ID, world, pos.getX(), pos.getY(), pos.getZ());
-        return true;
+        return false;
     }
 
-    private boolean canActivate(World world, EnumHand hand, ItemStack heldItem) {
+    private boolean canActivate(World world) {
         if(world.isRemote) {
-            return false;
-        }
-        else if(hand != EnumHand.MAIN_HAND) {
-            return false;
-        }
-        else if(heldItem != null) {
             return false;
         }
         return true;

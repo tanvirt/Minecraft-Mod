@@ -1,5 +1,7 @@
 package com.quantumindustries.minecraft.mod.multiblock.particleaccelerator;
 
+import com.quantumindustries.minecraft.mod.recipes.ParticleAcceleratorRecipes;
+import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -12,9 +14,8 @@ public class ParticleAcceleratorControllerTileEntity extends ParticleAccelerator
     // TODO(CM): Either fix empty class or format to show we aren't using it.
 
     public static final int SIZE = 2;
-    public ItemStack[] particleAcceleratorItemStacks = new ItemStack[2];
 
-    // This item handler will hold our nine inventory slots
+    // This item handler will hold our inventory slots
     private ItemStackHandler itemStackHandler = new ItemStackHandler(SIZE) {
         @Override
         protected void onContentsChanged(int slot) {
@@ -39,11 +40,6 @@ public class ParticleAcceleratorControllerTileEntity extends ParticleAccelerator
         return compound;
     }
 
-    public boolean canInteractWith(EntityPlayer playerIn) {
-        // If we are too far away from this tile entity you cannot use it
-        return !isInvalid() && playerIn.getDistanceSq(pos.add(0.5D, 0.5D, 0.5D)) <= 64D;
-    }
-
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
@@ -58,5 +54,67 @@ public class ParticleAcceleratorControllerTileEntity extends ParticleAccelerator
             return (T) itemStackHandler;
         }
         return super.getCapability(capability, facing);
+    }
+
+    // -----------------------------------------------------------------
+    // ItemStack Inventory Functions
+    // -----------------------------------------------------------------
+
+    public boolean canInteractWith(EntityPlayer playerIn) {
+        // If we are too far away from this tile entity you cannot use it
+        return !isInvalid() && playerIn.getDistanceSq(pos.add(0.5D, 0.5D, 0.5D)) <= 64D;
+    }
+
+    public int getInventoryStackLimit()
+    {
+        return 64;
+    }
+
+    public boolean canAccelerate(){
+        if (itemStackHandler.getStackInSlot(GuiSlots.INPUT) == null)
+        {
+            return false;
+        }
+        else
+        {
+            ItemStack itemstack = ParticleAcceleratorRecipes.instance().getAcceleratingResult(
+                    itemStackHandler.getStackInSlot(GuiSlots.INPUT)
+            );
+            if (itemstack == null) {
+                return false;
+            }
+            // TODO(CM): Check power and plasma as well.
+            if (itemStackHandler.getStackInSlot(GuiSlots.OUTPUT) == null) {
+                return true;
+            }
+            if (!itemStackHandler.getStackInSlot(GuiSlots.OUTPUT).isItemEqual(itemstack)) {
+                return false;
+            }
+            int result = itemStackHandler.getStackInSlot(GuiSlots.OUTPUT).stackSize + itemstack.stackSize;
+            return result <= getInventoryStackLimit() && result <= itemStackHandler.getStackInSlot(GuiSlots.OUTPUT).getMaxStackSize(); //Forge BugFix: Make it respect stack sizes properly.
+        }
+    }
+
+    public void accelerateItem() {
+        ItemStack itemStack = ParticleAcceleratorRecipes.instance().getAcceleratingResult(itemStackHandler.getStackInSlot(GuiSlots.INPUT));
+
+        if(itemStackHandler.getStackInSlot(GuiSlots.OUTPUT) == null) {
+            itemStackHandler.insertItem(
+                    GuiSlots.OUTPUT,
+                    itemStack.copy(),
+                    false
+            );
+        }
+        else if(itemStackHandler.getStackInSlot(GuiSlots.OUTPUT).getItem() == itemStack.getItem()) {
+            itemStackHandler.insertItem(GuiSlots.OUTPUT, itemStack.copy(), false);
+        }
+
+        itemStackHandler.extractItem(GuiSlots.INPUT, 1, false);
+
+    }
+
+    public class GuiSlots {
+        static final int INPUT = 0;
+        static final int OUTPUT = 1;
     }
 }
