@@ -5,30 +5,31 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.quantumindustries.minecraft.mod.items.ModItems;
-import net.minecraft.block.BlockFurnace;
+import com.quantumindustries.minecraft.mod.util.AcceleratingInput;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraftforge.fml.common.FMLLog;
+import scala.Array;
 
 public class ParticleAcceleratorRecipes {
 
     private static final ParticleAcceleratorRecipes ACCELERATOR_BASE = new ParticleAcceleratorRecipes();
-    private final Map<ItemStack, ItemStack> acceleratorList = Maps.<ItemStack, ItemStack>newHashMap();
+    private final Map<AcceleratingInput, ItemStack> acceleratorList = Maps.newHashMap();
 
     public static ParticleAcceleratorRecipes instance() {
         return ACCELERATOR_BASE;
     }
 
     private ParticleAcceleratorRecipes() {
-        addAccelerating(ModItems.netherStarTarget, new ItemStack(ModItems.neutronStarParticle));
+        // TODO(CM): fix power totals and power rates for recipes
+        addAccelerating(ModItems.netherStarTarget, new ItemStack(ModItems.neutronStarParticle), 10000, 1000);
     }
 
-    public void addAccelerating(Item input, ItemStack stack) {
-        addAcceleratingRecipe(new ItemStack(input, 1, 32767), stack);
+    public void addAccelerating(Item input, ItemStack stack, long powerTotal, long powerRate) {
+        addAcceleratingRecipe(new ItemStack(input, 1, 32767), powerTotal, powerRate, stack);
     }
 
-    public void addAcceleratingRecipe(ItemStack input, ItemStack stack) {
+    public void addAcceleratingRecipe(ItemStack input, long powerTotal, long powerRate, ItemStack stack) {
         if(getAcceleratingResult(input) != null) {
             FMLLog.info(
                     "Ignored accelerator recipe with conflicting input: %s = %s",
@@ -36,23 +37,33 @@ public class ParticleAcceleratorRecipes {
             );
             return;
         }
-        acceleratorList.put(input, stack);
+
+        acceleratorList.put(new AcceleratingInput(input, powerTotal, powerRate), stack);
     }
 
     public ItemStack getAcceleratingResult(ItemStack stack) {
-        for(Entry<ItemStack, ItemStack> entry : acceleratorList.entrySet()) {
-            if(compareItemStacks(stack, (ItemStack) entry.getKey())) {
-                return (ItemStack) entry.getValue();
+        for(Entry<AcceleratingInput, ItemStack> entry : acceleratorList.entrySet()) {
+            if(compareItemStacks(stack, entry.getKey().getInputStack())) {
+                return entry.getValue();
             }
         }
         return null;
+    }
+
+    public long getAcceleratingTotalPowerRequirement(ItemStack stack) {
+        for(Entry<AcceleratingInput, ItemStack> entry : acceleratorList.entrySet()) {
+            if(compareItemStacks(stack, entry.getKey().getInputStack())) {
+                return entry.getKey().getPowerRequired();
+            }
+        }
+        return 0;
     }
 
     private boolean compareItemStacks(ItemStack stack1, ItemStack stack2) {
         return stack2.getItem() == stack1.getItem() && (stack2.getMetadata() == 32767 || stack2.getMetadata() == stack1.getMetadata());
     }
 
-    public Map<ItemStack, ItemStack> getAcceleratorList() {
+    public Map<AcceleratingInput, ItemStack> getAcceleratorList() {
         return acceleratorList;
     }
 }

@@ -1,11 +1,98 @@
 package com.quantumindustries.minecraft.mod.multiblock.particleaccelerator;
 
-import it.zerono.mods.zerocore.api.multiblock.validation.ValidationError;
+import com.quantumindustries.minecraft.mod.util.BaseMachineContainer;
+import net.darkhax.tesla.capability.TeslaCapabilities;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.common.capabilities.Capability;
 
 public class ParticleAcceleratorPowerTileEntity extends ParticleAcceleratorTileEntity {
 
-    private static ValidationError s_invalidPosition = new ValidationError(
-            "custommod:api.multiblock.validation.powerport_invalid_position"
-    );
+    // An instance of something that implements ITeslaConsumer, ITeslaProducer or
+    // ITeslaHandler. In this case we use the BaseTeslaContainer which makes use of all three.
+    // The purpose of this instance is to handle all tesla related logic for the TileEntity.
+    private BaseMachineContainer container;
 
+    public ParticleAcceleratorPowerTileEntity() {
+        // Initializes the container. Very straight forward.
+        this.container = new BaseMachineContainer();
+    }
+
+    public void setNewContainer(long capacity, long rate) {
+        container = new BaseMachineContainer(capacity, rate, rate);
+    }
+
+    public void setNewContainer(long power, long capacity, long input) {
+        container = new BaseMachineContainer(power, capacity, input, input);
+    }
+
+    public BaseMachineContainer getContainer() {
+        return container;
+    }
+
+    public long getCurrentPower() {
+        return container.getStoredPower();
+    }
+
+    public long consumePower(long power) {
+        if(container.getStoredPower() > power) {
+            container.takePower(power, false);
+            return power;
+        }
+        else {
+            container.takePower(container.getStoredPower(), false);
+            return container.getStoredPower();
+        }
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound compound) {
+        super.readFromNBT(compound);
+        // It is important for the power being stored to be persistent. The BaseTeslaContainer
+        // includes a method to make reading one from a compound tag very easy. This method is
+        // completely optional though, you can handle saving however you prefer. You could even
+        // choose not to, but then power won't be saved when you close the game.
+        this.container = new BaseMachineContainer(compound.getCompoundTag("PowerPortContainer"));
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+        // It is important for the power being stored to be persistent. The BaseTeslaContainer
+        // includes a method to make writing one to a compound tag very easy. This method is
+        // completely optional though, you can handle saving however you prefer. You could even
+        // choose not to, but then power won't be saved when you close the game.
+        compound.setTag("PowerPortContainer", this.container.serializeNBT());
+        return super.writeToNBT(compound);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+        // This method is where other things will try to access your TileEntity's Tesla
+        // capability. In the case of the analyzer, is a consumer, producer and holder so we
+        // can allow requests that are looking for any of those things. This example also does
+        // not care about which side is being accessed, however if you wanted to restrict which
+        // side can be used, for example only allow power input through the back, that could be
+        // done here.
+        if (capability == TeslaCapabilities.CAPABILITY_CONSUMER ||
+                capability == TeslaCapabilities.CAPABILITY_PRODUCER ||
+                capability == TeslaCapabilities.CAPABILITY_HOLDER)
+            return (T) this.container;
+
+        return super.getCapability(capability, facing);
+    }
+
+    @Override
+    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+        // This method replaces the instanceof checks that would be used in an interface based
+        // system. It can be used by other things to see if the TileEntity uses a capability or
+        // not. This example is a Consumer, Producer and Holder, so we return true for all
+        // three. This can also be used to restrict access on certain sides, for example if you
+        // only accept power input from the bottom of the block, you would only return true for
+        // Consumer if the facing parameter was down.
+        return capability == TeslaCapabilities.CAPABILITY_CONSUMER ||
+                capability == TeslaCapabilities.CAPABILITY_PRODUCER ||
+                capability == TeslaCapabilities.CAPABILITY_HOLDER ||
+                super.hasCapability(capability, facing);
+    }
 }

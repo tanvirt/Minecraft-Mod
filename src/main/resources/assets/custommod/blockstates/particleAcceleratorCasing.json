@@ -1,36 +1,103 @@
 {
   "forge_marker": 1,
   "variants": {
-    "faces=none,rotate=false": { "model": "custommod:pa_case_default" },
-    "faces=all,rotate=false": { "model": "custommod:pa_case_default" },
-    "faces=face_d,rotate=false": { "model": "custommod:pa_case_bottom_center" },
-    "faces=face_u,rotate=false": {"model": "custommod:pa_case_top_center"},
-    "faces=face_u,rotate=true": {"model": "custommod:pa_case_top_center", "y": 90},
-    "faces=face_e,rotate=false": { "model": "custommod:pa_case_mid", "y": 180},
-    "faces=face_w,rotate=false": { "model": "custommod:pa_case_mid"},
-    "faces=face_s,rotate=false": { "model": "custommod:pa_case_mid", "y": 270},
-    "faces=face_n,rotate=false": { "model": "custommod:pa_case_mid", "y": 90},
-    "faces=angle_sw,rotate=false": { "model": "custommod:pa_case_default"},
-    "faces=angle_es,rotate=false": { "model": "custommod:pa_case_default"},
-    "faces=angle_en,rotate=false": { "model": "custommod:pa_case_default"},
-    "faces=angle_nw,rotate=false": { "model": "custommod:pa_case_default"},
-    "faces=angle_su,rotate=false": { "model": "custommod:pa_case_top_child", "y": 270},
-    "faces=angle_ds,rotate=false": { "model": "custommod:pa_case_lower_side", "y": 270},
-    "faces=angle_eu,rotate=false": { "model": "custommod:pa_case_top_child", "y": 180},
-    "faces=angle_de,rotate=false": { "model": "custommod:pa_case_lower_side", "y": 180},
-    "faces=angle_nu,rotate=false": { "model": "custommod:pa_case_top_child", "y": 90},
-    "faces=angle_dn,rotate=false": { "model": "custommod:pa_case_lower_side", "y": 90},
-    "faces=angle_uw,rotate=false": { "model": "custommod:pa_case_top_child"},
-    "faces=angle_dw,rotate=false": { "model": "custommod:pa_case_lower_side"},
-    "faces=corner_suw,rotate=false": { "model": "custommod:pa_case_default" },
-    "faces=corner_dsw,rotate=false": { "model": "custommod:pa_case_default"},
-    "faces=corner_esu,rotate=false": { "model": "custommod:pa_case_default"},
-    "faces=corner_des,rotate=false": { "model": "custommod:pa_case_default"},
-    "faces=corner_enu,rotate=false": { "model": "custommod:pa_case_default"},
-    "faces=corner_nuw,rotate=false": { "model": "custommod:pa_case_default"},
-    "faces=corner_dnw,rotate=false": { "model": "custommod:pa_case_default"},
-    "faces=corner_den,rotate=false": { "model": "custommod:pa_case_default"},
-    "faces=opposite_ew,rotate=false": { "model": "custommod:pa_case_default" },
+    "faces": {
+      "none": {
+        "model": "custommod:pa_case_default"
+      },
+      "all": {
+        "model": "custommod:pa_case_default"
+      },
+      "face_d": {
+        "model": "custommod:pa_case_bottom_center"
+      },
+      "face_u": {
+        "model": "custommod:pa_case_top_center"
+      },
+      "face_e": {
+        "model": "custommod:pa_case_mid", "y": 180
+      },
+      "face_w": {
+        "model": "custommod:pa_case_mid"
+      },
+      "face_s": {
+        "model": "custommod:pa_case_mid", "y": 270
+      },
+      "face_n": {
+        "model": "custommod:pa_case_mid", "y": 90
+      },
+      "angle_sw": {
+        "model": "custommod:pa_case_default"
+      },
+      "angle_es": {
+        "model": "custommod:pa_case_default"
+      },
+      "angle_en": {
+        "model": "custommod:pa_case_default"
+      },
+      "angle_nw": {
+        "model": "custommod:pa_case_default"
+      },
+      "angle_su": {
+        "model": "custommod:pa_case_top_child", "y": 270
+      },
+      "angle_ds": {
+        "model": "custommod:pa_case_lower_side", "y": 270
+      },
+      "angle_eu": {
+        "model": "custommod:pa_case_top_child", "y": 180
+      },
+      "angle_de": {
+        "model": "custommod:pa_case_lower_side", "y": 180
+      },
+      "angle_nu": {
+        "model": "custommod:pa_case_top_child", "y": 90
+      },
+      "angle_dn": {
+        "model": "custommod:pa_case_lower_side", "y": 90
+      },
+      "angle_uw": {
+        "model": "custommod:pa_case_top_child"
+      },
+      "angle_dw": {
+        "model": "custommod:pa_case_lower_side"
+      },
+      "corner_suw": {
+        "model": "custommod:pa_case_default"
+      },
+      "corner_dsw": {
+        "model": "custommod:pa_case_default"
+      },
+      "corner_esu": {
+        "model": "custommod:pa_case_default"
+      },
+      "corner_des": {
+        "model": "custommod:pa_case_default"
+      },
+      "corner_enu": {
+        "model": "custommod:pa_case_default"
+      },
+      "corner_nuw": {
+        "model": "custommod:pa_case_default"
+      },
+      "corner_dnw": {
+        "model": "custommod:pa_case_default"
+      },
+      "corner_den": {
+        "model": "custommod:pa_case_default"
+      },
+      "opposite_ew": {
+        "model": "custommod:pa_case_default"
+      }
+    },
+    "rotate": {
+      "true": {
+        "y": 90
+      },
+      "false": {
+        // Do nothing
+      }
+    },
     "inventory": {
       "transform": "forge:default-block",
       "model": "custommod:pa_case_default"

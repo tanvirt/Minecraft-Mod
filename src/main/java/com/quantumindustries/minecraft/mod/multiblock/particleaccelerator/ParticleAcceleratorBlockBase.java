@@ -4,6 +4,8 @@ import com.quantumindustries.minecraft.mod.CustomMod;
 import com.quantumindustries.minecraft.mod.blocks.BlockBase;
 import it.zerono.mods.zerocore.api.multiblock.IMultiblockPart;
 import it.zerono.mods.zerocore.api.multiblock.MultiblockControllerBase;
+import net.darkhax.tesla.api.ITeslaHolder;
+import net.darkhax.tesla.capability.TeslaCapabilities;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
@@ -16,6 +18,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -61,11 +64,11 @@ public abstract class ParticleAcceleratorBlockBase extends BlockBase {
                                     ItemStack heldItem, EnumFacing side,
                                     float hitX, float hitY, float hitZ) {
         // Only execute on the server
-        if (!canActivate(world)) {
+        if (!canActivate(world, heldItem, hand)) {
             return false;
         }
 
-        ParticleAcceleratorController controller = this.getAcceleratorController(world, position);
+        ParticleAcceleratorController controller = getAcceleratorController(world, position);
 
         if(!controller.isAssembled()) {
             return false;
@@ -76,11 +79,22 @@ public abstract class ParticleAcceleratorBlockBase extends BlockBase {
             player.openGui(CustomMod.instance, CONTROLLER_GUI_ID, world, position.getX(), position.getY(), position.getZ());
             return true;
         }
+        if (te instanceof ParticleAcceleratorPowerTileEntity) {
+            final ITeslaHolder holder = te.getCapability(TeslaCapabilities.CAPABILITY_HOLDER, side);
+            player.addChatMessage(new TextComponentString("Power: " + holder.getStoredPower()));
+            return true;
+        }
         return false;
     }
 
-    private boolean canActivate(World world) {
+    private boolean canActivate(World world, ItemStack heldItem, EnumHand hand) {
         if(world.isRemote) {
+            return false;
+        }
+        else if(hand != EnumHand.MAIN_HAND) {
+            return false;
+        }
+        else if(heldItem != null) {
             return false;
         }
         return true;

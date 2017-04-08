@@ -1,12 +1,12 @@
 package com.quantumindustries.minecraft.mod.multiblock.particleaccelerator;
 
 import com.quantumindustries.minecraft.mod.recipes.ParticleAcceleratorRecipes;
-import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -14,6 +14,8 @@ public class ParticleAcceleratorControllerTileEntity extends ParticleAccelerator
     // TODO(CM): Either fix empty class or format to show we aren't using it.
 
     public static final int SIZE = 2;
+    private static final int TOTAL_POWER_INDEX = 0;
+    private static final int POWER_RATE_INDEX = 1;
 
     // This item handler will hold our inventory slots
     private ItemStackHandler itemStackHandler = new ItemStackHandler(SIZE) {
@@ -70,17 +72,20 @@ public class ParticleAcceleratorControllerTileEntity extends ParticleAccelerator
         return 64;
     }
 
-    public boolean canAccelerate(){
+    public boolean canAccelerate(long maxPowerRate){
         if (itemStackHandler.getStackInSlot(GuiSlots.INPUT) == null)
         {
             return false;
         }
         else
         {
-            ItemStack itemstack = ParticleAcceleratorRecipes.instance().getAcceleratingResult(
-                    itemStackHandler.getStackInSlot(GuiSlots.INPUT)
-            );
+            ItemStack stackInSlot = itemStackHandler.getStackInSlot(GuiSlots.INPUT);
+            ItemStack itemstack = ParticleAcceleratorRecipes.instance().getAcceleratingResult(stackInSlot);
+            long totalPowerRequired = ParticleAcceleratorRecipes.instance().getAcceleratingTotalPowerRequirement(stackInSlot);
             if (itemstack == null) {
+                return false;
+            }
+            else if(totalPowerRequired > maxPowerRate) {
                 return false;
             }
             // TODO(CM): Check power and plasma as well.
@@ -95,22 +100,8 @@ public class ParticleAcceleratorControllerTileEntity extends ParticleAccelerator
         }
     }
 
-    public void accelerateItem() {
-        ItemStack itemStack = ParticleAcceleratorRecipes.instance().getAcceleratingResult(itemStackHandler.getStackInSlot(GuiSlots.INPUT));
-
-        if(itemStackHandler.getStackInSlot(GuiSlots.OUTPUT) == null) {
-            itemStackHandler.insertItem(
-                    GuiSlots.OUTPUT,
-                    itemStack.copy(),
-                    false
-            );
-        }
-        else if(itemStackHandler.getStackInSlot(GuiSlots.OUTPUT).getItem() == itemStack.getItem()) {
-            itemStackHandler.insertItem(GuiSlots.OUTPUT, itemStack.copy(), false);
-        }
-
-        itemStackHandler.extractItem(GuiSlots.INPUT, 1, false);
-
+    public ItemStackHandler getItemStackHandler() {
+        return itemStackHandler;
     }
 
     public class GuiSlots {

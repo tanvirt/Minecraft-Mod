@@ -25,7 +25,10 @@ public class ParticleAcceleratorBlockWall extends ParticleAcceleratorBlockBase {
     public ParticleAcceleratorBlockWall(String name) {
         super(name, ParticleAcceleratorBlockType.Wall);
 
-        setDefaultState(blockState.getBaseState().withProperty(FACES, PropertyBlockFacings.All).withProperty(ROTATE, false));
+        setDefaultState(blockState.getBaseState()
+                .withProperty(FACES, PropertyBlockFacings.All)
+                .withProperty(ROTATE, false)
+        );
     }
 
     @SideOnly(Side.CLIENT)

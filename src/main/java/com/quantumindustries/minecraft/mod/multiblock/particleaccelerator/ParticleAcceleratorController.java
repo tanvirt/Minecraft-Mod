@@ -1,40 +1,31 @@
 package com.quantumindustries.minecraft.mod.multiblock.particleaccelerator;
 
 import com.quantumindustries.minecraft.mod.recipes.ParticleAcceleratorRecipes;
+import com.quantumindustries.minecraft.mod.util.BaseMachineContainer;
 import it.zerono.mods.zerocore.api.multiblock.IMultiblockPart;
 import it.zerono.mods.zerocore.api.multiblock.MultiblockControllerBase;
 import it.zerono.mods.zerocore.api.multiblock.validation.IMultiblockValidator;
 import it.zerono.mods.zerocore.lib.block.ModTileEntity;
 import it.zerono.mods.zerocore.util.WorldHelper;
-import net.darkhax.tesla.api.ITeslaConsumer;
-import net.darkhax.tesla.api.ITeslaHolder;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.FurnaceRecipes;
-import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
-import net.minecraftforge.fluids.capability.ItemFluidContainer;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.items.ItemStackHandler;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import static java.lang.Math.abs;
+import static java.lang.Math.min;
 
-public class ParticleAcceleratorController extends MultiblockControllerBase implements
-        ITeslaConsumer, ITeslaHolder, IFluidHandler{
+public class ParticleAcceleratorController extends MultiblockControllerBase {
 
     private List<ParticleAcceleratorIOPortTileEntity> outputPorts;
     private List<ParticleAcceleratorIOPortTileEntity> inputPorts;
@@ -48,10 +39,11 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
     private ActualAcceleratorSizes actualAcceleratorSizes;
 
     // Power Related Variables
-    private int maxPowerConsumptionRate;
-    private int minPowerConsumptionRate;
-    private int maxPowerStorage;
-    private int currentPowerStored;
+    private long maxPowerConsumptionRate;
+    private long maxPowerStorage;
+    private long powerUsedInCurrentAcceleration;
+
+    private BaseMachineContainer powerContainer;
 
     public ParticleAcceleratorController(World world) {
         super(world);
@@ -67,9 +59,10 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
 
         // Power Variables
         maxPowerConsumptionRate = 0;
-        minPowerConsumptionRate = 0;
         maxPowerStorage = 0;
-        currentPowerStored = 0;
+        powerUsedInCurrentAcceleration = 0;
+
+        powerContainer = new BaseMachineContainer();
     }
 
     public boolean isAcceleratorBuilt() {
@@ -139,7 +132,6 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
 
     private void resetPowerVariables() {
         maxPowerConsumptionRate = 0;
-        minPowerConsumptionRate = 0;
         maxPowerStorage = 0;
     }
 
@@ -152,7 +144,6 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
         int acceleratorPerimeter = calculatePerimeter();
         int powerMagnetRatio = currentCounts.magnetBlock / 10;
         maxPowerConsumptionRate = (acceleratorPerimeter * 1000) * powerMagnetRatio;
-        minPowerConsumptionRate = (acceleratorPerimeter * 500) * powerMagnetRatio;
 
         if(maxPowerConsumptionRate < oneHundredThousand) {
             maxPowerStorage = oneHundredThousand;
@@ -166,6 +157,8 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
         else {
             maxPowerStorage = oneHundredMillion;
         }
+
+        powerPorts.get(0).setNewContainer(maxPowerStorage, maxPowerConsumptionRate);
     }
 
     private int calculatePerimeter() {
@@ -852,11 +845,46 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
 
     @Override
     protected boolean updateServer() {
-        if(controllerBlock.canAccelerate()) {
-            FMLLog.warning("YOU CAN ACCELERATE");
-            controllerBlock.accelerateItem();
+        ItemStackHandler itemStackHandler = controllerBlock.getItemStackHandler();
+        if(controllerBlock.canAccelerate(maxPowerConsumptionRate)) {
+            ItemStack inputStack = itemStackHandler.getStackInSlot(0);
+            long totalPowerRequirement = ParticleAcceleratorRecipes.instance().getAcceleratingTotalPowerRequirement(inputStack);
+            FMLLog.warning("Requirement: %d", totalPowerRequirement);
+            FMLLog.warning("Power Stored: %d", powerPorts.get(0).getContainer().getStoredPower());
+            if(powerUsedInCurrentAcceleration < totalPowerRequirement) {
+                long consumptionAmountLeft = min(totalPowerRequirement - powerUsedInCurrentAcceleration, maxPowerConsumptionRate);
+                powerUsedInCurrentAcceleration += powerPorts.get(0).consumePower(consumptionAmountLeft);
+            }
+            else {
+                // This function finally produces the item.
+                accelerateItem();
+            }
         }
         return true;
+    }
+
+    public void accelerateItem() {
+        int INPUT = 0;
+        int OUTPUT = 1;
+        ItemStackHandler itemStackHandler = controllerBlock.getItemStackHandler();
+        ItemStack inputStack = itemStackHandler.getStackInSlot(INPUT);
+
+        ItemStack itemStack = ParticleAcceleratorRecipes.instance().getAcceleratingResult(inputStack);
+
+        if(itemStackHandler.getStackInSlot(OUTPUT) == null) {
+            itemStackHandler.insertItem(
+                    OUTPUT,
+                    itemStack.copy(),
+                    false
+            );
+        }
+        else if(itemStackHandler.getStackInSlot(OUTPUT).getItem() == itemStack.getItem()) {
+            itemStackHandler.insertItem(OUTPUT, itemStack.copy(), false);
+        }
+
+        itemStackHandler.extractItem(INPUT, 1, false);
+        powerUsedInCurrentAcceleration = 0;
+        toggleActive();
     }
 
     @Override
@@ -892,65 +920,21 @@ public class ParticleAcceleratorController extends MultiblockControllerBase impl
 
     @Override
     protected void syncDataFrom(NBTTagCompound nbtTagCompound, ModTileEntity.SyncReason syncReason) {
-        // TODO(CM): Either fix empty method or format to show we aren't using it.
+
     }
 
     @Override
     protected void syncDataTo(NBTTagCompound nbtTagCompound, ModTileEntity.SyncReason syncReason) {
-        // TODO(CM): Either fix empty method or format to show we aren't using it.
+
     }
 
     // -----------------------------------------------------------------------
     // Crafting Functions
     // -----------------------------------------------------------------------
 
-    // TODO(CM): In below functions, create enum for item slots so they aren't 0, 1, etc.
-
-
-    public int getInventoryStackLimit() {
-        return 64;
-    }
-
     // -----------------------------------------------------------------------
     // Power Functions
     // -----------------------------------------------------------------------
-
-    @Override
-    public long givePower(long l, boolean b) {
-        return 0;
-    }
-
-    @Override
-    public long getStoredPower() {
-        return 0;
-    }
-
-    @Override
-    public long getCapacity() {
-        return 0;
-    }
-
-    @Override
-    public IFluidTankProperties[] getTankProperties() {
-        return new IFluidTankProperties[0];
-    }
-
-    @Override
-    public int fill(FluidStack resource, boolean doFill) {
-        return 0;
-    }
-
-    @Nullable
-    @Override
-    public FluidStack drain(FluidStack resource, boolean doDrain) {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public FluidStack drain(int maxDrain, boolean doDrain) {
-        return null;
-    }
 
     // -----------------------------------------------------------------------
     // Inner Data classes
