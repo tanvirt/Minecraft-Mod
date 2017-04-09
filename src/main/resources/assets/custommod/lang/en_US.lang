@@ -24,6 +24,7 @@ tile.blockNeoCobaltMagnet.name=Neodymium-Cobalt Magnet
 tile.blockNeoRhodiumMagnet.name=Neodymium-Rhodium Magnet
 tile.powerAnalyzer.name=Power Analyzer
 tile.infiniteProducer.name=Infinite Power Block
+tile.blockGrinder.name=Grinder
 
 # Particle Accelerator Blocks
 tile.particleAcceleratorPowerPort.name=PA Power Port
@@ -46,3 +47,6 @@ tile.blockFluidArgon.name=Liquid Argon
 fluid.fluid_nitrogen=Liquid Nitrogen
 fluid.fluid_oxygen=Liquid Oxygen
 fluid.fluid_argon=Liquid Argon
+
+# Mod Containers
+container.grinder=Grinder

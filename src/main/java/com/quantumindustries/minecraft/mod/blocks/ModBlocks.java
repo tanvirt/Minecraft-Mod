@@ -2,9 +2,11 @@ package com.quantumindustries.minecraft.mod.blocks;
 
 import com.quantumindustries.minecraft.mod.CustomMod;
 import com.quantumindustries.minecraft.mod.ItemModelProvider;
+import com.quantumindustries.minecraft.mod.blocks.grinder.BlockGrinder;
 import com.quantumindustries.minecraft.mod.blocks.infiniteproducer.BlockInfiniteProducer;
 import com.quantumindustries.minecraft.mod.blocks.poweranalyzer.BlockPowerAnalyzer;
 import com.quantumindustries.minecraft.mod.items.ItemOreDict;
+import com.quantumindustries.minecraft.mod.tileentities.BlockContainerTileEntity;
 import com.quantumindustries.minecraft.mod.multiblock.*;
 import com.quantumindustries.minecraft.mod.tileentities.BlockTileEntity;
 import net.minecraft.block.Block;
@@ -15,7 +17,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class ModBlocks {
 
-    // BlockOres
+    // Ores
     public static BlockOre oreCobalt;
     public static BlockOre oreNeodymium;
     public static BlockOre oreRhodium;
@@ -23,10 +25,13 @@ public class ModBlocks {
     public static BlockOre blockNeodymium;
     public static BlockOre blockRhodium;
 
-    // BlockBase
+    // Magnets
     public static BlockBase blockNeoIronMagnet;
     public static BlockBase blockNeoCobaltMagnet;
     public static BlockBase blockNeoRhodiumMagnet;
+
+    // Miscellaneous
+    public static BlockGrinder blockGrinder;
 
     // Particle Accelerator Blocks
     public static ParticleAcceleratorBlockWall blockAcceleratorWall;
@@ -44,9 +49,13 @@ public class ModBlocks {
         initMagnetBlocks();
         initOres();
         initOreBlocks();
+
         initParticleAcceleratorBlocks();
+
         register(new BlockInfiniteProducer());
         register(new BlockPowerAnalyzer());
+
+        blockGrinder = register(new BlockGrinder());
     }
 
     private static void initMagnetBlocks() {
@@ -133,10 +142,16 @@ public class ModBlocks {
                 );
             }
 
+            if(block instanceof BlockContainerTileEntity) {
+                GameRegistry.registerTileEntity(
+                        ((BlockContainerTileEntity<?>) block).getTileEntityClass(),
+                        block.getRegistryName().toString()
+                );
+            }
+
             if(itemBlock instanceof ItemOreDict) {
                 ((ItemOreDict) itemBlock).initOreDict();
             }
-
         }
 
         return block;

@@ -20,10 +20,14 @@ public class CustomMod  {
             serverSide = "com.quantumindustries.minecraft.mod.proxy.CommonProxy")
     public static CommonProxy proxy;
 
-    @Mod.Instance
+    @Mod.Instance(MODID)
     public static CustomMod instance;
 
     public static final CustomTab tab = new CustomTab();
+
+    public enum GUI {
+        GRINDER
+    }
 
     static {
         FluidRegistry.enableUniversalBucket();

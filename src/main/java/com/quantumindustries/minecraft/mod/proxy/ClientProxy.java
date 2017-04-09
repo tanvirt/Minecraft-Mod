@@ -1,10 +1,16 @@
 package com.quantumindustries.minecraft.mod.proxy;
 
+import com.quantumindustries.minecraft.mod.CustomMod;
 import com.quantumindustries.minecraft.mod.ModWorldGen;
 import com.quantumindustries.minecraft.mod.blocks.ModBlocks;
+import com.quantumindustries.minecraft.mod.blocks.grinder.GrinderRecipes;
 import com.quantumindustries.minecraft.mod.fluids.ModFluids;
 import com.quantumindustries.minecraft.mod.items.ModItems;
 import com.quantumindustries.minecraft.mod.recipes.ModRecipes;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.item.Item;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -18,17 +24,26 @@ public class ClientProxy extends CommonProxy {
         ModFluids.init();
         ModItems.init();
         ModRecipes.init();
+        GrinderRecipes.init();
         GameRegistry.registerWorldGenerator(new ModWorldGen(), 3);
     }
 
     @Override
     public void init(FMLInitializationEvent event) {
-        // TODO
+        RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
+        renderItem.getItemModelMesher().register(
+                Item.getItemFromBlock(ModBlocks.blockGrinder),
+                0,
+                new ModelResourceLocation(
+                        CustomMod.MODID + ":" + ModBlocks.blockGrinder
+                                .getUnlocalizedName(),
+                        "inventory"
+                )
+        );
+        super.init(event);
     }
 
     @Override
-    public void postInit(FMLPostInitializationEvent event) {
-        // TODO
-    }
+    public void postInit(FMLPostInitializationEvent event) {}
 
 }

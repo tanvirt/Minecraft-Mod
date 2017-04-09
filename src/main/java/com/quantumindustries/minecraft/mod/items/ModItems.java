@@ -6,16 +6,16 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class ModItems {
 
-    // ItemBases
-    public static ItemBase airFilter;
-
-    // ItemOres
+    // Ores
     public static ItemOre ingotCobalt;
     public static ItemOre ingotNeodymium;
     public static ItemOre ingotRhodium;
     public static ItemOre dustCobalt;
     public static ItemOre dustNeodymium;
     public static ItemOre dustRhodium;
+
+    // Miscellaneous
+    public static ItemBase airFilter;
 
     public static void init() {
         initIngots();
