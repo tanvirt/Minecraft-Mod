@@ -1,6 +1,7 @@
 package com.quantumindustries.minecraft.mod.multiblock.particleaccelerator.containers;
 
 import com.quantumindustries.minecraft.mod.multiblock.particleaccelerator.ParticleAcceleratorControllerTileEntity;
+import net.darkhax.tesla.lib.PowerBar;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;

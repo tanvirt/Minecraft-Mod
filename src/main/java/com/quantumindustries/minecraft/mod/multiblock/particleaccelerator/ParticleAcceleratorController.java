@@ -1,7 +1,6 @@
 package com.quantumindustries.minecraft.mod.multiblock.particleaccelerator;
 
 import com.quantumindustries.minecraft.mod.recipes.ParticleAcceleratorRecipes;
-import com.quantumindustries.minecraft.mod.util.BaseMachineContainer;
 import it.zerono.mods.zerocore.api.multiblock.IMultiblockPart;
 import it.zerono.mods.zerocore.api.multiblock.MultiblockControllerBase;
 import it.zerono.mods.zerocore.api.multiblock.validation.IMultiblockValidator;
@@ -23,6 +22,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import static java.lang.Math.abs;
+import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 public class ParticleAcceleratorController extends MultiblockControllerBase {
@@ -43,8 +43,6 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
     private long maxPowerStorage;
     private long powerUsedInCurrentAcceleration;
 
-    private BaseMachineContainer powerContainer;
-
     public ParticleAcceleratorController(World world) {
         super(world);
 
@@ -61,8 +59,6 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
         maxPowerConsumptionRate = 0;
         maxPowerStorage = 0;
         powerUsedInCurrentAcceleration = 0;
-
-        powerContainer = new BaseMachineContainer();
     }
 
     public boolean isAcceleratorBuilt() {
@@ -158,7 +154,15 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
             maxPowerStorage = oneHundredMillion;
         }
 
-        powerPorts.get(0).setNewContainer(maxPowerStorage, maxPowerConsumptionRate);
+        if(powerPorts.get(0).getCapacity() < maxPowerStorage) {
+            powerPorts.get(0).setCapacity(maxPowerStorage);
+        }
+        if(powerPorts.get(0).getInputRate() < maxPowerConsumptionRate) {
+            powerPorts.get(0).setInputRate(maxPowerConsumptionRate);
+        }
+        if(powerPorts.get(0).getOutputRate() < maxPowerConsumptionRate) {
+            powerPorts.get(0).setOutputRate(maxPowerConsumptionRate);
+        }
     }
 
     private int calculatePerimeter() {
@@ -920,7 +924,8 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
 
     @Override
     protected void syncDataFrom(NBTTagCompound nbtTagCompound, ModTileEntity.SyncReason syncReason) {
-
+        FMLLog.warning("Sync Data From with compound: %s", nbtTagCompound.toString());
+        powerPorts.get(0).readFromNBT(nbtTagCompound);
     }
 
     @Override

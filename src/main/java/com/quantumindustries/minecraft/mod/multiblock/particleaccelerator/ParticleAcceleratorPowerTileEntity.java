@@ -5,6 +5,7 @@ import net.darkhax.tesla.capability.TeslaCapabilities;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fml.common.FMLLog;
 
 public class ParticleAcceleratorPowerTileEntity extends ParticleAcceleratorTileEntity {
 
@@ -30,6 +31,30 @@ public class ParticleAcceleratorPowerTileEntity extends ParticleAcceleratorTileE
         return container;
     }
 
+    public void setCapacity(long power) {
+        container.setCapacity(power);
+    }
+
+    public long getCapacity() {
+        return container.getCapacity();
+    }
+
+    public void setInputRate(long rate) {
+        container.setInputRate(rate);
+    }
+
+    public long getInputRate() {
+        return container.getInputRate();
+    }
+
+    public void setOutputRate(long rate) {
+        container.setOutputRate(rate);
+    }
+
+    public long getOutputRate() {
+        return container.getOutputRate();
+    }
+
     public long getCurrentPower() {
         return container.getStoredPower();
     }
@@ -47,6 +72,7 @@ public class ParticleAcceleratorPowerTileEntity extends ParticleAcceleratorTileE
 
     @Override
     public void readFromNBT(NBTTagCompound compound) {
+        FMLLog.warning("Reading data from NBT Power: %s", compound.toString());
         super.readFromNBT(compound);
         // It is important for the power being stored to be persistent. The BaseTeslaContainer
         // includes a method to make reading one from a compound tag very easy. This method is
@@ -57,6 +83,7 @@ public class ParticleAcceleratorPowerTileEntity extends ParticleAcceleratorTileE
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+        FMLLog.warning("Writing data to NBT Power: %s", compound.toString());
         // It is important for the power being stored to be persistent. The BaseTeslaContainer
         // includes a method to make writing one to a compound tag very easy. This method is
         // completely optional though, you can handle saving however you prefer. You could even
