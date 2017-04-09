@@ -33,6 +33,10 @@ public class CustomMod  {
         FluidRegistry.enableUniversalBucket();
     }
 
+    public static CommonProxy getProxy() {
+        return CustomMod.proxy;
+    }
+
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         proxy.preInit(event);

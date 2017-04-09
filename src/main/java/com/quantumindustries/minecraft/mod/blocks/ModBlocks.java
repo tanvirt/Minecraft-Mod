@@ -1,15 +1,18 @@
 package com.quantumindustries.minecraft.mod.blocks;
 
+import com.quantumindustries.minecraft.mod.CustomMod;
 import com.quantumindustries.minecraft.mod.ItemModelProvider;
 import com.quantumindustries.minecraft.mod.blocks.grinder.BlockGrinder;
 import com.quantumindustries.minecraft.mod.blocks.infiniteproducer.BlockInfiniteProducer;
 import com.quantumindustries.minecraft.mod.blocks.poweranalyzer.BlockPowerAnalyzer;
 import com.quantumindustries.minecraft.mod.items.ItemOreDict;
 import com.quantumindustries.minecraft.mod.tileentities.BlockContainerTileEntity;
+import com.quantumindustries.minecraft.mod.multiblock.*;
 import com.quantumindustries.minecraft.mod.tileentities.BlockTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class ModBlocks {
@@ -30,10 +33,24 @@ public class ModBlocks {
     // Miscellaneous
     public static BlockGrinder blockGrinder;
 
+    // Particle Accelerator Blocks
+    public static ParticleAcceleratorBlockWall blockAcceleratorWall;
+    public static ParticleAcceleratorBlockPort blockAcceleratorPowerPort;
+    public static ParticleAcceleratorBlockPort blockAcceleratorInputPort;
+    public static ParticleAcceleratorBlockPort blockAcceleratorOutputPort;
+    public static ParticleAcceleratorBlockBeamPipe blockAcceleratorBeamPipe;
+    public static ParticleAcceleratorBlockDetector blockAcceleratorDetector;
+    public static ParticleAcceleratorBlockMagnet blockAcceleratorMagnet;
+    public static ParticleAcceleratorBlockTarget blockAcceleratorTarget;
+    public static ParticleAcceleratorBlockController blockAcceleratorController;
+    public static ParticleAcceleratorBlockBeamSource blockAcceleratorBeamSource;
+
     public static void init() {
         initMagnetBlocks();
         initOres();
         initOreBlocks();
+
+        initParticleAcceleratorBlocks();
 
         register(new BlockInfiniteProducer());
         register(new BlockPowerAnalyzer());
@@ -62,6 +79,52 @@ public class ModBlocks {
         blockRhodium = register(new BlockOre("blockRhodium", "blockRhodium", 3f, 5f));
     }
 
+    private static void initParticleAcceleratorBlocks() {
+        blockAcceleratorWall = register(new ParticleAcceleratorBlockWall("particleAcceleratorCasing"));
+        blockAcceleratorPowerPort = register(new ParticleAcceleratorBlockPort(
+                "particleAcceleratorPowerPort",
+                ParticleAcceleratorBlockType.Power)
+        );
+        blockAcceleratorInputPort = register(new ParticleAcceleratorBlockPort(
+                "particleAcceleratorInputPort",
+                ParticleAcceleratorBlockType.Input)
+        );
+        blockAcceleratorOutputPort = register(new ParticleAcceleratorBlockPort(
+                "particleAcceleratorOutputPort",
+                ParticleAcceleratorBlockType.Output)
+        );
+        blockAcceleratorBeamPipe = register(new ParticleAcceleratorBlockBeamPipe(
+                "particleAcceleratorBeamPipe",
+                ParticleAcceleratorBlockType.Pipe)
+        );
+        blockAcceleratorController = register(new ParticleAcceleratorBlockController(
+                "particleAcceleratorController",
+                ParticleAcceleratorBlockType.Controller)
+        );
+        blockAcceleratorDetector = register(new ParticleAcceleratorBlockDetector(
+                "particleAcceleratorDetector",
+                ParticleAcceleratorBlockType.Detector)
+        );
+        blockAcceleratorMagnet = register(new ParticleAcceleratorBlockMagnet(
+                "particleAcceleratorMagnet",
+                ParticleAcceleratorBlockType.Magnet)
+        );
+        blockAcceleratorTarget = register(new ParticleAcceleratorBlockTarget(
+                "particleAcceleratorTarget",
+                ParticleAcceleratorBlockType.Target)
+        );
+        blockAcceleratorBeamSource = register(new ParticleAcceleratorBlockBeamSource(
+                "particleAcceleratorBeamSource",
+                ParticleAcceleratorBlockType.BeamSource)
+        );
+        register(ParticleAcceleratorTileEntity.class);
+        register(ParticleAcceleratorPowerTileEntity.class);
+        register(ParticleAcceleratorIOPortTileEntity.class);
+        register(ParticleAcceleratorControllerTileEntity.class);
+    }
+
+    // Registers blocks and checks what they are instanceof
+    // for further registrations.
     private static <T extends Block> T register(T block, ItemBlock itemBlock) {
         GameRegistry.register(block);
 
@@ -92,6 +155,10 @@ public class ModBlocks {
         }
 
         return block;
+    }
+
+    private static void register(Class<? extends TileEntity> tileEntityClass) {
+        GameRegistry.registerTileEntity(tileEntityClass, CustomMod.MODID + tileEntityClass.getSimpleName());
     }
 
     private static <T extends Block> T register(T block) {
