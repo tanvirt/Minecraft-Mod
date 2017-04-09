@@ -38,7 +38,7 @@ public class ModBlocks {
         register(new BlockInfiniteProducer());
         register(new BlockPowerAnalyzer());
 
-        initBlockGrinder();
+        blockGrinder = register(new BlockGrinder());
     }
 
     private static void initMagnetBlocks() {
@@ -60,10 +60,6 @@ public class ModBlocks {
         blockCobalt = register(new BlockOre("blockCobalt", "blockCobalt", 3f, 5f));
         blockNeodymium = register(new BlockOre("blockNeodymium", "blockNeodymium", 3f, 5f));
         blockRhodium = register(new BlockOre("blockRhodium", "blockRhodium", 3f, 5f));
-    }
-
-    private static void initBlockGrinder() {
-        blockGrinder = register(new BlockGrinder());
     }
 
     private static <T extends Block> T register(T block, ItemBlock itemBlock) {

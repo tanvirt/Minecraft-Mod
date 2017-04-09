@@ -187,7 +187,6 @@ public class ContainerGrinder extends Container {
     }
 
     private class Indices {
-
         public int start;
         public int end;
 
@@ -195,7 +194,6 @@ public class ContainerGrinder extends Container {
             this.start = start;
             this.end = end;
         }
-
     }
 
 }

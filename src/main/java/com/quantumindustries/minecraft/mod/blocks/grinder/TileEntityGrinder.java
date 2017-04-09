@@ -5,18 +5,16 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ITickable;
 import net.minecraft.tileentity.TileEntityLockable;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
 public class TileEntityGrinder extends TileEntityLockable
-        implements ITickable, ISidedInventory {
+        implements ITickable {
 
     public enum slotEnum {
         INPUT_SLOT, OUTPUT_SLOT
@@ -234,31 +232,6 @@ public class TileEntityGrinder extends TileEntityLockable
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
         return index == slotEnum.INPUT_SLOT.ordinal();
-    }
-
-    @Override
-    public int[] getSlotsForFace(EnumFacing side) {
-        if(side == EnumFacing.DOWN) {
-            return new int[] { slotEnum.OUTPUT_SLOT.ordinal() };
-        }
-        else {
-            if(side == EnumFacing.UP) {
-                return new int[] { slotEnum.INPUT_SLOT.ordinal() };
-            }
-            else {
-                return new int[] {};
-            }
-        }
-    }
-
-    @Override
-    public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
-        return isItemValidForSlot(index, itemStackIn);
-    }
-
-    @Override
-    public boolean canExtractItem(int slotIndex, ItemStack stack, EnumFacing facing) {
-        return true;
     }
 
     @Override

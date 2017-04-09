@@ -19,11 +19,13 @@ public class GrinderRecipes {
     private static int metadata;
 
     public static void init() {
+        // TODO(TT): collapse all of these maps into a single map
         grindingList = new HashMap<ItemStack, ItemStack>();
         experienceList = new HashMap<ItemStack, Float>();
         grindingTimes = new HashMap<String, Integer>();
         metadata = 32767;
 
+        // TODO(TT): remove recipes that are not intended to be used
         initRecipe(Blocks.STONEBRICK, Item.getItemFromBlock(Blocks.GRAVEL), 1, 200);
         initRecipe(Blocks.STONE_SLAB, Item.getItemFromBlock(Blocks.GRAVEL), 1, 200);
         initRecipe(Blocks.STONE_SLAB2, Item.getItemFromBlock(Blocks.GRAVEL), 1, 200);
