@@ -22,9 +22,6 @@ public class TileEntityGrinder extends TileEntityLockable
         INPUT_SLOT, OUTPUT_SLOT
     }
 
-    private static final int[] slotsTop = new int[] { slotEnum.INPUT_SLOT.ordinal() };
-    private static final int[] slotsBottom = new int[] { slotEnum.OUTPUT_SLOT.ordinal() };
-    private static final int[] slotsSides = new int[] {};
     private ItemStack[] grinderItemStackArray = new ItemStack[2];
     private int currentItemGrindTime;
     private int ticksGrindingItemSoFar;
@@ -242,14 +239,14 @@ public class TileEntityGrinder extends TileEntityLockable
     @Override
     public int[] getSlotsForFace(EnumFacing side) {
         if(side == EnumFacing.DOWN) {
-            return slotsBottom;
+            return new int[] { slotEnum.OUTPUT_SLOT.ordinal() };
         }
         else {
             if(side == EnumFacing.UP) {
-                return slotsTop;
+                return new int[] { slotEnum.INPUT_SLOT.ordinal() };
             }
             else {
-                return slotsSides;
+                return new int[] {};
             }
         }
     }
