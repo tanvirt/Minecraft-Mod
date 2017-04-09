@@ -8,8 +8,6 @@ import com.quantumindustries.minecraft.mod.items.ModItems;
 import com.quantumindustries.minecraft.mod.util.AcceleratingInput;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.FMLLog;
-import scala.Array;
 
 public class ParticleAcceleratorRecipes {
 
@@ -31,10 +29,6 @@ public class ParticleAcceleratorRecipes {
 
     public void addAcceleratingRecipe(ItemStack input, long powerTotal, long powerRate, ItemStack stack) {
         if(getAcceleratingResult(input) != null) {
-            FMLLog.info(
-                    "Ignored accelerator recipe with conflicting input: %s = %s",
-                    input.toString(), stack.toString()
-            );
             return;
         }
 
@@ -60,7 +54,8 @@ public class ParticleAcceleratorRecipes {
     }
 
     private boolean compareItemStacks(ItemStack stack1, ItemStack stack2) {
-        return stack2.getItem() == stack1.getItem() && (stack2.getMetadata() == 32767 || stack2.getMetadata() == stack1.getMetadata());
+        return stack2.getItem() == stack1.getItem() &&
+                (stack2.getMetadata() == 32767 || stack2.getMetadata() == stack1.getMetadata());
     }
 
     public Map<AcceleratingInput, ItemStack> getAcceleratorList() {

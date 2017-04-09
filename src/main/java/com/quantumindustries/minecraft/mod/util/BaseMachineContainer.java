@@ -81,8 +81,11 @@ public class BaseMachineContainer implements ITeslaConsumer, ITeslaHolder, ITesl
 
     @Override
     public long getStoredPower () {
-
         return this.stored;
+    }
+
+    public void setStoredPower(long power) {
+        stored = power;
     }
 
     @Override

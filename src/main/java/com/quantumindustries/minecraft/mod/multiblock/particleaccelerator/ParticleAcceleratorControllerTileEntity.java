@@ -6,7 +6,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -23,7 +22,7 @@ public class ParticleAcceleratorControllerTileEntity extends ParticleAccelerator
         protected void onContentsChanged(int slot) {
             // We need to tell the tile entity that something has changed so
             // that the chest contents is persisted
-            ParticleAcceleratorControllerTileEntity.this.markDirty();
+            markDirty();
         }
     };
 
@@ -58,6 +57,14 @@ public class ParticleAcceleratorControllerTileEntity extends ParticleAccelerator
         return super.getCapability(capability, facing);
     }
 
+    public long getCurrentPower() {
+        return ((ParticleAcceleratorController) getMultiblockController()).getPowerPort().getCurrentPower();
+    }
+
+    public long getCurrentCapacity() {
+        return ((ParticleAcceleratorController) getMultiblockController()).getPowerPort().getCapacity();
+    }
+
     // -----------------------------------------------------------------
     // ItemStack Inventory Functions
     // -----------------------------------------------------------------
@@ -67,18 +74,15 @@ public class ParticleAcceleratorControllerTileEntity extends ParticleAccelerator
         return !isInvalid() && playerIn.getDistanceSq(pos.add(0.5D, 0.5D, 0.5D)) <= 64D;
     }
 
-    public int getInventoryStackLimit()
-    {
+    public int getInventoryStackLimit() {
         return 64;
     }
 
     public boolean canAccelerate(long maxPowerRate){
-        if (itemStackHandler.getStackInSlot(GuiSlots.INPUT) == null)
-        {
+        if (itemStackHandler.getStackInSlot(GuiSlots.INPUT) == null) {
             return false;
         }
-        else
-        {
+        else {
             ItemStack stackInSlot = itemStackHandler.getStackInSlot(GuiSlots.INPUT);
             ItemStack itemstack = ParticleAcceleratorRecipes.instance().getAcceleratingResult(stackInSlot);
             long totalPowerRequired = ParticleAcceleratorRecipes.instance().getAcceleratingTotalPowerRequirement(stackInSlot);

@@ -102,10 +102,8 @@ public class ParticleAcceleratorPowerTileEntity extends ParticleAcceleratorTileE
         // side can be used, for example only allow power input through the back, that could be
         // done here.
         if (capability == TeslaCapabilities.CAPABILITY_CONSUMER ||
-                capability == TeslaCapabilities.CAPABILITY_PRODUCER ||
                 capability == TeslaCapabilities.CAPABILITY_HOLDER)
-            return (T) this.container;
-
+            return (T) getAcceleratorController().powerContainer;
         return super.getCapability(capability, facing);
     }
 
@@ -118,7 +116,6 @@ public class ParticleAcceleratorPowerTileEntity extends ParticleAcceleratorTileE
         // only accept power input from the bottom of the block, you would only return true for
         // Consumer if the facing parameter was down.
         return capability == TeslaCapabilities.CAPABILITY_CONSUMER ||
-                capability == TeslaCapabilities.CAPABILITY_PRODUCER ||
                 capability == TeslaCapabilities.CAPABILITY_HOLDER ||
                 super.hasCapability(capability, facing);
     }

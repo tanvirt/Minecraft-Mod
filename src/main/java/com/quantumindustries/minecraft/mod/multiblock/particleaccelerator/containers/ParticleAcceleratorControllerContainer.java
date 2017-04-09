@@ -1,24 +1,30 @@
 package com.quantumindustries.minecraft.mod.multiblock.particleaccelerator.containers;
 
 import com.quantumindustries.minecraft.mod.multiblock.particleaccelerator.ParticleAcceleratorControllerTileEntity;
+import com.quantumindustries.minecraft.mod.multiblock.particleaccelerator.ParticleAcceleratorPowerTileEntity;
 import net.darkhax.tesla.lib.PowerBar;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
+import net.minecraft.client.gui.inventory.GuiFurnace;
 
 import javax.annotation.Nullable;
 
 public class ParticleAcceleratorControllerContainer extends Container {
 
-    private ParticleAcceleratorControllerTileEntity te;
+    private ParticleAcceleratorControllerTileEntity controller;
+    private ParticleAcceleratorPowerTileEntity powerPort;
 
-    public ParticleAcceleratorControllerContainer(IInventory playerInventory, ParticleAcceleratorControllerTileEntity te) {
-        this.te = te;
+    public ParticleAcceleratorControllerContainer(IInventory playerInventory, ParticleAcceleratorControllerTileEntity controller,
+                                                  ParticleAcceleratorPowerTileEntity powerPort) {
+        this.controller = controller;
+        this.powerPort = powerPort;
 
         // This container references items out of our own inventory (the 9 slots we hold ourselves)
         // as well as the slots from the player inventory so that the user can transfer items between
@@ -46,7 +52,7 @@ public class ParticleAcceleratorControllerContainer extends Container {
     }
 
     private void addOwnSlots() {
-        IItemHandler itemHandler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+        IItemHandler itemHandler = controller.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
 
         // TODO(CM): Convert the 'slot' value to an enum list for different types of slots.
         SlotCoordinates input = new SlotCoordinates(64, 9, 0);
@@ -54,6 +60,12 @@ public class ParticleAcceleratorControllerContainer extends Container {
 
         addSlotToContainer(new SlotItemHandler(itemHandler, input.slotNumber, input.x, input.y));
         addSlotToContainer(new SlotItemHandler(itemHandler, output.slotNumber, output.x, output.y));
+    }
+
+    @Override
+    public void addListener(IContainerListener listener) {
+        super.addListener(listener);
+//        listener.sendAllWindowProperties(this, controller.getItemStackHandler());
     }
 
     @Nullable
@@ -88,7 +100,7 @@ public class ParticleAcceleratorControllerContainer extends Container {
 
     @Override
     public boolean canInteractWith(EntityPlayer playerIn) {
-        return te.canInteractWith(playerIn);
+        return controller.canInteractWith(playerIn);
     }
 
     public class SlotCoordinates {
