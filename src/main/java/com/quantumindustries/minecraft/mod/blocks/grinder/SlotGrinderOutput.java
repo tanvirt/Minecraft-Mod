@@ -12,10 +12,10 @@ public class SlotGrinderOutput extends Slot {
     private final EntityPlayer thePlayer;
     private int numGrinderOutput;
 
-    public SlotGrinderOutput(EntityPlayer parPlayer, IInventory parIInventory,
-                             int parSlotIndex, int parXDisplayPosition, int parYDisplayPosition) {
-        super(parIInventory, parSlotIndex, parXDisplayPosition, parYDisplayPosition);
-        thePlayer = parPlayer;
+    public SlotGrinderOutput(EntityPlayer player, IInventory inventory,
+                             int slotIndex, int xDisplayPosition, int yDisplayPosition) {
+        super(inventory, slotIndex, xDisplayPosition, yDisplayPosition);
+        thePlayer = player;
     }
 
     @Override
@@ -24,11 +24,11 @@ public class SlotGrinderOutput extends Slot {
     }
 
     @Override
-    public ItemStack decrStackSize(int parAmount) {
+    public ItemStack decrStackSize(int amount) {
         if(getHasStack()) {
-            numGrinderOutput += Math.min(parAmount, getStack().stackSize);
+            numGrinderOutput += Math.min(amount, getStack().stackSize);
         }
-        return super.decrStackSize(parAmount);
+        return super.decrStackSize(amount);
     }
 
     @Override
@@ -41,18 +41,18 @@ public class SlotGrinderOutput extends Slot {
      * The itemStack passed in is the output - ie, iron ingots, and pickaxes, not ore and wood
      */
     @Override
-    protected void onCrafting(ItemStack parItemStack, int parAmountGround) {
-        numGrinderOutput += parAmountGround;
-        onCrafting(parItemStack);
+    protected void onCrafting(ItemStack itemStack, int amountGround) {
+        numGrinderOutput += amountGround;
+        onCrafting(itemStack);
     }
 
     /**
      * The itemStack passed in is the output - ie, iron ingots, and pickaxes, not ore and wood.
      */
     @Override
-    protected void onCrafting(ItemStack parItemStack) {
+    protected void onCrafting(ItemStack itemStack) {
         if(!thePlayer.worldObj.isRemote) {
-            float expFactor = GrinderRecipes.getGrindingExperience(parItemStack);
+            float expFactor = GrinderRecipes.getGrindingExperience(itemStack);
             int expEarned = getExpEarned(numGrinderOutput, expFactor);
             createExperienceOrbs(expEarned);
         }

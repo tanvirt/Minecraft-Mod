@@ -47,14 +47,14 @@ public class GrinderRecipes {
         initRecipe(Blocks.SEA_LANTERN, Items.PRISMARINE_CRYSTALS, 10, 200);
     }
 
-    public static void addGrindingRecipe(ItemStack parItemStackIn, ItemStack parItemStackOut,
-                                  float parExperience, int time) {
-        grindingList.put(parItemStackIn, parItemStackOut);
-        experienceList.put(parItemStackOut, Float.valueOf(parExperience));
-        grindingTimes.put(parItemStackIn.getItem().getUnlocalizedName(), time);
+    public static void addGrindingRecipe(ItemStack itemStackIn, ItemStack itemStackOut,
+                                  float experience, int time) {
+        grindingList.put(itemStackIn, itemStackOut);
+        experienceList.put(itemStackOut, Float.valueOf(experience));
+        grindingTimes.put(itemStackIn.getItem().getUnlocalizedName(), time);
     }
 
-    public static ItemStack getGrindingResult(ItemStack parItemStack) {
+    public static ItemStack getGrindingResult(ItemStack itemStack) {
         Iterator<Entry<ItemStack, ItemStack>> iterator = grindingList.entrySet().iterator();
         Entry<ItemStack, ItemStack> entry;
 
@@ -64,12 +64,12 @@ public class GrinderRecipes {
             }
             entry = iterator.next();
         }
-        while(!itemStacksAreEqual(parItemStack, entry.getKey()));
+        while(!itemStacksAreEqual(itemStack, entry.getKey()));
 
         return entry.getValue();
     }
 
-    public static float getGrindingExperience(ItemStack parItemStack) {
+    public static float getGrindingExperience(ItemStack itemStack) {
         Iterator<Entry<ItemStack, Float>> iterator = experienceList.entrySet().iterator();
         Entry<ItemStack, Float> entry;
 
@@ -79,7 +79,7 @@ public class GrinderRecipes {
             }
             entry = iterator.next();
         }
-        while(!itemStacksAreEqual(parItemStack, entry.getKey()));
+        while(!itemStacksAreEqual(itemStack, entry.getKey()));
 
         return entry.getValue();
     }
@@ -98,10 +98,10 @@ public class GrinderRecipes {
         );
     }
 
-    private static boolean itemStacksAreEqual(ItemStack parItemStack1, ItemStack parItemStack2) {
-        return parItemStack2.getItem() == parItemStack1.getItem() &&
-                (parItemStack2.getMetadata() == metadata ||
-                        parItemStack2.getMetadata() == parItemStack1.getMetadata()
+    private static boolean itemStacksAreEqual(ItemStack itemStack1, ItemStack itemStack2) {
+        return itemStack2.getItem() == itemStack1.getItem() &&
+                (itemStack2.getMetadata() == metadata ||
+                        itemStack2.getMetadata() == itemStack1.getMetadata()
                 );
     }
 

@@ -17,12 +17,12 @@ public class ContainerGrinder extends Container {
     private int ticksGrindingItemSoFar;
     private int ticksPerItem;
 
-    public ContainerGrinder(InventoryPlayer parInventoryPlayer, IInventory parIInventory) {
-        tileGrinder = parIInventory;
+    public ContainerGrinder(InventoryPlayer inventoryPlayer, IInventory inventory) {
+        tileGrinder = inventory;
         sizeInventory = tileGrinder.getSizeInventory();
-        addContainerSlots(parInventoryPlayer);
-        addPlayerInventorySlots(parInventoryPlayer);
-        addHotbarSlots(parInventoryPlayer);
+        addContainerSlots(inventoryPlayer);
+        addPlayerInventorySlots(inventoryPlayer);
+        addHotbarSlots(inventoryPlayer);
     }
 
     @Override
@@ -107,7 +107,7 @@ public class ContainerGrinder extends Container {
         return slotIndex >= sizeInventory && slotIndex < sizeInventory + 27;
     }
 
-    private void addContainerSlots(InventoryPlayer parInventoryPlayer) {
+    private void addContainerSlots(InventoryPlayer inventoryPlayer) {
         addSlotToContainer(new Slot(
                 tileGrinder,
                 TileEntityGrinder.slotEnum.INPUT_SLOT.ordinal(),
@@ -115,7 +115,7 @@ public class ContainerGrinder extends Container {
                 35
         ));
         addSlotToContainer(new SlotGrinderOutput(
-                parInventoryPlayer.player,
+                inventoryPlayer.player,
                 tileGrinder,
                 TileEntityGrinder.slotEnum.OUTPUT_SLOT.ordinal(),
                 116,
@@ -123,11 +123,11 @@ public class ContainerGrinder extends Container {
         ));
     }
 
-    private void addPlayerInventorySlots(InventoryPlayer parInventoryPlayer) {
+    private void addPlayerInventorySlots(InventoryPlayer inventoryPlayer) {
         for(int i = 0; i < 3; ++i) {
             for(int j = 0; j < 9; ++j) {
                 addSlotToContainer(new Slot(
-                        parInventoryPlayer,
+                        inventoryPlayer,
                         j + i * 9 + 9,
                         8 + j * 18,
                         84 + i * 18
@@ -136,10 +136,10 @@ public class ContainerGrinder extends Container {
         }
     }
 
-    private void addHotbarSlots(InventoryPlayer parInventoryPlayer) {
+    private void addHotbarSlots(InventoryPlayer inventoryPlayer) {
         for(int i = 0; i < 9; ++i) {
             addSlotToContainer(new Slot(
-                    parInventoryPlayer,
+                    inventoryPlayer,
                     i,
                     8 + i * 18,
                     142

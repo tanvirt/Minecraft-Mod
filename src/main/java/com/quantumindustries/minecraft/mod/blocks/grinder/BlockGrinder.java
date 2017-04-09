@@ -58,35 +58,35 @@ public class BlockGrinder extends BlockContainerTileEntity<TileEntityGrinder> {
     }
 
     @Override
-    public void onBlockAdded(World parWorld, BlockPos parBlockPos, IBlockState parIBlockState) {
-        if(!parWorld.isRemote) {
+    public void onBlockAdded(World world, BlockPos blockPos, IBlockState blockState) {
+        if(!world.isRemote) {
             EnumFacing enumFacing = getUnblockedFace(
-                    parWorld,
-                    parBlockPos,
-                    parIBlockState
+                    world,
+                    blockPos,
+                    blockState
             );
 
-            parWorld.setBlockState(
-                    parBlockPos,
-                    parIBlockState.withProperty(FACING, enumFacing),
+            world.setBlockState(
+                    blockPos,
+                    blockState.withProperty(FACING, enumFacing),
                     2
             );
         }
     }
 
     @Override
-    public boolean onBlockActivated(World parWorld, BlockPos parBlockPos,
-                                    IBlockState parIBlockState, EntityPlayer parPlayer,
-                                    EnumHand parHand, ItemStack parStack, EnumFacing parFacing,
+    public boolean onBlockActivated(World world, BlockPos blockPos,
+                                    IBlockState blockState, EntityPlayer player,
+                                    EnumHand hand, ItemStack stack, EnumFacing facing,
                                     float hitX, float hitY, float hitZ) {
-        if(!parWorld.isRemote) {
-            parPlayer.openGui(
+        if(!world.isRemote) {
+            player.openGui(
                     CustomMod.instance,
                     CustomMod.GUI.GRINDER.ordinal(),
-                    parWorld,
-                    parBlockPos.getX(),
-                    parBlockPos.getY(),
-                    parBlockPos.getZ()
+                    world,
+                    blockPos.getX(),
+                    blockPos.getY(),
+                    blockPos.getZ()
             );
         }
 
@@ -145,7 +145,7 @@ public class BlockGrinder extends BlockContainerTileEntity<TileEntityGrinder> {
     }
 
     @Override
-    public EnumBlockRenderType getRenderType(IBlockState parIBlockState) {
+    public EnumBlockRenderType getRenderType(IBlockState blockState) {
         return EnumBlockRenderType.MODEL;
     }
 
@@ -182,13 +182,13 @@ public class BlockGrinder extends BlockContainerTileEntity<TileEntityGrinder> {
         return new BlockStateContainer(this, new IProperty[] { FACING });
     }
 
-    private EnumFacing getUnblockedFace(World parWorld, BlockPos parBlockPos, IBlockState parIBlockState) {
-        IBlockState blockToNorth = parWorld.getBlockState(parBlockPos.north());
-        IBlockState blockToSouth = parWorld.getBlockState(parBlockPos.south());
-        IBlockState blockToWest = parWorld.getBlockState(parBlockPos.west());
-        IBlockState blockToEast = parWorld.getBlockState(parBlockPos.east());
+    private EnumFacing getUnblockedFace(World world, BlockPos blockPos, IBlockState blockState) {
+        IBlockState blockToNorth = world.getBlockState(blockPos.north());
+        IBlockState blockToSouth = world.getBlockState(blockPos.south());
+        IBlockState blockToWest = world.getBlockState(blockPos.west());
+        IBlockState blockToEast = world.getBlockState(blockPos.east());
 
-        EnumFacing enumFacing = parIBlockState.getValue(FACING);
+        EnumFacing enumFacing = blockState.getValue(FACING);
 
         if(shouldFaceSouth(blockToNorth, blockToSouth, enumFacing)) {
             enumFacing = EnumFacing.SOUTH;

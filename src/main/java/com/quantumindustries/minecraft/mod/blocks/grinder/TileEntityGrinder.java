@@ -114,8 +114,8 @@ public class TileEntityGrinder extends TileEntityLockable
         return grinderCustomName != null && grinderCustomName.length() > 0;
     }
 
-    public void setCustomInventoryName(String parCustomName) {
-        grinderCustomName = parCustomName;
+    public void setCustomInventoryName(String customName) {
+        grinderCustomName = customName;
     }
 
     @Override
@@ -260,7 +260,7 @@ public class TileEntityGrinder extends TileEntityLockable
     }
 
     @Override
-    public boolean canExtractItem(int parSlotIndex, ItemStack parStack, EnumFacing parFacing) {
+    public boolean canExtractItem(int slotIndex, ItemStack stack, EnumFacing facing) {
         return true;
     }
 
@@ -332,10 +332,10 @@ public class TileEntityGrinder extends TileEntityLockable
         return grinderItemStackArray[slotEnum.INPUT_SLOT.ordinal()] != null;
     }
 
-    private int timeToGrindOneItem(ItemStack parItemStack) {
-        if(parItemStack != null && parItemStack.getItem() != null) {
+    private int timeToGrindOneItem(ItemStack itemStack) {
+        if(itemStack != null && itemStack.getItem() != null) {
             return GrinderRecipes.getGrindingTime(
-                    parItemStack.getItem().getUnlocalizedName()
+                    itemStack.getItem().getUnlocalizedName()
             );
         }
         return 0;

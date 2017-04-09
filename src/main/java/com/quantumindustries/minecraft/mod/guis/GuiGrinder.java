@@ -19,10 +19,10 @@ public class GuiGrinder extends GuiContainer {
     private final InventoryPlayer inventoryPlayer;
     private final IInventory tileGrinder;
 
-    public GuiGrinder(InventoryPlayer parInventoryPlayer, IInventory parInventoryGrinder) {
-        super(new ContainerGrinder(parInventoryPlayer, parInventoryGrinder));
-        inventoryPlayer = parInventoryPlayer;
-        tileGrinder = parInventoryGrinder;
+    public GuiGrinder(InventoryPlayer inventoryPlayer, IInventory inventoryGrinder) {
+        super(new ContainerGrinder(inventoryPlayer, inventoryGrinder));
+        this.inventoryPlayer = inventoryPlayer;
+        tileGrinder = inventoryGrinder;
     }
 
     @Override
