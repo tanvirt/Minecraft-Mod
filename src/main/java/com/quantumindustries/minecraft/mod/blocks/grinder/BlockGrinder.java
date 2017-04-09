@@ -33,7 +33,6 @@ public class BlockGrinder extends BlockContainerTileEntity<TileEntityGrinder> {
     public static final PropertyDirection FACING = PropertyDirection.create(
             "facing", EnumFacing.Plane.HORIZONTAL
     );
-    private final boolean isGrinding;
     private boolean hasTileEntity;
 
     public BlockGrinder() {
@@ -42,7 +41,6 @@ public class BlockGrinder extends BlockContainerTileEntity<TileEntityGrinder> {
                 FACING,
                 EnumFacing.NORTH
         ));
-        isGrinding = true;
         hasTileEntity = false;
         blockSoundType = SoundType.SNOW;
         blockParticleGravity = 1.0f;
