@@ -1,7 +1,5 @@
 package com.quantumindustries.minecraft.mod.multiblock.particleaccelerator;
 
-import com.quantumindustries.minecraft.mod.recipes.ParticleAcceleratorRecipes;
-import com.quantumindustries.minecraft.mod.util.BaseMachineContainer;
 import it.zerono.mods.zerocore.api.multiblock.IMultiblockPart;
 import it.zerono.mods.zerocore.api.multiblock.MultiblockControllerBase;
 import it.zerono.mods.zerocore.api.multiblock.validation.IMultiblockValidator;
@@ -9,13 +7,11 @@ import it.zerono.mods.zerocore.lib.block.ModTileEntity;
 import it.zerono.mods.zerocore.util.WorldHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +19,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import static java.lang.Math.abs;
-import static java.lang.Math.max;
-import static java.lang.Math.min;
 
 public class ParticleAcceleratorController extends MultiblockControllerBase {
 
@@ -43,11 +37,9 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
     private long maxPowerConsumptionRate;
     private long maxPowerStorage;
     private long powerUsedInCurrentAcceleration;
-    public BaseMachineContainer powerContainer;
 
     public ParticleAcceleratorController(World world) {
         super(world);
-
         outputPorts =  new ArrayList<>();
         inputPorts =  new ArrayList<>();
         powerPort =  null;
@@ -61,7 +53,6 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
         maxPowerConsumptionRate = 0;
         maxPowerStorage = 0;
         powerUsedInCurrentAcceleration = 0;
-        powerContainer = new BaseMachineContainer(0, 0, 0);
     }
 
     public boolean isAcceleratorBuilt() {
@@ -101,6 +92,10 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
 
     public ParticleAcceleratorPowerTileEntity getPowerPort() {
         return powerPort;
+    }
+
+    public ParticleAcceleratorControllerTileEntity getController() {
+        return controllerBlock;
     }
 
     @Override
@@ -162,18 +157,15 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
             maxPowerStorage = oneHundredMillion;
         }
 
-//        if(powerPort.getCapacity() < maxPowerStorage) {
-//            powerPort.setCapacity(maxPowerStorage);
-//        }
-//        if(powerPort.getInputRate() < maxPowerConsumptionRate) {
-//            powerPort.setInputRate(maxPowerConsumptionRate);
-//        }
-//        if(powerPort.getOutputRate() < maxPowerConsumptionRate) {
-//            powerPort.setOutputRate(maxPowerConsumptionRate);
-//        }
-        powerContainer.setCapacity(maxPowerStorage);
-        powerContainer.setInputRate(maxPowerConsumptionRate);
-        powerContainer.setOutputRate(maxPowerConsumptionRate);
+        if(powerPort.getCapacity() < maxPowerStorage) {
+            powerPort.setCapacity(maxPowerStorage);
+        }
+        if(powerPort.getInputRate() < maxPowerConsumptionRate) {
+            powerPort.setInputRate(maxPowerConsumptionRate);
+        }
+        if(powerPort.getOutputRate() < maxPowerConsumptionRate) {
+            powerPort.setOutputRate(maxPowerConsumptionRate);
+        }
     }
 
     private int calculatePerimeter() {
@@ -860,47 +852,10 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
 
     @Override
     protected boolean updateServer() {
-        FMLLog.warning("PowerContainer Stored: %d    Powercontainer Max: %d", powerContainer.getStoredPower(), powerContainer.getCapacity());
-        ItemStackHandler itemStackHandler = controllerBlock.getItemStackHandler();
         if(controllerBlock.canAccelerate(maxPowerConsumptionRate)) {
-            ItemStack inputStack = itemStackHandler.getStackInSlot(0);
-            long totalPowerRequirement = ParticleAcceleratorRecipes.instance().getAcceleratingTotalPowerRequirement(inputStack);
-            if(powerUsedInCurrentAcceleration < totalPowerRequirement) {
-                long consumptionAmountLeft = min(totalPowerRequirement - powerUsedInCurrentAcceleration, maxPowerConsumptionRate);
-                powerUsedInCurrentAcceleration += powerPort.consumePower(consumptionAmountLeft);
-                return true;
-            }
-            else {
-                // This function finally produces the item.
-                accelerateItem();
-                return true;
-            }
+            controllerBlock.acceleratingItem(powerPort);
         }
         return false;
-    }
-
-    public void accelerateItem() {
-        int INPUT = 0;
-        int OUTPUT = 1;
-        ItemStackHandler itemStackHandler = controllerBlock.getItemStackHandler();
-        ItemStack inputStack = itemStackHandler.getStackInSlot(INPUT);
-
-        ItemStack itemStack = ParticleAcceleratorRecipes.instance().getAcceleratingResult(inputStack);
-
-        if(itemStackHandler.getStackInSlot(OUTPUT) == null) {
-            itemStackHandler.insertItem(
-                    OUTPUT,
-                    itemStack.copy(),
-                    false
-            );
-        }
-        else if(itemStackHandler.getStackInSlot(OUTPUT).getItem() == itemStack.getItem()) {
-            itemStackHandler.insertItem(OUTPUT, itemStack.copy(), false);
-        }
-
-        itemStackHandler.extractItem(INPUT, 1, false);
-        powerUsedInCurrentAcceleration = 0;
-        toggleActive();
     }
 
     @Override
@@ -936,16 +891,12 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
 
     @Override
     protected void syncDataFrom(NBTTagCompound nbtTagCompound, ModTileEntity.SyncReason syncReason) {
-        FMLLog.warning("Sync Data From with compound: %s", nbtTagCompound.toString());
-        if(nbtTagCompound.hasKey("PowerPortContainer")) {
-            powerContainer = new BaseMachineContainer(nbtTagCompound.getCompoundTag("PowerPortContainer"));
-        }
+
     }
 
     @Override
     protected void syncDataTo(NBTTagCompound nbtTagCompound, ModTileEntity.SyncReason syncReason) {
-        FMLLog.warning("Sync Data To with compound: %s", nbtTagCompound.toString());
-        nbtTagCompound.setTag("PowerPortContainer", powerContainer.serializeNBT());
+
     }
 
     // -----------------------------------------------------------------------

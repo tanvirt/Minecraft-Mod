@@ -20,6 +20,8 @@ public class ParticleAcceleratorControllerContainer extends Container {
 
     private ParticleAcceleratorControllerTileEntity controller;
     private ParticleAcceleratorPowerTileEntity powerPort;
+    private long powerCapacity;
+    private long powerStored;
 
     public ParticleAcceleratorControllerContainer(IInventory playerInventory, ParticleAcceleratorControllerTileEntity controller,
                                                   ParticleAcceleratorPowerTileEntity powerPort) {
@@ -63,9 +65,32 @@ public class ParticleAcceleratorControllerContainer extends Container {
     }
 
     @Override
+    public void updateProgressBar(int id, int data) {
+        powerPort.setField(id, data);
+    }
+
+    @Override
+    public void detectAndSendChanges() {
+        super.detectAndSendChanges();
+
+        for(int i = 0; i < listeners.size(); ++i) {
+            IContainerListener iContainerListener = (IContainerListener) listeners.get(i);
+            if(powerCapacity != powerPort.getField(0)) {
+                iContainerListener.sendProgressBarUpdate(this, 0, (int) powerPort.getField(0));
+            }
+            if(powerStored != powerPort.getField(1)) {
+                iContainerListener.sendProgressBarUpdate(this, 1, (int) powerPort.getField(1));
+            }
+        }
+
+        powerCapacity = powerPort.getField(0);
+        powerStored = powerPort.getField(1);
+    }
+
+    @Override
     public void addListener(IContainerListener listener) {
         super.addListener(listener);
-//        listener.sendAllWindowProperties(this, controller.getItemStackHandler());
+        listener.sendAllWindowProperties(this, (IInventory) this.powerPort);
     }
 
     @Nullable

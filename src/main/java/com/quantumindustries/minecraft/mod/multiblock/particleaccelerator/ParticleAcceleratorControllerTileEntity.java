@@ -3,9 +3,12 @@ package com.quantumindustries.minecraft.mod.multiblock.particleaccelerator;
 import com.quantumindustries.minecraft.mod.recipes.ParticleAcceleratorRecipes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -13,8 +16,9 @@ public class ParticleAcceleratorControllerTileEntity extends ParticleAccelerator
     // TODO(CM): Either fix empty class or format to show we aren't using it.
 
     public static final int SIZE = 2;
-    private static final int TOTAL_POWER_INDEX = 0;
-    private static final int POWER_RATE_INDEX = 1;
+    public CurrentAcceleration currentAcceleration = new CurrentAcceleration();
+    public long maxPowerStorage = 1000;
+    public long currentPowerStorage = 500;
 
     // This item handler will hold our inventory slots
     private ItemStackHandler itemStackHandler = new ItemStackHandler(SIZE) {
@@ -26,11 +30,19 @@ public class ParticleAcceleratorControllerTileEntity extends ParticleAccelerator
         }
     };
 
+    public void setPowerContents(long max, long current) {
+        maxPowerStorage = max;
+        currentPowerStorage = current;
+    }
+
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        if (compound.hasKey("items")) {
+        if(compound.hasKey("items")) {
             itemStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("items"));
+        }
+        if(compound.hasKey("currentAcceleration")) {
+            currentAcceleration.deserializeNBT((NBTTagCompound) compound.getTag("currentAcceleration"));
         }
     }
 
@@ -38,6 +50,7 @@ public class ParticleAcceleratorControllerTileEntity extends ParticleAccelerator
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
         compound.setTag("items", itemStackHandler.serializeNBT());
+        compound.setTag("currentAcceleration", currentAcceleration.serializeNBT());
         return compound;
     }
 
@@ -57,14 +70,6 @@ public class ParticleAcceleratorControllerTileEntity extends ParticleAccelerator
         return super.getCapability(capability, facing);
     }
 
-    public long getCurrentPower() {
-        return ((ParticleAcceleratorController) getMultiblockController()).getPowerPort().getCurrentPower();
-    }
-
-    public long getCurrentCapacity() {
-        return ((ParticleAcceleratorController) getMultiblockController()).getPowerPort().getCapacity();
-    }
-
     // -----------------------------------------------------------------
     // ItemStack Inventory Functions
     // -----------------------------------------------------------------
@@ -80,16 +85,17 @@ public class ParticleAcceleratorControllerTileEntity extends ParticleAccelerator
 
     public boolean canAccelerate(long maxPowerRate){
         if (itemStackHandler.getStackInSlot(GuiSlots.INPUT) == null) {
+            resetCurrentAcceleration();
             return false;
         }
         else {
             ItemStack stackInSlot = itemStackHandler.getStackInSlot(GuiSlots.INPUT);
             ItemStack itemstack = ParticleAcceleratorRecipes.instance().getAcceleratingResult(stackInSlot);
-            long totalPowerRequired = ParticleAcceleratorRecipes.instance().getAcceleratingTotalPowerRequirement(stackInSlot);
+            long powerRateRequired = ParticleAcceleratorRecipes.instance().getAcceleratingRatePowerRequirement(stackInSlot);
             if (itemstack == null) {
                 return false;
             }
-            else if(totalPowerRequired > maxPowerRate) {
+            else if(powerRateRequired > maxPowerRate) {
                 return false;
             }
             // TODO(CM): Check power and plasma as well.
@@ -104,12 +110,98 @@ public class ParticleAcceleratorControllerTileEntity extends ParticleAccelerator
         }
     }
 
+    public void acceleratingItem(ParticleAcceleratorPowerTileEntity powerPort) {
+        //If not Active, we are starting a new acceleration
+        if(!currentAcceleration.isAccelerating) {
+            getAcceleratorController().setActive(true);
+            setNewAcceleration(ParticleAcceleratorRecipes.instance().getAcceleratingTotalPowerRequirement(itemStackHandler.getStackInSlot(GuiSlots.INPUT)));
+        }
+        else if(canAccelerate(powerPort.getInputRate())){
+            if(currentAcceleration.totalPowerNeeded > currentAcceleration.totalPowerUsed) {
+                long totalPowerStillNeeded = currentAcceleration.totalPowerNeeded - currentAcceleration.totalPowerUsed;
+                currentAcceleration.totalPowerUsed += powerPort.consumePower(totalPowerStillNeeded);
+                FMLLog.warning("Current Total Power Used: %d   Power Needed: %d", currentAcceleration.totalPowerUsed, currentAcceleration.totalPowerNeeded);
+            }
+            else if(currentAcceleration.totalPowerNeeded <= currentAcceleration.totalPowerUsed) {
+                finishAcceleration();
+            }
+        }
+        else {
+            resetCurrentAcceleration();
+            getAcceleratorController().setActive(false);
+        }
+    }
+
+    public void finishAcceleration() {
+        int INPUT = 0;
+        int OUTPUT = 1;
+        ItemStack inputStack = itemStackHandler.getStackInSlot(INPUT);
+
+        ItemStack itemStack = ParticleAcceleratorRecipes.instance().getAcceleratingResult(inputStack);
+
+        if(itemStackHandler.getStackInSlot(OUTPUT) == null) {
+            itemStackHandler.insertItem(
+                    OUTPUT,
+                    itemStack.copy(),
+                    false
+            );
+        }
+        else if(itemStackHandler.getStackInSlot(OUTPUT).getItem() == itemStack.getItem()) {
+            itemStackHandler.insertItem(OUTPUT, itemStack.copy(), false);
+        }
+
+        itemStackHandler.extractItem(INPUT, 1, false);
+        resetCurrentAcceleration();
+        getAcceleratorController().setActive(false);
+    }
+
     public ItemStackHandler getItemStackHandler() {
         return itemStackHandler;
+    }
+
+    public void setNewAcceleration(long powerNeeded) {
+        currentAcceleration.totalPowerUsed = 0;
+        currentAcceleration.totalPowerNeeded = powerNeeded;
+        currentAcceleration.isAccelerating = true;
+    }
+
+    public void resetCurrentAcceleration() {
+        currentAcceleration = new CurrentAcceleration();
     }
 
     public class GuiSlots {
         static final int INPUT = 0;
         static final int OUTPUT = 1;
     }
+
+    public class CurrentAcceleration implements  INBTSerializable<NBTTagCompound> {
+        long totalPowerUsed = 0;
+        long totalPowerNeeded = 0;
+        boolean isAccelerating = false;
+
+        @Override
+        public NBTTagCompound serializeNBT() {
+            final NBTTagCompound dataTag = new NBTTagCompound();
+            dataTag.setLong("totalPowerUsed", totalPowerUsed);
+            dataTag.setLong("totalPowerNeeded", totalPowerNeeded);
+            dataTag.setBoolean("isAccelerating", isAccelerating);
+
+            return dataTag;
+        }
+
+        @Override
+        public void deserializeNBT(NBTTagCompound nbt) {
+            if (nbt.hasKey("totalPowerUsed")) {
+                currentAcceleration.totalPowerUsed = nbt.getLong("totalPowerUsed");
+            }
+            if (nbt.hasKey("totalPowerNeeded")) {
+                currentAcceleration.totalPowerNeeded = nbt.getLong("totalPowerNeeded");
+            }
+            if (nbt.hasKey("isAccelerating")) {
+                currentAcceleration.isAccelerating = nbt.getBoolean("isAccelerating");
+            }
+        }
+    }
+
+
 }

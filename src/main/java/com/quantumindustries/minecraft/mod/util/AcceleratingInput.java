@@ -18,7 +18,7 @@ public class AcceleratingInput {
         return inputStack;
     }
 
-    public long getPowerRequired() {
+    public long getTotalPowerRequired() {
         return totalPowerRequired;
     }
 

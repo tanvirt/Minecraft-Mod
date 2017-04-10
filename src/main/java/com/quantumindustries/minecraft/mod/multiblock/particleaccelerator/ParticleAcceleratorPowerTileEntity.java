@@ -2,6 +2,7 @@ package com.quantumindustries.minecraft.mod.multiblock.particleaccelerator;
 
 import com.quantumindustries.minecraft.mod.util.BaseMachineContainer;
 import net.darkhax.tesla.capability.TeslaCapabilities;
+import net.minecraft.client.gui.inventory.GuiFurnace;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
@@ -60,14 +61,7 @@ public class ParticleAcceleratorPowerTileEntity extends ParticleAcceleratorTileE
     }
 
     public long consumePower(long power) {
-        if(container.getStoredPower() > power) {
-            container.takePower(power, false);
-            return power;
-        }
-        else {
-            container.takePower(container.getStoredPower(), false);
-            return container.getStoredPower();
-        }
+        return container.takePower(power, false);
     }
 
     @Override
@@ -79,6 +73,7 @@ public class ParticleAcceleratorPowerTileEntity extends ParticleAcceleratorTileE
         // completely optional though, you can handle saving however you prefer. You could even
         // choose not to, but then power won't be saved when you close the game.
         this.container = new BaseMachineContainer(compound.getCompoundTag("PowerPortContainer"));
+        getAcceleratorController().getController().setPowerContents(container.getCapacity(), container.getStoredPower());
     }
 
     @Override
@@ -89,6 +84,7 @@ public class ParticleAcceleratorPowerTileEntity extends ParticleAcceleratorTileE
         // completely optional though, you can handle saving however you prefer. You could even
         // choose not to, but then power won't be saved when you close the game.
         compound.setTag("PowerPortContainer", this.container.serializeNBT());
+        getAcceleratorController().getController().setPowerContents(container.getCapacity(), container.getStoredPower());
         return super.writeToNBT(compound);
     }
 
@@ -103,7 +99,7 @@ public class ParticleAcceleratorPowerTileEntity extends ParticleAcceleratorTileE
         // done here.
         if (capability == TeslaCapabilities.CAPABILITY_CONSUMER ||
                 capability == TeslaCapabilities.CAPABILITY_HOLDER)
-            return (T) getAcceleratorController().powerContainer;
+            return (T) container;
         return super.getCapability(capability, facing);
     }
 
@@ -118,5 +114,30 @@ public class ParticleAcceleratorPowerTileEntity extends ParticleAcceleratorTileE
         return capability == TeslaCapabilities.CAPABILITY_CONSUMER ||
                 capability == TeslaCapabilities.CAPABILITY_HOLDER ||
                 super.hasCapability(capability, facing);
+    }
+
+    public long getField(int id)
+    {
+        switch (id)
+        {
+            case 0:
+                return container.getCapacity();
+            case 1:
+                return container.getStoredPower();
+            default:
+                return 0;
+        }
+    }
+
+    public void setField(int id, int value)
+    {
+        switch (id)
+        {
+            case 0:
+                container.setCapacity(value);
+                break;
+            case 1:
+                container.setStoredPower(value);
+        }
     }
 }

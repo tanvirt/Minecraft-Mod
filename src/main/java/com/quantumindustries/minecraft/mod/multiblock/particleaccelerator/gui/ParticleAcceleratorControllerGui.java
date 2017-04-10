@@ -19,8 +19,8 @@ public class ParticleAcceleratorControllerGui extends GuiContainer {
     public static final int WIDTH = 176;
     public static final int HEIGHT = 166;
     public PowerBar controllerPowerBar;
-    private ParticleAcceleratorPowerTileEntity powerPort;
     private ParticleAcceleratorControllerTileEntity controller;
+    ParticleAcceleratorPowerTileEntity powerPort;
 
     private static final ResourceLocation background =
             new ResourceLocation(
@@ -28,11 +28,11 @@ public class ParticleAcceleratorControllerGui extends GuiContainer {
                 "textures/gui/acceleratorControllerGui.png"
             );
 
-    public ParticleAcceleratorControllerGui(ParticleAcceleratorControllerTileEntity tileEntity,
+    public ParticleAcceleratorControllerGui(ParticleAcceleratorControllerTileEntity controller,
                                             ParticleAcceleratorPowerTileEntity powerPort,
                                             ParticleAcceleratorControllerContainer container) {
         super(container);
-        controller = tileEntity;
+        this.controller = controller;
         this.powerPort = powerPort;
         xSize = WIDTH;
         ySize = HEIGHT;
@@ -49,12 +49,16 @@ public class ParticleAcceleratorControllerGui extends GuiContainer {
         mc.getTextureManager().bindTexture(background);
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
         // TODO(CM): Get actual values from power ports
-        controllerPowerBar.draw(controller.getCurrentPower(), 1000000);
+        long capacity = getPowerCapacity();
+        long stored = getPowerStored();
+        controllerPowerBar.draw(stored, capacity);
     }
 
-//    @Override
-//    public void updateScreen() {
-//        super.updateScreen();
-//        controllerPowerBar.draw(controller.getCurrentPower(), 1000000);
-//    }
+    private long getPowerCapacity() {
+        return powerPort.getField(0);
+    }
+
+    private long getPowerStored() {
+        return powerPort.getField(1);
+    }
 }

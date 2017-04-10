@@ -20,7 +20,7 @@ public class ParticleAcceleratorRecipes {
 
     private ParticleAcceleratorRecipes() {
         // TODO(CM): fix power totals and power rates for recipes
-        addAccelerating(ModItems.netherStarTarget, new ItemStack(ModItems.neutronStarParticle), 10000, 1000);
+        addAccelerating(ModItems.netherStarTarget, new ItemStack(ModItems.neutronStarParticle), 1000000, 1000);
     }
 
     public void addAccelerating(Item input, ItemStack stack, long powerTotal, long powerRate) {
@@ -47,7 +47,16 @@ public class ParticleAcceleratorRecipes {
     public long getAcceleratingTotalPowerRequirement(ItemStack stack) {
         for(Entry<AcceleratingInput, ItemStack> entry : acceleratorList.entrySet()) {
             if(compareItemStacks(stack, entry.getKey().getInputStack())) {
-                return entry.getKey().getPowerRequired();
+                return entry.getKey().getTotalPowerRequired();
+            }
+        }
+        return 0;
+    }
+
+    public long getAcceleratingRatePowerRequirement(ItemStack stack) {
+        for(Entry<AcceleratingInput, ItemStack> entry : acceleratorList.entrySet()) {
+            if(compareItemStacks(stack, entry.getKey().getInputStack())) {
+                return entry.getKey().getPowerRateRequired();
             }
         }
         return 0;
