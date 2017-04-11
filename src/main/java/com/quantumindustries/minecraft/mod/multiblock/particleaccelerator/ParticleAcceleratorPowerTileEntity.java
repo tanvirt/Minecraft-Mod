@@ -1,6 +1,7 @@
 package com.quantumindustries.minecraft.mod.multiblock.particleaccelerator;
 
 import com.quantumindustries.minecraft.mod.util.BaseMachineContainer;
+import javafx.beans.InvalidationListener;
 import net.darkhax.tesla.capability.TeslaCapabilities;
 import net.minecraft.client.gui.inventory.GuiFurnace;
 import net.minecraft.nbt.NBTTagCompound;
@@ -28,12 +29,18 @@ public class ParticleAcceleratorPowerTileEntity extends ParticleAcceleratorTileE
         container = new BaseMachineContainer(power, capacity, input, input);
     }
 
+    public void setContainer(BaseMachineContainer container) {
+        this.container = container;
+        notifyUpdate();
+    }
+
     public BaseMachineContainer getContainer() {
         return container;
     }
 
     public void setCapacity(long power) {
         container.setCapacity(power);
+        notifyUpdate();
     }
 
     public long getCapacity() {
@@ -61,7 +68,9 @@ public class ParticleAcceleratorPowerTileEntity extends ParticleAcceleratorTileE
     }
 
     public long consumePower(long power) {
-        return container.takePower(power, false);
+        long powerConsumed = container.takePower(power, false);
+        notifyUpdate();
+        return powerConsumed;
     }
 
     @Override
@@ -73,7 +82,6 @@ public class ParticleAcceleratorPowerTileEntity extends ParticleAcceleratorTileE
         // completely optional though, you can handle saving however you prefer. You could even
         // choose not to, but then power won't be saved when you close the game.
         this.container = new BaseMachineContainer(compound.getCompoundTag("PowerPortContainer"));
-        getAcceleratorController().getController().setPowerContents(container.getCapacity(), container.getStoredPower());
     }
 
     @Override
@@ -84,7 +92,6 @@ public class ParticleAcceleratorPowerTileEntity extends ParticleAcceleratorTileE
         // completely optional though, you can handle saving however you prefer. You could even
         // choose not to, but then power won't be saved when you close the game.
         compound.setTag("PowerPortContainer", this.container.serializeNBT());
-        getAcceleratorController().getController().setPowerContents(container.getCapacity(), container.getStoredPower());
         return super.writeToNBT(compound);
     }
 
@@ -140,4 +147,5 @@ public class ParticleAcceleratorPowerTileEntity extends ParticleAcceleratorTileE
                 container.setStoredPower(value);
         }
     }
+
 }

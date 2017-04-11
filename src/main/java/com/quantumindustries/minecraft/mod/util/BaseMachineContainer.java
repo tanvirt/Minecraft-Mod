@@ -220,4 +220,29 @@ public class BaseMachineContainer implements ITeslaConsumer, ITeslaHolder, ITesl
         this.setOutputRate(rate);
         return this;
     }
+
+    public long getField(int id)
+    {
+        switch (id)
+        {
+            case 0:
+                return capacity;
+            case 1:
+                return stored;
+            default:
+                return 0;
+        }
+    }
+
+    public void setField(int id, long value)
+    {
+        switch (id)
+        {
+            case 0:
+                capacity = value;
+                break;
+            case 1:
+                stored = value;
+        }
+    }
 }

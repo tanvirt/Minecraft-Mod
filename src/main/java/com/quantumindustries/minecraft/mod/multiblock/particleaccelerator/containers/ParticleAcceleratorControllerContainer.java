@@ -1,8 +1,7 @@
 package com.quantumindustries.minecraft.mod.multiblock.particleaccelerator.containers;
 
 import com.quantumindustries.minecraft.mod.multiblock.particleaccelerator.ParticleAcceleratorControllerTileEntity;
-import com.quantumindustries.minecraft.mod.multiblock.particleaccelerator.ParticleAcceleratorPowerTileEntity;
-import net.darkhax.tesla.lib.PowerBar;
+import com.quantumindustries.minecraft.mod.util.BaseMachineContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IContainerListener;
@@ -12,25 +11,21 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
-import net.minecraft.client.gui.inventory.GuiFurnace;
 
 import javax.annotation.Nullable;
 
 public class ParticleAcceleratorControllerContainer extends Container {
 
     private ParticleAcceleratorControllerTileEntity controller;
-    private ParticleAcceleratorPowerTileEntity powerPort;
     private long powerCapacity;
     private long powerStored;
+    private BaseMachineContainer powerHolder;
 
     public ParticleAcceleratorControllerContainer(IInventory playerInventory, ParticleAcceleratorControllerTileEntity controller,
-                                                  ParticleAcceleratorPowerTileEntity powerPort) {
+                                                  BaseMachineContainer powerHolder) {
         this.controller = controller;
-        this.powerPort = powerPort;
+        this.powerHolder = powerHolder;
 
-        // This container references items out of our own inventory (the 9 slots we hold ourselves)
-        // as well as the slots from the player inventory so that the user can transfer items between
-        // both inventories. The two calls below make sure that slots are defined for both inventories.
         addOwnSlots();
         addPlayerSlots(playerInventory);
     }
@@ -66,7 +61,7 @@ public class ParticleAcceleratorControllerContainer extends Container {
 
     @Override
     public void updateProgressBar(int id, int data) {
-        powerPort.setField(id, data);
+        powerHolder.setField(id, data);
     }
 
     @Override
@@ -74,30 +69,24 @@ public class ParticleAcceleratorControllerContainer extends Container {
         super.detectAndSendChanges();
 
         for(int i = 0; i < listeners.size(); ++i) {
-            IContainerListener iContainerListener = (IContainerListener) listeners.get(i);
-            if(powerCapacity != powerPort.getField(0)) {
-                iContainerListener.sendProgressBarUpdate(this, 0, (int) powerPort.getField(0));
+            IContainerListener iContainerListener = listeners.get(i);
+            if(powerCapacity != powerHolder.getField(0)) {
+                iContainerListener.sendProgressBarUpdate(this, 0, (int) powerHolder.getField(0));
             }
-            if(powerStored != powerPort.getField(1)) {
-                iContainerListener.sendProgressBarUpdate(this, 1, (int) powerPort.getField(1));
+            if(powerStored != powerHolder.getField(1)) {
+                iContainerListener.sendProgressBarUpdate(this, 1, (int) powerHolder.getField(1));
             }
         }
 
-        powerCapacity = powerPort.getField(0);
-        powerStored = powerPort.getField(1);
-    }
-
-    @Override
-    public void addListener(IContainerListener listener) {
-        super.addListener(listener);
-        listener.sendAllWindowProperties(this, (IInventory) this.powerPort);
+        powerCapacity = powerHolder.getField(0);
+        powerStored = powerHolder.getField(1);
     }
 
     @Nullable
     @Override
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
         ItemStack itemstack = null;
-        Slot slot = (Slot) inventorySlots.get(index);
+        Slot slot = inventorySlots.get(index);
 
         if (slot != null && slot.getHasStack()) {
             ItemStack itemStack1 = slot.getStack();

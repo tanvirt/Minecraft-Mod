@@ -120,7 +120,7 @@ public class ParticleAcceleratorControllerTileEntity extends ParticleAccelerator
             if(currentAcceleration.totalPowerNeeded > currentAcceleration.totalPowerUsed) {
                 long totalPowerStillNeeded = currentAcceleration.totalPowerNeeded - currentAcceleration.totalPowerUsed;
                 currentAcceleration.totalPowerUsed += powerPort.consumePower(totalPowerStillNeeded);
-                FMLLog.warning("Current Total Power Used: %d   Power Needed: %d", currentAcceleration.totalPowerUsed, currentAcceleration.totalPowerNeeded);
+//                FMLLog.warning("Current Total Power Used: %d   Power Needed: %d", currentAcceleration.totalPowerUsed, currentAcceleration.totalPowerNeeded);
             }
             else if(currentAcceleration.totalPowerNeeded <= currentAcceleration.totalPowerUsed) {
                 finishAcceleration();

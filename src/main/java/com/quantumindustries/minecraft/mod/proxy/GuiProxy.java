@@ -5,10 +5,14 @@ import com.quantumindustries.minecraft.mod.multiblock.particleaccelerator.Partic
 import com.quantumindustries.minecraft.mod.multiblock.particleaccelerator.ParticleAcceleratorPowerTileEntity;
 import com.quantumindustries.minecraft.mod.multiblock.particleaccelerator.containers.ParticleAcceleratorControllerContainer;
 import com.quantumindustries.minecraft.mod.multiblock.particleaccelerator.gui.ParticleAcceleratorControllerGui;
+import net.darkhax.tesla.api.ITeslaHolder;
+import net.darkhax.tesla.capability.TeslaCapabilities;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 
 public class GuiProxy implements IGuiHandler {
@@ -21,7 +25,7 @@ public class GuiProxy implements IGuiHandler {
             ParticleAcceleratorPowerTileEntity powerPort =
                     ((ParticleAcceleratorControllerTileEntity) te).getAcceleratorController().getPowerPort();
             return new ParticleAcceleratorControllerContainer(
-                    player.inventory,(ParticleAcceleratorControllerTileEntity) te, powerPort
+                    player.inventory,(ParticleAcceleratorControllerTileEntity) te, powerPort.getContainer()
             );
         }
         return null;
@@ -36,9 +40,8 @@ public class GuiProxy implements IGuiHandler {
                     ((ParticleAcceleratorControllerTileEntity) te).getAcceleratorController().getPowerPort();
             ParticleAcceleratorControllerTileEntity containerTileEntity = (ParticleAcceleratorControllerTileEntity) te;
             return new ParticleAcceleratorControllerGui(
-                    containerTileEntity,
-                    powerPort,
-                    new ParticleAcceleratorControllerContainer(player.inventory, containerTileEntity, powerPort)
+                    containerTileEntity, powerPort.getContainer(),
+                    new ParticleAcceleratorControllerContainer(player.inventory, containerTileEntity, powerPort.getContainer())
             );
         }
         return null;
