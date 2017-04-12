@@ -2,11 +2,9 @@ package com.quantumindustries.minecraft.mod.guis;
 
 import com.quantumindustries.minecraft.mod.CustomMod;
 import com.quantumindustries.minecraft.mod.containers.ParticleAcceleratorControllerContainer;
-import com.quantumindustries.minecraft.mod.items.ModItems;
 import com.quantumindustries.minecraft.mod.util.BaseMachineContainer;
 import net.darkhax.tesla.lib.PowerBar;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
