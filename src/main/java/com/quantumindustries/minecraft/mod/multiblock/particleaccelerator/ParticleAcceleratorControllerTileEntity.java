@@ -16,8 +16,6 @@ public class ParticleAcceleratorControllerTileEntity extends ParticleAccelerator
 
     public static final int SIZE = 2;
     public CurrentAcceleration currentAcceleration = new CurrentAcceleration();
-    public long maxPowerStorage = 1000;
-    public long currentPowerStorage = 500;
 
     // This item handler will hold our inventory slots
     private ItemStackHandler itemStackHandler = new ItemStackHandler(SIZE) {
@@ -28,11 +26,6 @@ public class ParticleAcceleratorControllerTileEntity extends ParticleAccelerator
             markDirty();
         }
     };
-
-    public void setPowerContents(long max, long current) {
-        maxPowerStorage = max;
-        currentPowerStorage = current;
-    }
 
     @Override
     public void readFromNBT(NBTTagCompound compound) {
