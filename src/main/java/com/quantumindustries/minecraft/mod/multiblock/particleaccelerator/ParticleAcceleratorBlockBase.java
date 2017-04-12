@@ -79,11 +79,6 @@ public abstract class ParticleAcceleratorBlockBase extends BlockBase {
             player.openGui(CustomMod.instance, CONTROLLER_GUI_ID, world, position.getX(), position.getY(), position.getZ());
             return true;
         }
-        if (te instanceof ParticleAcceleratorPowerTileEntity) {
-            final ITeslaHolder holder = te.getCapability(TeslaCapabilities.CAPABILITY_HOLDER, side);
-            player.addChatMessage(new TextComponentString("Power: " + holder.getStoredPower()));
-            return true;
-        }
         return false;
     }
 
@@ -126,7 +121,4 @@ public abstract class ParticleAcceleratorBlockBase extends BlockBase {
         }
     }
 
-    private boolean isPlayerHittingController(IBlockState state) {
-        return state.getBlock() instanceof ParticleAcceleratorBlockController;
-    }
 }

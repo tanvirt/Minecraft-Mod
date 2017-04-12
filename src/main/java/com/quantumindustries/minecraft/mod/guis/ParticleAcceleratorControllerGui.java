@@ -1,11 +1,12 @@
-package com.quantumindustries.minecraft.mod.multiblock.particleaccelerator.gui;
+package com.quantumindustries.minecraft.mod.guis;
 
 import com.quantumindustries.minecraft.mod.CustomMod;
-import com.quantumindustries.minecraft.mod.multiblock.particleaccelerator.ParticleAcceleratorControllerTileEntity;
-import com.quantumindustries.minecraft.mod.multiblock.particleaccelerator.containers.ParticleAcceleratorControllerContainer;
+import com.quantumindustries.minecraft.mod.containers.ParticleAcceleratorControllerContainer;
+import com.quantumindustries.minecraft.mod.items.ModItems;
 import com.quantumindustries.minecraft.mod.util.BaseMachineContainer;
 import net.darkhax.tesla.lib.PowerBar;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
@@ -13,11 +14,10 @@ import java.util.List;
 
 public class ParticleAcceleratorControllerGui extends GuiContainer {
 
-    public static final int WIDTH = 176;
-    public static final int HEIGHT = 166;
-    public PowerBar controllerPowerBar;
-    private ParticleAcceleratorControllerTileEntity controller;
-    BaseMachineContainer powerPort;
+    private static final int WIDTH = 176;
+    private static final int HEIGHT = 166;
+    private PowerBar controllerPowerBar;
+    private BaseMachineContainer powerPort;
 
     private static final ResourceLocation background =
             new ResourceLocation(
@@ -25,11 +25,10 @@ public class ParticleAcceleratorControllerGui extends GuiContainer {
                 "textures/gui/acceleratorControllerGui.png"
             );
 
-    public ParticleAcceleratorControllerGui(ParticleAcceleratorControllerTileEntity controller,
-                                            BaseMachineContainer powerPort,
+    public ParticleAcceleratorControllerGui(BaseMachineContainer powerPort,
                                             ParticleAcceleratorControllerContainer container) {
         super(container);
-        this.controller = controller;
+
         this.powerPort = powerPort;
         xSize = WIDTH;
         ySize = HEIGHT;
@@ -48,14 +47,21 @@ public class ParticleAcceleratorControllerGui extends GuiContainer {
         long capacity = getPowerCapacity();
         long stored = getPowerStored();
 
-        String powerString = stored + "/" + capacity;
-        List<String> powerRatio = new ArrayList<>();
-        powerRatio.add(powerString);
-        if(checkPowerBarHover(mouseX, mouseY)) {
-            drawHoveringText(powerRatio, mouseX, mouseY);
-        }
-
         controllerPowerBar.draw(stored, capacity);
+    }
+
+    @Override
+    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+        long capacity = getPowerCapacity();
+        long stored = getPowerStored();
+
+        if(checkPowerBarHover(mouseX, mouseY)) {
+            drawHoveringText(new ArrayList<String>() {{add(getPowerHoverString(stored, capacity));}}, mouseX - guiLeft, mouseY - guiTop);
+        }
+    }
+
+    private String getPowerHoverString(long stored, long capacity) {
+        return stored + "/" + capacity;
     }
 
     private long getPowerCapacity() {

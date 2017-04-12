@@ -33,13 +33,9 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
     private CurrentCounts currentCounts;
     private ActualAcceleratorSizes actualAcceleratorSizes;
 
-    // Power Related Variables
-    private long maxPowerConsumptionRate;
-    private long maxPowerStorage;
-    private long powerUsedInCurrentAcceleration;
-
     public ParticleAcceleratorController(World world) {
         super(world);
+
         outputPorts =  new ArrayList<>();
         inputPorts =  new ArrayList<>();
         powerPort =  null;
@@ -48,11 +44,6 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
         isActive = false;
         isAcceleratorBuilt = false;
         actualAcceleratorSizes = new ActualAcceleratorSizes();
-
-        // Power Variables
-        maxPowerConsumptionRate = 0;
-        maxPowerStorage = 0;
-        powerUsedInCurrentAcceleration = 0;
     }
 
     public boolean isAcceleratorBuilt() {
@@ -85,10 +76,6 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
             markMultiblockForRenderUpdate();
         }
     }
-
-    // -----------------------------------------------------------------------
-    // Getter/Setter Functions
-    // -----------------------------------------------------------------------
 
     public ParticleAcceleratorPowerTileEntity getPowerPort() {
         return powerPort;
@@ -130,11 +117,15 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
     }
 
     private void resetPowerVariables() {
-        maxPowerConsumptionRate = 0;
-        maxPowerStorage = 0;
+        powerPort.setCapacity(0);
+        powerPort.setOutputRate(0);
+        powerPort.setInputRate(0);
     }
 
     private void calculatePowerVariables() {
+        // TODO(CM): Continue tweaking this whole function for balance purposes.
+        long powerRate;
+        long powerCapacity;
         int oneHundredThousand = 100000;
         int oneMillion = 1000000;
         int tenMillion = 10000000;
@@ -142,29 +133,29 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
 
         int acceleratorPerimeter = calculatePerimeter();
         int powerMagnetRatio = currentCounts.magnetBlock / 10;
-        maxPowerConsumptionRate = (acceleratorPerimeter * 1000) * powerMagnetRatio;
+        powerRate = (acceleratorPerimeter * 1000) * powerMagnetRatio;
 
-        if(maxPowerConsumptionRate < oneHundredThousand) {
-            maxPowerStorage = oneHundredThousand;
+        if(powerRate < oneHundredThousand) {
+            powerCapacity = oneHundredThousand;
         }
-        else if(maxPowerConsumptionRate < oneMillion) {
-            maxPowerStorage = oneMillion;
+        else if(powerRate < oneMillion) {
+            powerCapacity = oneMillion;
         }
-        else if(maxPowerStorage < tenMillion) {
-            maxPowerStorage = tenMillion;
+        else if(powerRate < tenMillion) {
+            powerCapacity = tenMillion;
         }
         else {
-            maxPowerStorage = oneHundredMillion;
+            powerCapacity = oneHundredMillion;
         }
 
-        if(powerPort.getCapacity() < maxPowerStorage) {
-            powerPort.setCapacity(maxPowerStorage);
+        if(powerPort.getCapacity() < powerCapacity) {
+            powerPort.setCapacity(powerCapacity);
         }
-        if(powerPort.getInputRate() < maxPowerConsumptionRate) {
-            powerPort.setInputRate(maxPowerConsumptionRate);
+        if(powerPort.getInputRate() < powerRate) {
+            powerPort.setInputRate(powerRate);
         }
-        if(powerPort.getOutputRate() < maxPowerConsumptionRate) {
-            powerPort.setOutputRate(maxPowerConsumptionRate);
+        if(powerPort.getOutputRate() < powerRate) {
+            powerPort.setOutputRate(powerRate);
         }
     }
 
@@ -852,7 +843,7 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
 
     @Override
     protected boolean updateServer() {
-        if(controllerBlock.canAccelerate(maxPowerConsumptionRate)) {
+        if(controllerBlock.canAccelerate(powerPort.getInputRate())) {
             controllerBlock.acceleratingItem(powerPort);
         }
         return false;
@@ -898,14 +889,6 @@ public class ParticleAcceleratorController extends MultiblockControllerBase {
     protected void syncDataTo(NBTTagCompound nbtTagCompound, ModTileEntity.SyncReason syncReason) {
 
     }
-
-    // -----------------------------------------------------------------------
-    // Crafting Functions
-    // -----------------------------------------------------------------------
-
-    // -----------------------------------------------------------------------
-    // Power Functions
-    // -----------------------------------------------------------------------
 
     // -----------------------------------------------------------------------
     // Inner Data classes

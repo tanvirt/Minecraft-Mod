@@ -2,13 +2,12 @@ package com.quantumindustries.minecraft.mod.multiblock.particleaccelerator;
 
 import com.quantumindustries.minecraft.mod.recipes.ParticleAcceleratorRecipes;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -120,7 +119,6 @@ public class ParticleAcceleratorControllerTileEntity extends ParticleAccelerator
             if(currentAcceleration.totalPowerNeeded > currentAcceleration.totalPowerUsed) {
                 long totalPowerStillNeeded = currentAcceleration.totalPowerNeeded - currentAcceleration.totalPowerUsed;
                 currentAcceleration.totalPowerUsed += powerPort.consumePower(totalPowerStillNeeded);
-//                FMLLog.warning("Current Total Power Used: %d   Power Needed: %d", currentAcceleration.totalPowerUsed, currentAcceleration.totalPowerNeeded);
             }
             else if(currentAcceleration.totalPowerNeeded <= currentAcceleration.totalPowerUsed) {
                 finishAcceleration();
@@ -202,6 +200,5 @@ public class ParticleAcceleratorControllerTileEntity extends ParticleAccelerator
             }
         }
     }
-
 
 }

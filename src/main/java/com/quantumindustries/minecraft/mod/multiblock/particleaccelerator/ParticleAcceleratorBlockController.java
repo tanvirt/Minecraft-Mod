@@ -17,14 +17,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class ParticleAcceleratorBlockController extends ParticleAcceleratorBlockBase {
 
     public static final PropertyDirection FACING = PropertyDirection.create("facing");
+    // TODO(CM): May need this ID in the future, but unused for now
+    public static final int GUI_ID = 1;
 
     public ParticleAcceleratorBlockController(String name, ParticleAcceleratorBlockType type) {
         super(name, type);
 
         setDefaultState(blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
     }
-
-    public static final int GUI_ID = 1;
 
     @SideOnly(Side.CLIENT)
     public void initModel() {
@@ -64,4 +64,5 @@ public class ParticleAcceleratorBlockController extends ParticleAcceleratorBlock
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, FACING);
     }
+
 }

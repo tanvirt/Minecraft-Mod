@@ -34,7 +34,6 @@ public class BaseMachineContainer implements ITeslaConsumer, ITeslaHolder, ITesl
      * taken as a base line for balancing.
      */
     public BaseMachineContainer() {
-
         this(0, 0, 0);
     }
 
@@ -46,24 +45,22 @@ public class BaseMachineContainer implements ITeslaConsumer, ITeslaHolder, ITesl
      * @param output The maximum rate of power that can be extracted at a time.
      */
     public BaseMachineContainer(long capacity, long input, long output) {
-
         this(0, capacity, input, output);
     }
 
     /**
      * Constructor for setting all of the base values, including the stored power.
      *
-     * @param power The amount of stored power to initialize the container with.
+     * @param stored The amount of stored power to initialize the container with.
      * @param capacity The maximum amount of Tesla power that the container should hold.
-     * @param input The maximum rate of power that can be accepted at a time.
-     * @param output The maximum rate of power that can be extracted at a time.
+     * @param inputRate The maximum rate of power that can be accepted at a time.
+     * @param outputRate The maximum rate of power that can be extracted at a time.
      */
-    public BaseMachineContainer(long power, long capacity, long input, long output) {
-
-        this.stored = power;
+    public BaseMachineContainer(long stored, long capacity, long inputRate, long outputRate) {
+        this.stored = stored;
         this.capacity = capacity;
-        this.inputRate = input;
-        this.outputRate = output;
+        this.inputRate = inputRate;
+        this.outputRate = outputRate;
     }
 
     /**
@@ -75,13 +72,12 @@ public class BaseMachineContainer implements ITeslaConsumer, ITeslaHolder, ITesl
      * @param dataTag The NBTCompoundTag to read the important data from.
      */
     public BaseMachineContainer(NBTTagCompound dataTag) {
-
-        this.deserializeNBT(dataTag);
+        deserializeNBT(dataTag);
     }
 
     @Override
     public long getStoredPower () {
-        return this.stored;
+        return stored;
     }
 
     public void setStoredPower(long power) {
@@ -90,60 +86,56 @@ public class BaseMachineContainer implements ITeslaConsumer, ITeslaHolder, ITesl
 
     @Override
     public long givePower (long Tesla, boolean simulated) {
+        final long acceptedTesla = Math.min(getCapacity() - stored, Math.min(getInputRate(), Tesla));
 
-        final long acceptedTesla = Math.min(this.getCapacity() - this.stored, Math.min(this.getInputRate(), Tesla));
-
-        if (!simulated)
-            this.stored += acceptedTesla;
-
+        if (!simulated) {
+            stored += acceptedTesla;
+        }
         return acceptedTesla;
     }
 
     @Override
     public long takePower (long Tesla, boolean simulated) {
+        final long removedPower = Math.min(stored, Math.min(this.getOutputRate(), Tesla));
 
-        final long removedPower = Math.min(this.stored, Math.min(this.getOutputRate(), Tesla));
-
-        if (!simulated)
-            this.stored -= removedPower;
-
+        if (!simulated) {
+            stored -= removedPower;
+        }
         return removedPower;
     }
 
     @Override
     public long getCapacity () {
-
-        return this.capacity;
+        return capacity;
     }
 
     @Override
     public NBTTagCompound serializeNBT () {
-
         final NBTTagCompound dataTag = new NBTTagCompound();
-        dataTag.setLong("TeslaPower", this.stored);
-        dataTag.setLong("TeslaCapacity", this.capacity);
-        dataTag.setLong("TeslaInput", this.inputRate);
-        dataTag.setLong("TeslaOutput", this.outputRate);
+        dataTag.setLong("TeslaPower", stored);
+        dataTag.setLong("TeslaCapacity", capacity);
+        dataTag.setLong("TeslaInput", inputRate);
+        dataTag.setLong("TeslaOutput", outputRate);
 
         return dataTag;
     }
 
     @Override
     public void deserializeNBT (NBTTagCompound nbt) {
+        stored = nbt.getLong("TeslaPower");
 
-        this.stored = nbt.getLong("TeslaPower");
-
-        if (nbt.hasKey("TeslaCapacity"))
-            this.capacity = nbt.getLong("TeslaCapacity");
-
-        if (nbt.hasKey("TeslaInput"))
-            this.inputRate = nbt.getLong("TeslaInput");
-
-        if (nbt.hasKey("TeslaOutput"))
-            this.outputRate = nbt.getLong("TeslaOutput");
-
-        if (this.stored > this.getCapacity())
-            this.stored = this.getCapacity();
+        if (nbt.hasKey("TeslaCapacity")) {
+            capacity = nbt.getLong("TeslaCapacity");
+        }
+        if (nbt.hasKey("TeslaInput")) {
+            inputRate = nbt.getLong("TeslaInput");
+        }
+        if (nbt.hasKey("TeslaOutput")) {
+            outputRate = nbt.getLong("TeslaOutput");
+        }
+        if (stored > getCapacity()) {
+            stored = getCapacity();
+        }
     }
 
     /**
@@ -154,12 +146,11 @@ public class BaseMachineContainer implements ITeslaConsumer, ITeslaHolder, ITesl
      * @return The instance of the container being updated.
      */
     public BaseMachineContainer setCapacity (long capacity) {
-
         this.capacity = capacity;
 
-        if (this.stored > capacity)
-            this.stored = capacity;
-
+        if (stored > capacity) {
+            stored = capacity;
+        }
         return this;
     }
 
@@ -169,8 +160,7 @@ public class BaseMachineContainer implements ITeslaConsumer, ITeslaHolder, ITesl
      * @return The amount of Tesla power that can be accepted at any time.
      */
     public long getInputRate () {
-
-        return this.inputRate;
+        return inputRate;
     }
 
     /**
@@ -180,8 +170,7 @@ public class BaseMachineContainer implements ITeslaConsumer, ITeslaHolder, ITesl
      * @return The instance of the container being updated.
      */
     public BaseMachineContainer setInputRate (long rate) {
-
-        this.inputRate = rate;
+        inputRate = rate;
         return this;
     }
 
@@ -191,8 +180,7 @@ public class BaseMachineContainer implements ITeslaConsumer, ITeslaHolder, ITesl
      * @return The amount of Tesla power that can be extracted at any time.
      */
     public long getOutputRate () {
-
-        return this.outputRate;
+        return outputRate;
     }
 
     /**
@@ -202,8 +190,7 @@ public class BaseMachineContainer implements ITeslaConsumer, ITeslaHolder, ITesl
      * @return The instance of the container being updated.
      */
     public BaseMachineContainer setOutputRate (long rate) {
-
-        this.outputRate = rate;
+        outputRate = rate;
         return this;
     }
 
@@ -215,16 +202,14 @@ public class BaseMachineContainer implements ITeslaConsumer, ITeslaHolder, ITesl
      * @return The instance of the container being updated.
      */
     public BaseMachineContainer setTransferRate (long rate) {
-
-        this.setInputRate(rate);
-        this.setOutputRate(rate);
+        setInputRate(rate);
+        setOutputRate(rate);
         return this;
     }
 
     public long getField(int id)
     {
-        switch (id)
-        {
+        switch (id) {
             case 0:
                 return capacity;
             case 1:
@@ -236,8 +221,7 @@ public class BaseMachineContainer implements ITeslaConsumer, ITeslaHolder, ITesl
 
     public void setField(int id, long value)
     {
-        switch (id)
-        {
+        switch (id) {
             case 0:
                 capacity = value;
                 break;

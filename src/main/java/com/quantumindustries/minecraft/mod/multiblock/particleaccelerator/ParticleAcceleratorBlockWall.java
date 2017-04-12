@@ -101,7 +101,6 @@ public class ParticleAcceleratorBlockWall extends ParticleAcceleratorBlockBase {
     }
 
     static {
-
         ArrayList<PropertyBlockFacings> values = Lists.newArrayList();
 
         values.addAll(PropertyBlockFacings.ALL_AND_NONE);
@@ -112,4 +111,5 @@ public class ParticleAcceleratorBlockWall extends ParticleAcceleratorBlockBase {
 
         FACES = PropertyEnum.create("faces", PropertyBlockFacings.class, values);
     }
+
 }

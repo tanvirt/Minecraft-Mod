@@ -1,4 +1,4 @@
-package com.quantumindustries.minecraft.mod.multiblock.particleaccelerator.containers;
+package com.quantumindustries.minecraft.mod.containers;
 
 import com.quantumindustries.minecraft.mod.multiblock.particleaccelerator.ParticleAcceleratorControllerTileEntity;
 import com.quantumindustries.minecraft.mod.util.BaseMachineContainer;

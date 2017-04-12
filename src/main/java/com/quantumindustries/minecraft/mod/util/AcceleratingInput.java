@@ -37,4 +37,5 @@ public class AcceleratingInput {
     public void setPowerRateRequired(long power) {
         powerRateRequired = power;
     }
+
 }
