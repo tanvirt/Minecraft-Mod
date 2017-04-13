@@ -18,28 +18,40 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class ModFluids {
 
+    public static Fluid nitrogen;
+    public static Fluid oxygen;
+    public static Fluid argon;
+    public static Fluid plasma;
+
     public static void init() {
         initNitrogen();
         initOxygen();
         initArgon();
+        initPlasma();
     }
 
     private static void initNitrogen() {
         String fluidName = "nitrogen";
-        Fluid fluid = createFluid(fluidName);
-        createBlock("blockFluidNitrogen", fluidName, fluid, Material.WATER);
+        nitrogen = createFluid(fluidName);
+        createBlock("blockFluidNitrogen", fluidName, nitrogen, Material.WATER);
     }
 
     private static void initOxygen() {
         String fluidName = "oxygen";
-        Fluid fluid = createFluid(fluidName);
-        createBlock("blockFluidOxygen", fluidName, fluid, Material.WATER);
+        oxygen = createFluid(fluidName);
+        createBlock("blockFluidOxygen", fluidName, oxygen, Material.WATER);
     }
 
     private static void initArgon() {
         String fluidName = "argon";
-        Fluid fluid = createFluid(fluidName);
-        createBlock("blockFluidArgon", fluidName, fluid, Material.WATER);
+        argon = createFluid(fluidName);
+        createBlock("blockFluidArgon", fluidName, argon, Material.WATER);
+    }
+
+    private static void initPlasma() {
+        String fluidName = "plasma";
+        plasma = createFluid(fluidName);
+        createBlock("blockFluidPlasma", fluidName, plasma, Material.WATER);
     }
 
     private static Fluid createFluid(String name) {

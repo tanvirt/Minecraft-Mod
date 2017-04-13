@@ -1,8 +1,8 @@
 package com.quantumindustries.minecraft.mod.multiblock.particleaccelerator;
 
+import com.quantumindustries.minecraft.mod.fluids.PlasmaTank;
 import com.quantumindustries.minecraft.mod.recipes.ParticleAcceleratorRecipes;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -15,7 +15,9 @@ public class ParticleAcceleratorControllerTileEntity extends ParticleAccelerator
     // TODO(CM): Either fix empty class or format to show we aren't using it.
 
     public static final int SIZE = 2;
-    public CurrentAcceleration currentAcceleration = new CurrentAcceleration();
+    private CurrentAcceleration currentAcceleration = new CurrentAcceleration();
+    // TODO(CM): Balance tank capacity
+    private PlasmaTank plasmaTank = new PlasmaTank(10000);
 
     // This item handler will hold our inventory slots
     private ItemStackHandler itemStackHandler = new ItemStackHandler(SIZE) {
@@ -27,6 +29,10 @@ public class ParticleAcceleratorControllerTileEntity extends ParticleAccelerator
         }
     };
 
+    public PlasmaTank getPlasmaTank() {
+        return plasmaTank;
+    }
+
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
@@ -36,6 +42,7 @@ public class ParticleAcceleratorControllerTileEntity extends ParticleAccelerator
         if(compound.hasKey("currentAcceleration")) {
             currentAcceleration.deserializeNBT((NBTTagCompound) compound.getTag("currentAcceleration"));
         }
+        plasmaTank.readFromNBT(compound);
     }
 
     @Override
@@ -43,6 +50,7 @@ public class ParticleAcceleratorControllerTileEntity extends ParticleAccelerator
         super.writeToNBT(compound);
         compound.setTag("items", itemStackHandler.serializeNBT());
         compound.setTag("currentAcceleration", currentAcceleration.serializeNBT());
+        plasmaTank.writeToNBT(compound);
         return compound;
     }
 
@@ -76,29 +84,36 @@ public class ParticleAcceleratorControllerTileEntity extends ParticleAccelerator
     }
 
     public boolean canAccelerate(long maxPowerRate){
-        if (itemStackHandler.getStackInSlot(GuiSlots.INPUT) == null) {
+        if(itemStackHandler.getStackInSlot(GuiSlots.INPUT) == null) {
             resetCurrentAcceleration();
+            return false;
+        }
+        if(plasmaTank.getFluidAmount() == 0) {
             return false;
         }
         else {
             ItemStack stackInSlot = itemStackHandler.getStackInSlot(GuiSlots.INPUT);
             ItemStack itemstack = ParticleAcceleratorRecipes.instance().getAcceleratingResult(stackInSlot);
             long powerRateRequired = ParticleAcceleratorRecipes.instance().getAcceleratingRatePowerRequirement(stackInSlot);
-            if (itemstack == null) {
+            if(itemstack == null) {
                 return false;
             }
             else if(powerRateRequired > maxPowerRate) {
                 return false;
             }
+            // TODO(CM): 2000 means 2 buckets of plasma, instead of hardcode maybe dynamic? plasma req. in recipes?
+            else if(2000 > plasmaTank.getFluidAmount()) {
+                return false;
+            }
             // TODO(CM): Check power and plasma as well.
-            if (itemStackHandler.getStackInSlot(GuiSlots.OUTPUT) == null) {
+            if(itemStackHandler.getStackInSlot(GuiSlots.OUTPUT) == null) {
                 return true;
             }
-            if (!itemStackHandler.getStackInSlot(GuiSlots.OUTPUT).isItemEqual(itemstack)) {
+            if(!itemStackHandler.getStackInSlot(GuiSlots.OUTPUT).isItemEqual(itemstack)) {
                 return false;
             }
             int result = itemStackHandler.getStackInSlot(GuiSlots.OUTPUT).stackSize + itemstack.stackSize;
-            return result <= getInventoryStackLimit() && result <= itemStackHandler.getStackInSlot(GuiSlots.OUTPUT).getMaxStackSize(); //Forge BugFix: Make it respect stack sizes properly.
+            return result <= getInventoryStackLimit() && result <= itemStackHandler.getStackInSlot(GuiSlots.OUTPUT).getMaxStackSize();
         }
     }
 
@@ -141,6 +156,8 @@ public class ParticleAcceleratorControllerTileEntity extends ParticleAccelerator
             itemStackHandler.insertItem(OUTPUT, itemStack.copy(), false);
         }
 
+        // TODO(CM): Change this value to not be hard coded?
+        plasmaTank.drain(2000, true);
         itemStackHandler.extractItem(INPUT, 1, false);
         resetCurrentAcceleration();
         getAcceleratorController().setActive(false);

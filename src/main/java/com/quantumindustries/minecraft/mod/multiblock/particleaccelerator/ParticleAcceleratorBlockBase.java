@@ -21,6 +21,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLLog;
 
 public abstract class ParticleAcceleratorBlockBase extends BlockBase {
 
@@ -76,8 +77,12 @@ public abstract class ParticleAcceleratorBlockBase extends BlockBase {
 
         TileEntity te = world.getTileEntity(position);
         if (te instanceof ParticleAcceleratorControllerTileEntity) {
+            ParticleAcceleratorControllerTileEntity tile = (ParticleAcceleratorControllerTileEntity) te;
             player.openGui(CustomMod.instance, CONTROLLER_GUI_ID, world, position.getX(), position.getY(), position.getZ());
             return true;
+        }
+        if(te instanceof ParticleAcceleratorIOPortTileEntity) {
+            player.addChatMessage(new TextComponentString("Plasma Tank: " + ((ParticleAcceleratorIOPortTileEntity) te).getAcceleratorController().getController().getPlasmaTank().getFluidAmount()));
         }
         return false;
     }
