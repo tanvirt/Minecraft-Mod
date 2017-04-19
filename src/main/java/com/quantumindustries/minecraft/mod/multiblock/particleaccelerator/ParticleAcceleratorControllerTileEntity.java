@@ -8,6 +8,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -17,7 +18,7 @@ public class ParticleAcceleratorControllerTileEntity extends ParticleAccelerator
     public static final int SIZE = 2;
     private CurrentAcceleration currentAcceleration = new CurrentAcceleration();
     // TODO(CM): Balance tank capacity
-    private PlasmaTank plasmaTank = new PlasmaTank(10000);
+    private PlasmaTank plasmaTank = new PlasmaTank(0, 10000);
 
     // This item handler will hold our inventory slots
     private ItemStackHandler itemStackHandler = new ItemStackHandler(SIZE) {
@@ -208,6 +209,50 @@ public class ParticleAcceleratorControllerTileEntity extends ParticleAccelerator
             if (nbt.hasKey("isAccelerating")) {
                 currentAcceleration.isAccelerating = nbt.getBoolean("isAccelerating");
             }
+        }
+    }
+
+    public long getField(int id) {
+        switch(id) {
+            case 0:
+                return getAcceleratorController().getPowerPort().getCapacity();
+            case 1:
+                return getAcceleratorController().getPowerPort().getCurrentPower();
+            case 2:
+                return plasmaTank.getCapacity();
+            case 3:
+                return plasmaTank.getFluidAmount();
+            default:
+                return 0;
+        }
+    }
+
+    public FluidStack getFieldFluid(int id) {
+        switch(id) {
+            case 4:
+                return plasmaTank.getFluid();
+            default:
+                return null;
+        }
+    }
+
+    public void setField(int id, long value) {
+        switch (id) {
+            case 0:
+                getAcceleratorController().getPowerPort().setCapacity(value);
+            case 1:
+                getAcceleratorController().getPowerPort().setCurrentPower(value);
+            case 2:
+                break;
+            case 3:
+                plasmaTank.setAmountStored((int) value);
+        }
+    }
+
+    public void setFieldFluid(int id, FluidStack fluid) {
+        switch (id) {
+            case 4:
+                plasmaTank.setFluid(fluid);
         }
     }
 

@@ -61,6 +61,7 @@ public class ModFluids {
                 new ResourceLocation(texturePrefix + "_still"),
                 new ResourceLocation(texturePrefix + "_flow")
         );
+        fluid.setLuminosity(1000000);
         FluidRegistry.registerFluid(fluid);
         FluidRegistry.addBucketForFluid(fluid);
         return fluid;

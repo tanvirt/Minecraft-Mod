@@ -8,6 +8,8 @@ import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
@@ -19,6 +21,9 @@ public class ParticleAcceleratorControllerContainer extends Container {
     private ParticleAcceleratorControllerTileEntity controller;
     private long powerCapacity;
     private long powerStored;
+    private int fluidCapacity;
+    private int fluidStored;
+    private FluidStack fluidType;
     private BaseMachineContainer powerHolder;
 
     public ParticleAcceleratorControllerContainer(IInventory playerInventory, ParticleAcceleratorControllerTileEntity controller,
@@ -61,7 +66,7 @@ public class ParticleAcceleratorControllerContainer extends Container {
 
     @Override
     public void updateProgressBar(int id, int data) {
-        powerHolder.setField(id, data);
+        controller.setField(id, data);
     }
 
     @Override
@@ -70,16 +75,25 @@ public class ParticleAcceleratorControllerContainer extends Container {
 
         for(int i = 0; i < listeners.size(); ++i) {
             IContainerListener iContainerListener = listeners.get(i);
-            if(powerCapacity != powerHolder.getField(0)) {
-                iContainerListener.sendProgressBarUpdate(this, 0, (int) powerHolder.getField(0));
+            if(powerCapacity != controller.getField(0)) {
+                iContainerListener.sendProgressBarUpdate(this, 0, (int) controller.getField(0));
             }
-            if(powerStored != powerHolder.getField(1)) {
-                iContainerListener.sendProgressBarUpdate(this, 1, (int) powerHolder.getField(1));
+            if(powerStored != controller.getField(1)) {
+                iContainerListener.sendProgressBarUpdate(this, 1, (int) controller.getField(1));
+            }
+            if(fluidCapacity != controller.getField(2)) {
+                iContainerListener.sendProgressBarUpdate(this, 2, (int) controller.getField(2));
+            }
+            if(fluidStored != controller.getField(3)) {
+                iContainerListener.sendProgressBarUpdate(this, 3, (int)controller.getField(3));
             }
         }
 
-        powerCapacity = powerHolder.getField(0);
-        powerStored = powerHolder.getField(1);
+        powerCapacity = controller.getField(0);
+        powerStored = controller.getField(1);
+        fluidCapacity = (int) controller.getField(2);
+        fluidStored = (int) controller.getField(3);
+        fluidType = controller.getFieldFluid(4);
     }
 
     @Nullable

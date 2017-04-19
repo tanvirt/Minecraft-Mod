@@ -54,7 +54,9 @@ public class GuiHandler implements IGuiHandler {
                                                                                  TileEntity tileEntity) {
         BaseMachineContainer powerPort = ((ParticleAcceleratorControllerTileEntity) tileEntity).
                 getAcceleratorController().getPowerPort().getContainer();
-        return new ParticleAcceleratorControllerGui(powerPort, getParticleAcceleratorControllerContainer(player, tileEntity));
+
+        return new ParticleAcceleratorControllerGui(powerPort, (ParticleAcceleratorControllerTileEntity) tileEntity,
+                getParticleAcceleratorControllerContainer(player, tileEntity));
     }
 
 }

@@ -58,6 +58,10 @@ public class ParticleAcceleratorPowerTileEntity extends ParticleAcceleratorTileE
         return container.getStoredPower();
     }
 
+    public void setCurrentPower(long power) {
+        container.setStoredPower(power);
+    }
+
     public long consumePower(long power) {
         return container.takePower(power, false);
     }

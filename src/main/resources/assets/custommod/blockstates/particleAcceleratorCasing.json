@@ -72,22 +72,22 @@
         "model": "custommod:pa_case_lower_side"
       },
       "corner_suw": {
-        "model": "custommod:pa_case_default"
+        "model": "custommod:pa_case_upper_corner", "y": 270
       },
       "corner_dsw": {
         "model": "custommod:pa_case_lower_corner", "y": 270
       },
       "corner_esu": {
-        "model": "custommod:pa_case_default"
+        "model": "custommod:pa_case_upper_corner", "y": 180
       },
       "corner_des": {
         "model": "custommod:pa_case_lower_corner", "y": 180
       },
       "corner_enu": {
-        "model": "custommod:pa_case_default"
+        "model": "custommod:pa_case_upper_corner", "y": 90
       },
       "corner_nuw": {
-        "model": "custommod:pa_case_default"
+        "model": "custommod:pa_case_upper_corner"
       },
       "corner_dnw": {
         "model": "custommod:pa_case_lower_corner"
