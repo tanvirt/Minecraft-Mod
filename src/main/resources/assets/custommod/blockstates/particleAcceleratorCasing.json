@@ -1,16 +1,115 @@
 {
   "forge_marker": 1,
-  "defaults": {
-    "textures": {
-      "all": "custommod:block/blockCasing"
-    }
-  },
   "variants": {
-    "normal": {
-      "model": "cube_all"
+    "faces": {
+      "none": {
+        "model": "custommod:pa_case_default"
+      },
+      "all": {
+        "model": "custommod:pa_case_default"
+      },
+      "face_d": {
+        "model": "custommod:pa_case_bottom_center"
+      },
+      "face_u": {
+        "model": "custommod:pa_case_top_center"
+      },
+      "face_e": {
+        "model": "custommod:pa_case_mid",
+        "y": 180
+      },
+      "face_w": {
+        "model": "custommod:pa_case_mid"
+      },
+      "face_s": {
+        "model": "custommod:pa_case_mid",
+        "y": 270
+      },
+      "face_n": {
+        "model": "custommod:pa_case_mid",
+        "y": 90
+      },
+      "angle_sw": {
+        "model": "custommod:pa_case_mid_corner", "y": 270
+      },
+      "angle_es": {
+        "model": "custommod:pa_case_mid_corner", "y": 180
+      },
+      "angle_en": {
+        "model": "custommod:pa_case_mid_corner", "y": 90
+      },
+      "angle_nw": {
+        "model": "custommod:pa_case_mid_corner"
+      },
+      "angle_su": {
+        "model": "custommod:pa_case_top_child",
+        "y": 270
+      },
+      "angle_ds": {
+        "model": "custommod:pa_case_lower_side",
+        "y": 270
+      },
+      "angle_eu": {
+        "model": "custommod:pa_case_top_child",
+        "y": 180
+      },
+      "angle_de": {
+        "model": "custommod:pa_case_lower_side",
+        "y": 180
+      },
+      "angle_nu": {
+        "model": "custommod:pa_case_top_child",
+        "y": 90
+      },
+      "angle_dn": {
+        "model": "custommod:pa_case_lower_side",
+        "y": 90
+      },
+      "angle_uw": {
+        "model": "custommod:pa_case_top_child"
+      },
+      "angle_dw": {
+        "model": "custommod:pa_case_lower_side"
+      },
+      "corner_suw": {
+        "model": "custommod:pa_case_upper_corner", "y": 270
+      },
+      "corner_dsw": {
+        "model": "custommod:pa_case_lower_corner", "y": 270
+      },
+      "corner_esu": {
+        "model": "custommod:pa_case_upper_corner", "y": 180
+      },
+      "corner_des": {
+        "model": "custommod:pa_case_lower_corner", "y": 180
+      },
+      "corner_enu": {
+        "model": "custommod:pa_case_upper_corner", "y": 90
+      },
+      "corner_nuw": {
+        "model": "custommod:pa_case_upper_corner"
+      },
+      "corner_dnw": {
+        "model": "custommod:pa_case_lower_corner"
+      },
+      "corner_den": {
+        "model": "custommod:pa_case_lower_corner", "y": 90
+      },
+      "opposite_ew": {
+        "model": "custommod:pa_case_default"
+      }
+    },
+    "rotate": {
+      "true": {
+        "y": 90
+      },
+      "false": {
+        // Do nothing
+      }
     },
     "inventory": {
-      "model": "cube_all"
+      "transform": "forge:default-block",
+      "model": "custommod:pa_case_default"
     }
   }
 }

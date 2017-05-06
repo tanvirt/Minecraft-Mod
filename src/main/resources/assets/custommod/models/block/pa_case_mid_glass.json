@@ -1,0 +1,23 @@
+{
+    "__comment": "Model generated using MrCrayfish's Model Creator (http://mrcrayfish.com/modelcreator/)",
+    "textures": {
+        "0": "custommod:block/null",
+        "1": "custommod:block/pa_case_mid_glass",
+        "2": "custommod:block/pa_case_extras"
+    },
+    "elements": [
+        {
+            "name": "Cube",
+            "from": [ 5.0, 2.0, 0.0 ], 
+            "to": [ 7.0, 14.0, 16.0 ], 
+            "faces": {
+                "north": { "texture": "#3", "uv": [ 0.0, 0.0, 2.0, 12.0 ] },
+                "east": { "texture": "#4", "uv": [ 0.0, 4.0, 16.0, 16.0 ] },
+                "south": { "texture": "#3", "uv": [ 0.0, 0.0, 2.0, 12.0 ] },
+                "west": { "texture": "#4", "uv": [ 0.0, 4.0, 16.0, 16.0 ] },
+                "up": { "texture": "#5", "uv": [ 4.0, 0.0, 6.0, 16.0 ] },
+                "down": { "texture": "#5", "uv": [ 4.0, 0.0, 6.0, 16.0 ] }
+            }
+        }
+    ]
+}

@@ -17,9 +17,17 @@ public class ModItems {
     public static ItemOre dustNeodymium;
     public static ItemOre dustRhodium;
 
+    // Accelerator Targets
+    public static ItemBase netherStarTarget;
+
+    // Accelerator Output
+    public static ItemBase neutronStarParticle;
+
     public static void init() {
         initIngots();
         initDusts();
+        initTargets();
+        initParticles();
         airFilter = register(new ItemBase("airFilter"));
     }
 
@@ -33,6 +41,14 @@ public class ModItems {
         dustCobalt = register(new ItemOre("dustCobalt", "dustCobalt"));
         dustNeodymium = register(new ItemOre("dustNeodymium", "dustNeodymium"));
         dustRhodium = register(new ItemOre("dustRhodium", "dustRhodium"));
+    }
+
+    private static void initTargets() {
+        netherStarTarget = register(new ItemBase("netherStarTarget"));
+    }
+
+    private static void initParticles() {
+        neutronStarParticle = register(new ItemBase("neutronStarParticle"));
     }
 
     private static <T extends Item> T register(T item) {

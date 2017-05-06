@@ -30,7 +30,7 @@ public class TileEntityInfiniteProducer extends TileEntity implements ITickable{
 
     @Override
     public void update() {
-        TeslaUtils.distributePowerToAllFaces(this.worldObj, this.pos, 50, false);
+        TeslaUtils.distributePowerToAllFaces(this.worldObj, this.pos, 1000, false);
     }
 
 }
