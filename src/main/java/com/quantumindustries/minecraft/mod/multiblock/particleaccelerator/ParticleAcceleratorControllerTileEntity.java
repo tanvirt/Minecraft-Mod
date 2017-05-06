@@ -9,6 +9,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -19,6 +20,9 @@ public class ParticleAcceleratorControllerTileEntity extends ParticleAccelerator
     private CurrentAcceleration currentAcceleration = new CurrentAcceleration();
     // TODO(CM): Balance tank capacity
     private PlasmaTank plasmaTank = new PlasmaTank(0, 10000);
+    private AcceleratorBeams acceleratorBeams = new AcceleratorBeams();
+//    private ParticleAcceleratorBeamType leftBeam = ParticleAcceleratorBeamType.PROTON;
+//    private ParticleAcceleratorBeamType rightBeam = ParticleAcceleratorBeamType.PROTON;
 
     // This item handler will hold our inventory slots
     private ItemStackHandler itemStackHandler = new ItemStackHandler(SIZE) {
@@ -34,6 +38,14 @@ public class ParticleAcceleratorControllerTileEntity extends ParticleAccelerator
         return plasmaTank;
     }
 
+    public ParticleAcceleratorBeamType getLeftBeam() {
+        return acceleratorBeams.leftBeam;
+    }
+
+    public ParticleAcceleratorBeamType getRightBeam() {
+        return acceleratorBeams.rightBeam;
+    }
+
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
@@ -43,6 +55,9 @@ public class ParticleAcceleratorControllerTileEntity extends ParticleAccelerator
         if(compound.hasKey("currentAcceleration")) {
             currentAcceleration.deserializeNBT((NBTTagCompound) compound.getTag("currentAcceleration"));
         }
+        if(compound.hasKey("acceleratorBeams")) {
+            acceleratorBeams.deserializeNBT((NBTTagCompound) compound.getTag("acceleratorBeams"));
+        }
         plasmaTank.readFromNBT(compound);
     }
 
@@ -51,6 +66,7 @@ public class ParticleAcceleratorControllerTileEntity extends ParticleAccelerator
         super.writeToNBT(compound);
         compound.setTag("items", itemStackHandler.serializeNBT());
         compound.setTag("currentAcceleration", currentAcceleration.serializeNBT());
+        compound.setTag("acceleratorBeams", acceleratorBeams.serializeNBT());
         plasmaTank.writeToNBT(compound);
         return compound;
     }
@@ -178,9 +194,52 @@ public class ParticleAcceleratorControllerTileEntity extends ParticleAccelerator
         currentAcceleration = new CurrentAcceleration();
     }
 
+    public void cycleLeftBeam() {
+        acceleratorBeams.cycleLeftBeam();
+    }
+
+    public void cycleRightBeam() {
+        acceleratorBeams.cycleRightBeam();
+    }
+
     public class GuiSlots {
         static final int INPUT = 0;
         static final int OUTPUT = 1;
+    }
+
+    public class AcceleratorBeams implements INBTSerializable<NBTTagCompound> {
+
+        ParticleAcceleratorBeamType leftBeam = ParticleAcceleratorBeamType.PROTON;
+        ParticleAcceleratorBeamType rightBeam = ParticleAcceleratorBeamType.PROTON;
+
+        public void cycleLeftBeam() {
+            leftBeam = leftBeam.cycleBeam();
+            FMLLog.warning("Left Beam: %s", leftBeam.toString());
+        }
+
+        public void cycleRightBeam() {
+            rightBeam = rightBeam.cycleBeam();
+            FMLLog.warning("Right Beam: %s", rightBeam.toString());
+        }
+
+        @Override
+        public NBTTagCompound serializeNBT() {
+            final NBTTagCompound dataTag = new NBTTagCompound();
+            dataTag.setInteger("leftBeam", leftBeam.getOrdinalType());
+            dataTag.setInteger("rightBeam", rightBeam.getOrdinalType());
+
+            return dataTag;
+        }
+
+        @Override
+        public void deserializeNBT(NBTTagCompound nbt) {
+            if(nbt.hasKey("leftBeam")) {
+                leftBeam.setOrdinalType(nbt.getInteger("leftBeam"));
+            }
+            if(nbt.hasKey("rightBeam")) {
+                rightBeam.setOrdinalType(nbt.getInteger("rightBeam"));
+            }
+        }
     }
 
     public class CurrentAcceleration implements  INBTSerializable<NBTTagCompound> {
@@ -222,6 +281,10 @@ public class ParticleAcceleratorControllerTileEntity extends ParticleAccelerator
                 return plasmaTank.getCapacity();
             case 3:
                 return plasmaTank.getFluidAmount();
+            case 4:
+                return acceleratorBeams.leftBeam.getOrdinalType();
+            case 5:
+                return acceleratorBeams.rightBeam.getOrdinalType();
             default:
                 return 0;
         }
@@ -240,12 +303,22 @@ public class ParticleAcceleratorControllerTileEntity extends ParticleAccelerator
         switch (id) {
             case 0:
                 getAcceleratorController().getPowerPort().setCapacity(value);
+                break;
             case 1:
                 getAcceleratorController().getPowerPort().setCurrentPower(value);
+                break;
             case 2:
+                plasmaTank.setCapacity((int) value);
                 break;
             case 3:
                 plasmaTank.setAmountStored((int) value);
+                break;
+            case 4:
+                acceleratorBeams.leftBeam.setOrdinalType((int) value);
+                break;
+            case 5:
+                acceleratorBeams.rightBeam.setOrdinalType((int) value);
+                break;
         }
     }
 
@@ -253,6 +326,7 @@ public class ParticleAcceleratorControllerTileEntity extends ParticleAccelerator
         switch (id) {
             case 4:
                 plasmaTank.setFluid(fluid);
+                break;
         }
     }
 

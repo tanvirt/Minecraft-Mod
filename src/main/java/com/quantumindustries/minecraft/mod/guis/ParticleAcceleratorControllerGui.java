@@ -4,13 +4,16 @@ import com.quantumindustries.minecraft.mod.CustomMod;
 import com.quantumindustries.minecraft.mod.containers.ParticleAcceleratorControllerContainer;
 import com.quantumindustries.minecraft.mod.fluids.ModFluids;
 import com.quantumindustries.minecraft.mod.guis.util.FluidBar;
+import com.quantumindustries.minecraft.mod.multiblock.particleaccelerator.ParticleAcceleratorBeamType;
 import com.quantumindustries.minecraft.mod.multiblock.particleaccelerator.ParticleAcceleratorControllerTileEntity;
 import com.quantumindustries.minecraft.mod.util.BaseMachineContainer;
 import net.darkhax.tesla.lib.PowerBar;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLLog;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,8 +23,8 @@ public class ParticleAcceleratorControllerGui extends GuiContainer {
     private static final int HEIGHT = 166;
     private PowerBar controllerPowerBar;
     private FluidBar controllerFluidBar;
-    private MultiOptionButton leftBeamSource;
-    private MultiOptionButton rightBeamSource;
+    private GuiButton leftBeamSource;
+    private GuiButton rightBeamSource;
     private BaseMachineContainer powerPort;
     private ParticleAcceleratorControllerTileEntity controller;
 
@@ -46,9 +49,20 @@ public class ParticleAcceleratorControllerGui extends GuiContainer {
         super.initGui();
         controllerPowerBar = new PowerBar(this, guiLeft + 10, guiTop + 20, PowerBar.BackgroundType.DARK);
         controllerFluidBar = new FluidBar(this, guiLeft + 30, guiTop + 20, true, ModFluids.plasma);
-//        leftBeam = new CycleButton(this, 0, guiLeft, guiTop, ParticleAcceleratorBeamType.class);
-//        leftBeamSource = new MultiOptionButton(0, guiLeft + 100, guiTop + 50, 70, 20, "Left Button");
-//        rightBeamSource = new MultiOptionButton(2, guiLeft + 100, guiTop + 30, 70, 20, "Right Button");
+        leftBeamSource = new GuiButton(0, guiLeft + 100, guiTop + 50, 70, 20, controller.getLeftBeam().toString());
+        rightBeamSource = new GuiButton(1, guiLeft + 100, guiTop + 30, 70, 20, controller.getRightBeam().toString());
+        buttonList.add(leftBeamSource);
+        buttonList.add(rightBeamSource);
+    }
+
+    @Override
+    protected void actionPerformed(GuiButton button) throws IOException {
+        if(button.id == 0) {
+            controller.cycleLeftBeam();
+        }
+        if(button.id == 1) {
+            controller.cycleRightBeam();
+        }
     }
 
     @Override
@@ -60,10 +74,19 @@ public class ParticleAcceleratorControllerGui extends GuiContainer {
 
         int fluidCapacity = getFluidCapacity();
         int fluidStored = getFluidStored();
-        FMLLog.warning("Capacity: %d    Stored: %d", fluidCapacity, fluidStored);
-//
-//        leftBeamSource.drawButton(mc, mouseX, mouseY);
-//        rightBeamSource.drawButton(mc, mouseX, mouseY);
+
+        ParticleAcceleratorBeamType leftBeam = getLeftBeam();
+        ParticleAcceleratorBeamType rightBeam = getRightBeam();
+
+        for(GuiButton guiButton : this.buttonList) {
+            if(guiButton == leftBeamSource) {
+                guiButton.displayString = leftBeam.toString();
+            }
+            if(guiButton == rightBeamSource) {
+                guiButton.displayString = rightBeam.toString();
+            }
+        }
+
         controllerPowerBar.draw(powerStored, powerCapacity);
         controllerFluidBar.draw(fluidStored, fluidCapacity);
     }
@@ -76,6 +99,9 @@ public class ParticleAcceleratorControllerGui extends GuiContainer {
         int fluidCapacity = getFluidCapacity();
         int fluidStored = getFluidStored();
 
+        ParticleAcceleratorBeamType leftBeam = getLeftBeam();
+        ParticleAcceleratorBeamType rightBeam = getRightBeam();
+
         if(checkPowerBarHover(mouseX, mouseY)) {
             ArrayList<String> powerBarString = new ArrayList<String>() {{
                 add(getPowerHoverString(stored, capacity));
@@ -87,6 +113,12 @@ public class ParticleAcceleratorControllerGui extends GuiContainer {
                 add(getFluidHoverString(fluidStored, fluidCapacity));
             }};
             drawHoveringText(fluidBarString, mouseX - guiLeft, mouseY - guiTop);
+        }
+        for(GuiButton guiButton : this.buttonList) {
+            if(guiButton.isMouseOver()) {
+                guiButton.drawButtonForegroundLayer(mouseX - guiLeft, mouseY - guiTop);
+                break;
+            }
         }
     }
 
@@ -112,6 +144,18 @@ public class ParticleAcceleratorControllerGui extends GuiContainer {
 
     private int getFluidStored() {
         return (int) controller.getField(3);
+    }
+
+    private ParticleAcceleratorBeamType getLeftBeam() {
+        ParticleAcceleratorBeamType tempBeam = ParticleAcceleratorBeamType.PROTON;
+        int beam = (int) controller.getField(4);
+        return tempBeam.setOrdinalType(beam);
+    }
+
+    private ParticleAcceleratorBeamType getRightBeam() {
+        ParticleAcceleratorBeamType tempBeam = ParticleAcceleratorBeamType.PROTON;
+        int beam = (int) controller.getField(5);
+        return tempBeam.setOrdinalType(beam);
     }
 
     private boolean checkPowerBarHover(int mouseX, int mouseY) {

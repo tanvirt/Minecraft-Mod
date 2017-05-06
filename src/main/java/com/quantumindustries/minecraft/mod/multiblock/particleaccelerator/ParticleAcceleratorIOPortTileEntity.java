@@ -48,6 +48,9 @@ public class ParticleAcceleratorIOPortTileEntity extends ParticleAcceleratorTile
 
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+        if(!getAcceleratorController().isAssembled()) {
+            return false;
+        }
         return capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY ||
                 super.hasCapability(capability, facing);
     }

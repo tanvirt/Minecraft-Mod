@@ -1,5 +1,6 @@
 package com.quantumindustries.minecraft.mod.containers;
 
+import com.quantumindustries.minecraft.mod.multiblock.particleaccelerator.ParticleAcceleratorBeamType;
 import com.quantumindustries.minecraft.mod.multiblock.particleaccelerator.ParticleAcceleratorControllerTileEntity;
 import com.quantumindustries.minecraft.mod.util.BaseMachineContainer;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,6 +24,8 @@ public class ParticleAcceleratorControllerContainer extends Container {
     private long powerStored;
     private int fluidCapacity;
     private int fluidStored;
+    private int leftBeam;
+    private int rightBeam;
     private FluidStack fluidType;
     private BaseMachineContainer powerHolder;
 
@@ -85,7 +88,13 @@ public class ParticleAcceleratorControllerContainer extends Container {
                 iContainerListener.sendProgressBarUpdate(this, 2, (int) controller.getField(2));
             }
             if(fluidStored != controller.getField(3)) {
-                iContainerListener.sendProgressBarUpdate(this, 3, (int)controller.getField(3));
+                iContainerListener.sendProgressBarUpdate(this, 3, (int) controller.getField(3));
+            }
+            if(leftBeam != controller.getField(4)) {
+                iContainerListener.sendProgressBarUpdate(this, 4, (int) controller.getField(4));
+            }
+            if(rightBeam != controller.getField(5)) {
+                iContainerListener.sendProgressBarUpdate(this, 5, (int) controller.getField(5));
             }
         }
 
@@ -93,6 +102,9 @@ public class ParticleAcceleratorControllerContainer extends Container {
         powerStored = controller.getField(1);
         fluidCapacity = (int) controller.getField(2);
         fluidStored = (int) controller.getField(3);
+        leftBeam = (int) controller.getField(4);
+        rightBeam = (int) controller.getField(5);
+
         fluidType = controller.getFieldFluid(4);
     }
 
